@@ -646,6 +646,23 @@
         </div>
     </div>
 
+    <!-- Redeem success popup (amount + admin note) -->
+    <div id="redeemModal" class="pop-overlay" style="display:none">
+        <div class="pop-card space-y-2">
+            <div class="mx-auto w-14 h-14 rounded-2xl flex items-center justify-center bg-emerald-100 border border-emerald-200">
+                <i data-lucide="badge-check" class="w-7 h-7 text-emerald-600"></i>
+            </div>
+            <h3 class="text-base font-extrabold text-slate-900">Redeem Successful!</h3>
+            <p class="text-2xl font-black text-emerald-600">+<span id="redeemAmt">0</span> BDT</p>
+            <p id="redeemCodeLine" class="text-[10px] font-mono font-bold text-slate-400"></p>
+            <div id="redeemNoteBox" class="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5" style="display:none">
+                <p class="text-[9px] font-extrabold uppercase tracking-widest text-amber-600 text-left">Note from admin</p>
+                <p id="redeemNote" class="text-xs text-slate-700 font-semibold leading-relaxed text-left whitespace-pre-wrap"></p>
+            </div>
+            <button onclick="closeRedeem()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-sm transition-all cursor-pointer">OK, Thanks!</button>
+        </div>
+    </div>
+
     <!-- Maintenance overlay -->
     <div id="maintOverlay" class="pop-overlay" style="display:none">
         <div class="pop-card space-y-2">
@@ -874,17 +891,37 @@
         }
 
         async function redeemGo() {
+            if (window._redeeming) return;
             const inp = document.getElementById('redeemInput');
             const code = (inp.value || '').trim();
             if (!code) { toast('Code likhun'); return; }
+            if (!(window.ppfb && window.ppfb.user)) { toast('Please login first'); showScreen('screenLogin'); return; }
             if (!window.ppfb || !window.ppfb.redeem) { toast('Loading, please wait...'); return; }
+            const btn = document.querySelector('#screenProfile button[onclick="redeemGo()"]');
+            window._redeeming = true;
             inp.disabled = true;
+            if (btn) { btn.disabled = true; btn.textContent = 'Checking...'; }
             try {
                 const r = await window.ppfb.redeem(code);
-                toast(r.ok ? ('+' + r.amount + ' BDT added!') : (r.error || 'Redeem failed'));
-                if (r.ok) inp.value = '';
-            } finally { inp.disabled = false; }
+                if (!r.ok) { toast(r.error || 'Redeem failed'); return; }
+                inp.value = '';
+                document.getElementById('redeemAmt').textContent = r.amount;
+                document.getElementById('redeemCodeLine').textContent = code.toUpperCase();
+                const nb = document.getElementById('redeemNoteBox');
+                if (r.note && r.note.trim()) {
+                    document.getElementById('redeemNote').textContent = r.note.trim();
+                    nb.style.display = '';
+                } else { nb.style.display = 'none'; }
+                document.getElementById('redeemModal').style.display = 'flex';
+                if (window.lucide) lucide.createIcons();
+                if (window.ppfb.ev) window.ppfb.ev('redeem_success', { amount: r.amount });
+            } finally {
+                window._redeeming = false;
+                inp.disabled = false;
+                if (btn) { btn.disabled = false; btn.textContent = 'Redeem'; }
+            }
         }
+        function closeRedeem() { document.getElementById('redeemModal').style.display = 'none'; }
 
         function fillReceipt(o) {
             document.getElementById('successTitle').innerText = o.title;
@@ -1302,6 +1339,7 @@
             if (!code) return { ok: false, error: 'Code likhun' };
             try {
                 let credited = 0;
+                let noteOut = '';
                 await _tx(db, async (t) => {
                     const cref = _doc(db, 'codes', code);
                     const cs = await t.get(cref);
@@ -1313,8 +1351,9 @@
                     if (!us.exists()) throw new Error('nouser');
                     t.update(uref, { balance: (Number(us.data().balance) || 0) + amt, lastRedeem: code });
                     credited = amt;
+                    noteOut = (cs.data().note || '').toString();
                 });
-                return { ok: true, amount: credited };
+                return { ok: true, amount: credited, note: noteOut };
             } catch (e) {
                 console.warn(e);
                 const m = e && e.message;
