@@ -601,11 +601,8 @@
                     <button onclick="redeemGo()" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition-all cursor-pointer flex-shrink-0">Redeem</button>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-2">
-                <button onclick="openWithdraw()" class="py-2.5 px-3 bg-emerald-50 border border-emerald-200 text-emerald-700 font-extrabold rounded-xl text-xs cursor-pointer flex items-center justify-center gap-1.5">
-                    <i data-lucide="banknote" class="w-3.5 h-3.5"></i> Cash Out
-                </button>
-                <button onclick="openSupport()" class="py-2.5 px-3 bg-violet-50 border border-violet-200 text-violet-700 font-extrabold rounded-xl text-xs cursor-pointer flex items-center justify-center gap-1.5">
+            <div>
+                <button onclick="openSupport()" class="w-full py-2.5 px-3 bg-violet-50 border border-violet-200 text-violet-700 font-extrabold rounded-xl text-xs cursor-pointer flex items-center justify-center gap-1.5">
                     <i data-lucide="messages-square" class="w-3.5 h-3.5"></i> Support
                 </button>
             </div>
@@ -675,33 +672,7 @@
         </div>
     </div>
 
-    <!-- Cash out / Withdraw modal -->
-    <div id="wdModal" class="pop-overlay" style="display:none">
-        <div class="pop-card space-y-3">
-            <div class="mx-auto w-12 h-12 rounded-2xl flex items-center justify-center bg-emerald-100 border border-emerald-200">
-                <i data-lucide="banknote" class="w-5 h-5 text-emerald-600"></i>
-            </div>
-            <div class="text-center">
-                <h3 class="text-base font-extrabold text-slate-900">Cash Out</h3>
-                <p class="text-[11px] text-slate-400 font-medium">Available: <span id="wdAvail" class="font-extrabold text-slate-700">0 BDT</span></p>
-            </div>
-            <div>
-                <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-1">Your bKash/Nagad/Rocket number</label>
-                <input id="wdPhone" inputmode="numeric" placeholder="01XXXXXXXXX" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:border-emerald-500">
-            </div>
-            <div>
-                <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-1">Amount (BDT)</label>
-                <input id="wdAmount" type="number" placeholder="100" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:border-emerald-500">
-            </div>
-            <div class="flex gap-2">
-                <select id="wdMethod" class="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-emerald-500">
-                    <option>bKash</option><option>Nagad</option><option>Rocket</option>
-                </select>
-                <button id="wdReqBtn" onclick="submitWithdraw()" class="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs transition-all cursor-pointer disabled:opacity-60">Request</button>
-            </div>
-            <button onclick="closeWd()" class="w-full py-2.5 bg-slate-100 border border-slate-200 text-slate-600 font-bold rounded-xl text-xs transition-all cursor-pointer">Cancel</button>
-        </div>
-    </div>
+    <!-- Cash out removed (deposit only) -->
 
     <!-- Support modal -->
     <div id="spModal" class="pop-overlay" style="display:none">
@@ -1008,7 +979,7 @@
             measurementId: "G-CN9LJ502BL"
         };
 
-        const DEFAULTS = { fee: 20, minDeposit: 20, minWithdraw: 50, bkash: '01647712206', nagad: '01647712206', rocket: '01647712206', admin: 'https://t.me/Blackmoney54', support: 'https://t.me/Blackmoney54', notice: '', maintenance: false, maintMsg: 'App ti maintenance e ache. Ektokhon porer janabo.' };
+        const DEFAULTS = { fee: 20, minDeposit: 20, bkash: '01647712206', nagad: '01647712206', rocket: '01647712206', admin: 'https://t.me/Blackmoney54', support: 'https://t.me/Blackmoney54', notice: '', maintenance: false, maintMsg: 'App ti maintenance e ache. Ektokhon porer janabo.' };
 
         window.ppfb = {
             config: { ...DEFAULTS },
@@ -1157,7 +1128,7 @@
 
     <script type="module">
         import { initializeApp as _initApp, getApp as _getApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-        import { getFirestore as _getFS, doc as _doc, getDoc as _getDoc, setDoc as _setDoc, collection as _col, addDoc as _addDoc, serverTimestamp as _ts, runTransaction as _tx, query as _q, where as _where, orderBy as _orderBy, limit as _limit, getDocs as _getDocs, onSnapshot as _snap } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+        import { getFirestore as _getFS, doc as _doc, getDoc as _getDoc, setDoc as _setDoc, collection as _col, addDoc as _addDoc, serverTimestamp as _ts, runTransaction as _tx, increment as _inc, query as _q, where as _where, orderBy as _orderBy, limit as _limit, getDocs as _getDocs, onSnapshot as _snap } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
         import { getAuth as _getAuth, GoogleAuthProvider as _GAP, signInWithPopup as _popup, signInWithRedirect as _redir, getRedirectResult as _redirRes, onAuthStateChanged as _onAuth, signOut as _signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
         const FB = {
@@ -1346,66 +1317,39 @@
                     if (!cs.exists() || cs.data().active !== true) throw new Error('invalid');
                     const amt = Number(cs.data().amount || 0);
                     if (!amt || amt <= 0) throw new Error('invalid');
+                    const maxU = Number(cs.data().maxUses || 0);
+                    const usedN = Number(cs.data().used || 0);
+                    if (maxU > 0 && usedN >= maxU) throw new Error('maxed');
                     const uref = _doc(db, 'users', u.uid);
                     const us = await t.get(uref);
                     if (!us.exists()) throw new Error('nouser');
-                    t.update(uref, { balance: (Number(us.data().balance) || 0) + amt, lastRedeem: code });
+                    const ud = us.data() || {};
+                    if (ud.lastRedeem === code || (ud.redeemed && ud.redeemed[code])) throw new Error('already');
+                    t.update(uref, { balance: (Number(ud.balance) || 0) + amt, lastRedeem: code });
+                    t.set(_doc(_col(db, 'redemptions')), {
+                        uid: u.uid, name: u.displayName || '', email: u.email || '',
+                        code: code, amount: amt, note: (cs.data().note || '').toString(),
+                        status: 'approved', createdAt: _ts()
+                    });
                     credited = amt;
                     noteOut = (cs.data().note || '').toString();
                 });
+                try { await _setDoc(_doc(db, 'codes', code), { used: _inc(1) }, { merge: true }); } catch (ign) {}
+                try {
+                    const rk = {};
+                    rk['redeemed.' + code] = _ts();
+                    await _setDoc(_doc(db, 'users', u.uid), rk, { merge: true });
+                } catch (ign) {}
                 return { ok: true, amount: credited, note: noteOut };
             } catch (e) {
                 console.warn(e);
                 const m = e && e.message;
                 if (m === 'invalid') return { ok: false, error: 'Bhulo ba bondho code' };
-                if (e && e.code === 'permission-denied') return { ok: false, error: 'Ei code age use hoyeche' };
-                return { ok: false, error: 'Redeem failed, abar try korun' };
+                if (m === 'already') return { ok: false, error: 'Ei code age use hoyeche' };
+                if (m === 'maxed') return { ok: false, error: 'Ei code er limit sesh' };
+                if (e && e.code === 'permission-denied') return { ok: false, error: 'Redeem blocked — admin ke janan (rules)' };
+                return { ok: false, error: 'Redeem failed: ' + ((e && e.code) || 'abar try korun') };
             }
-        };
-
-        /* ---- Cash out (withdraw) ---- */
-        window.openWithdraw = () => {
-            const u = auth && auth.currentUser;
-            if (!u) { toast('Please login first'); showScreen('screenLogin'); return; }
-            if (window.ppfb.banned) { toast('Account banned'); return; }
-            const min = Number((window.ppfb.config && window.ppfb.config.minWithdraw) || 50);
-            const bal = window.ppfb.balance || 0;
-            if (bal < min) { toast('Minimum ' + min + ' BDT cash out kora jay'); return; }
-            const av = document.getElementById('wdAvail');
-            if (av) av.textContent = bal + ' BDT';
-            const am = document.getElementById('wdAmount');
-            if (am) am.placeholder = 'Min ' + min;
-            const mo = document.getElementById('wdModal');
-            if (mo) mo.style.display = 'flex';
-            if (window.lucide) lucide.createIcons();
-        };
-        window.closeWd = () => { const m = document.getElementById('wdModal'); if (m) m.style.display = 'none'; };
-        window.submitWithdraw = async () => {
-            if (window._wdSending) return;
-            const u = auth && auth.currentUser;
-            if (!u || !db) { toast('Please login first'); return; }
-            const phone = (document.getElementById('wdPhone').value || '').replace(/[^0-9+]/g, '').slice(0, 18);
-            const amount = Math.floor(Number(document.getElementById('wdAmount').value) || 0);
-            const method = document.getElementById('wdMethod').value;
-            const min = Number((window.ppfb.config && window.ppfb.config.minWithdraw) || 50);
-            if (phone.length < 6) { toast('Sothik number din'); return; }
-            if (amount < min) { toast('Minimum ' + min + ' BDT'); return; }
-            if (amount > (window.ppfb.balance || 0)) { toast('Balance er beshi taka'); return; }
-            window._wdSending = true;
-            const wbtn = document.getElementById('wdReqBtn');
-            if (wbtn) { wbtn.disabled = true; wbtn.textContent = 'Sending...'; }
-            try {
-                await _addDoc(_col(db, 'withdrawals'), {
-                    uid: u.uid, name: u.displayName || '', email: u.email || '', photo: u.photoURL || '',
-                    phone: phone, amount: amount, method: method, status: 'pending', createdAt: _ts()
-                });
-                closeWd();
-                document.getElementById('wdPhone').value = '';
-                document.getElementById('wdAmount').value = '';
-                toast('Request sent, admin review korbe');
-                if (window.ppfb.ev) window.ppfb.ev('withdraw_request', { amount: amount, method: method });
-            } catch (e) { console.warn(e); toast('Request fail, abar try korun'); }
-            finally { window._wdSending = false; if (wbtn) { wbtn.disabled = false; wbtn.textContent = 'Request'; } }
         };
 
         /* ---- Support ticket ---- */
@@ -1506,8 +1450,8 @@
             if (it.kind === 'TOP-UP') {
                 return '<span class="hist-tile" style="background:linear-gradient(135deg,#10b981,#059669)">+</span>';
             }
-            if (it.kind === 'PAYOUT') {
-                return '<span class="hist-tile" style="background:linear-gradient(135deg,#f43f5e,#e11d48)">৳</span>';
+            if (it.kind === 'REDEEM') {
+                return '<span class="hist-tile" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)">🎁</span>';
             }
             const ch = ((it.game || 'T').toString().charAt(0) || 'T').toUpperCase();
             return '<span class="hist-tile" style="background:linear-gradient(135deg,#8b5cf6,#4f46e5)">' + escapeHtml(ch) + '</span>';
@@ -1521,11 +1465,11 @@
             if (!u || !db) return;
             loadTickets();
             try {
-                const [orders, deps, wds] = await Promise.all([fetchList('orders', u), fetchList('deposits', u), fetchList('withdrawals', u)]);
+                const [orders, deps, reds] = await Promise.all([fetchList('orders', u), fetchList('deposits', u), fetchList('redemptions', u)]);
                 const items = [
                     ...orders.map(o => ({ kind: 'TASK', ...o })),
                     ...deps.map(d => ({ kind: 'TOP-UP', ...d })),
-                    ...wds.map(d => ({ kind: 'PAYOUT', ...d }))
+                    ...reds.map(d => ({ kind: 'REDEEM', status: 'approved', ...d }))
                 ];
                 const ms = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : 0);
                 items.sort((a, b) => ms(b) - ms(a));
@@ -1534,7 +1478,7 @@
                     let title = 'Wallet Top-up';
                     let info = escapeHtml(it.method || '') + ' • ' + escapeHtml(it.trxId || '');
                     if (it.kind === 'TASK') { title = escapeHtml(it.game || 'Task'); }
-                    else if (it.kind === 'PAYOUT') { title = 'Cash Out'; info = escapeHtml(it.method || '') + ' • ' + escapeHtml(it.phone || ''); }
+                    else if (it.kind === 'REDEEM') { title = 'Redeem ' + escapeHtml(it.code || ''); info = escapeHtml(it.code || ''); }
                     return '<div class="bg-white border border-slate-200 rounded-xl px-3 py-2.5 flex items-center gap-2.5">'
                         + histThumb(it)
                         + '<div class="flex-1 min-w-0"><p class="text-xs font-bold text-slate-800 truncate">' + title + '</p>'
