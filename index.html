@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PP MOD - VAREON Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .hidden { display: none !important; }
+
+        /* Screen transitions */
+        .screen:not(.hidden) { animation: screenIn .38s cubic-bezier(.22,.9,.3,1) both; }
+        @keyframes screenIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+        /* Hero (home) */
+        .hero { position: relative; overflow: hidden; border-radius: 1.25rem; padding: 1.1rem 1.15rem; color: #fff;
+            background: radial-gradient(130% 170% at 85% -20%, #334155 0%, #0f172a 55%, #020617 100%);
+            border: 1px solid rgba(148,163,184,.25); box-shadow: 0 14px 30px -16px rgba(2,6,23,.6); }
+        .hero::before { content: ""; position: absolute; left: -44px; bottom: -64px; width: 160px; height: 160px; border-radius: 9999px;
+            background: radial-gradient(circle, rgba(56,189,248,.35), rgba(56,189,248,0) 70%); }
+        .hero::after { content: ""; position: absolute; right: -52px; top: -52px; width: 160px; height: 160px; border-radius: 9999px;
+            background: radial-gradient(circle, rgba(245,158,11,.4), rgba(245,158,11,0) 70%); }
+        .hero > * { position: relative; z-index: 1; }
+        .status-pill { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 11px; font-weight: 700;
+            color: #6ee7b7; background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.35);
+            padding: 5px 12px; border-radius: 9999px; }
+        .hero-icon { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); width: 52px; height: 52px;
+            border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #fbbf24;
+            background: rgba(245,158,11,.14); border: 1px solid rgba(245,158,11,.4);
+            box-shadow: 0 0 26px rgba(245,158,11,.3); z-index: 1; }
+
+        /* Selected pill */
+        .sel-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;
+            padding: 5px 12px; border-radius: 9999px; border: 1px solid; max-width: 62%;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: all .25s ease; }
+        .sel-empty { color: #64748b; background: #f8fafc; border-color: #e2e8f0; }
+        .sel-active { color: #92400e; background: #fef3c7; border-color: #fcd34d;
+            box-shadow: 0 4px 12px -6px rgba(245,158,11,.7); }
+        .sel-pill .dot { width: 6px; height: 6px; border-radius: 9999px; background: currentColor; flex-shrink: 0; }
+
+        /* Game cards */
+        #gameGrid .game-card { position: relative; display: flex; align-items: center; gap: .55rem; min-width: 0;
+            padding: .7rem .65rem; border-radius: 1rem; background: #fff; border: 1.5px solid #e2e8f0;
+            text-align: left; cursor: pointer; overflow: hidden; box-shadow: 0 1px 2px rgba(15,23,42,.05);
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease; }
+        #gameGrid .game-card::after { content: "✓"; position: absolute; top: 6px; right: 6px; width: 18px; height: 18px;
+            border-radius: 9999px; background: var(--acc, #94a3b8); color: #fff; font-size: 11px; font-weight: 800;
+            display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(.4);
+            transition: all .22s cubic-bezier(.34,1.56,.64,1); }
+        #gameGrid .game-card:hover { transform: translateY(-2px); border-color: #cbd5e1;
+            box-shadow: 0 10px 20px -12px rgba(15,23,42,.35); }
+        #gameGrid .game-card:active { transform: scale(.96); }
+        #gameGrid .game-card.is-selected { border-color: var(--acc); background: var(--acc-bg);
+            box-shadow: 0 10px 22px -12px var(--acc); }
+        #gameGrid .game-card.is-selected::after { opacity: 1; transform: scale(1); }
+        #gameGrid .game-card.is-selected > span:last-child { margin-right: 14px; }
+        #gameGrid .game-card[data-accent="red"] { --acc: #ef4444; --acc-bg: #fef2f2; }
+        #gameGrid .game-card[data-accent="amber"] { --acc: #f59e0b; --acc-bg: #fffbeb; }
+        #gameGrid .game-card[data-accent="emerald"] { --acc: #10b981; --acc-bg: #ecfdf5; }
+        #gameGrid .game-card[data-accent="sky"] { --acc: #0ea5e9; --acc-bg: #f0f9ff; }
+
+        /* Sticky CTA */
+        .cta-bar { position: sticky; bottom: 0; z-index: 10; padding: 16px 2px 4px;
+            background: linear-gradient(180deg, rgba(241,245,249,0) 0%, #f1f5f9 45%); }
+        #startBtn { background: linear-gradient(135deg, #f59e0b, #f97316);
+            box-shadow: 0 12px 24px -10px rgba(249,115,22,.65); }
+        #startBtn:active:not(:disabled) { transform: scale(.97); }
+        #startBtn:disabled { background: #e2e8f0; color: #94a3b8; box-shadow: none; cursor: not-allowed; }
+
+        /* Steps */
+        .steps { display: flex; align-items: center; gap: 6px; }
+        .step { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; color: #94a3b8;
+            text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
+        .step .n { width: 18px; height: 18px; border-radius: 9999px; display: flex; align-items: center;
+            justify-content: center; font-size: 10px; background: #e2e8f0; color: #64748b; }
+        .step.done { color: #059669; }
+        .step.done .n { background: #059669; color: #fff; }
+        .step.active { color: #0f172a; }
+        .step.active .n { background: #f59e0b; color: #fff; box-shadow: 0 4px 10px -3px rgba(245,158,11,.7); }
+        .step-line { flex: 1; height: 2px; border-radius: 2px; background: #e2e8f0; }
+
+        /* Toast */
+        .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); z-index: 60;
+            background: #0f172a; color: #fff; font-size: 12px; font-weight: 700; padding: 10px 18px;
+            border-radius: 9999px; box-shadow: 0 12px 30px -8px rgba(2,6,23,.5); opacity: 0; pointer-events: none;
+            transition: all .3s ease; max-width: 88vw; text-align: center; }
+        .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+        /* App shell: fixed panel screen, no page scroll */
+        .app-body { min-height: 100dvh; display: flex; flex-direction: column; }
+        .app-shell { width: 100%; max-width: 28rem; margin-inline: auto; height: 100dvh; display: flex;
+            flex-direction: column; gap: .7rem; padding: .8rem .8rem .7rem; overflow: hidden; }
+        @media (min-width: 520px) {
+            .app-body { align-items: center; justify-content: center; padding: 20px 0;
+                background: radial-gradient(120% 100% at 50% 0%, #e2e8f0 0%, #f1f5f9 45%, #e6ebf1 100%); }
+            .app-shell { height: min(880px, calc(100dvh - 40px)); border-radius: 26px; border: 1px solid #e2e8f0;
+                background: #f1f5f9; box-shadow: 0 30px 60px -25px rgba(15,23,42,.35); }
+        }
+        .fit-home { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: .65rem; }
+        .fit-scroll { flex: 1; min-height: 0; overflow-y: auto; padding-bottom: .25rem; }
+        .fit-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0,1fr));
+            grid-template-rows: repeat(8, minmax(46px, 1fr)); gap: 8px; overflow-y: auto; padding: 2px; }
+        .cta-bar { padding: 2px 2px 0; background: none; }
+
+        /* Custom payment dropdown */
+        .pay-menu { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 30; background: #fff;
+            border: 1px solid #e2e8f0; border-radius: 14px; padding: 6px;
+            box-shadow: 0 18px 40px -16px rgba(15,23,42,.35); animation: screenIn .22s ease both; }
+        .pay-opt { width: 100%; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px;
+            font-size: 12px; font-weight: 700; color: #334155; cursor: pointer; transition: background .15s ease; }
+        .pay-opt:hover { background: #f8fafc; }
+        .pay-opt .pay-tick { width: 18px; height: 18px; border-radius: 9999px; background: #f1f5f9; color: transparent;
+            font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .pay-opt.picked { background: #fffbeb; }
+        .pay-opt.picked .pay-tick { background: #f59e0b; color: #fff; }
+
+        /* Wallet pay button */
+        #walletPayBtn { background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 12px 24px -10px rgba(16,185,129,.6); }
+        #walletPayBtn:active:not(:disabled) { transform: scale(.97); }
+        #walletPayBtn:disabled { background: #e2e8f0; color: #94a3b8; box-shadow: none; cursor: not-allowed; }
+
+        /* Header */
+        .app-header { position: sticky; top: 0; z-index: 20; flex-shrink: 0; }
+        .logo-tile { position: relative; width: 42px; height: 42px; border-radius: 14px; display: flex;
+            align-items: center; justify-content: center; background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border: 1px solid #fde68a; box-shadow: 0 6px 14px -8px rgba(245,158,11,.8), inset 0 0 0 1px #fff; flex-shrink: 0; }
+        .logo-tile .live-dot { position: absolute; right: -3px; top: -3px; width: 12px; height: 12px; border-radius: 9999px;
+            background: #10b981; border: 2px solid #fff; box-shadow: 0 0 0 2px rgba(16,185,129,.3); }
+        .ver-badge { font-size: 9px; font-weight: 800; letter-spacing: .08em; color: #92400e;
+            background: linear-gradient(135deg, #fde68a, #fbbf24); padding: 2px 7px; border-radius: 9999px;
+            margin-left: 6px; vertical-align: 2px; box-shadow: 0 3px 8px -3px rgba(245,158,11,.8); }
+
+        /* Hero v2 */
+        .hero-v2 { padding: .95rem 1rem; }
+        .hero-title2 { font-size: 17px; font-weight: 800; letter-spacing: -.01em; line-height: 1.35; }
+        .hero-accent { background: linear-gradient(90deg, #fbbf24, #fb923c); -webkit-background-clip: text;
+            background-clip: text; color: transparent; }
+        .hero-shine { position: absolute; top: 0; bottom: 0; width: 60px; z-index: 1;
+            background: linear-gradient(100deg, transparent, rgba(255,255,255,.09), transparent);
+            animation: shine 4.5s ease-in-out infinite; }
+        @keyframes shine { 0% { left: -80px; } 55%, 100% { left: 110%; } }
+        .hero-ring { position: absolute; border: 1px solid rgba(148,163,184,.25); border-radius: 9999px; }
+        .hero-ring.r1 { width: 120px; height: 120px; right: -40px; top: -40px; }
+        .hero-ring.r2 { width: 80px; height: 80px; right: -16px; top: -16px; border-color: rgba(245,158,11,.25); }
+        .hero-icon.float { animation: floaty 3.2s ease-in-out infinite; }
+        @keyframes floaty { 0%, 100% { transform: translateY(-50%); } 50% { transform: translateY(calc(-50% - 5px)); } }
+
+        /* Game logos + compact chip */
+        .g-logo { width: 30px; height: 30px; border-radius: 10px; object-fit: cover; flex-shrink: 0;
+            background: #f1f5f9; box-shadow: 0 2px 6px -2px rgba(15,23,42,.3); }
+        .g-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            font-size: 12px; font-weight: 700; color: #334155; }
+        #gameGrid .game-card { padding: .5rem .6rem; }
+        #gameGrid .game-card > span:last-child { font-size: 10px; padding: 3px 7px; }
+        #gameGrid .game-card > span:last-child img { width: 12px; height: 12px; }
+    </style>
+</head>
+<body class="app-body bg-slate-100 text-slate-800 selection:bg-amber-500 selection:text-white">
+
+    <!-- Splash Screen -->
+    <div id="splashScreen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-500">
+        <lottie-player src="https://lottie.host/41d6fc95-7f61-416c-b296-53a5836c22c2/BgBmgewgEu.json" background="transparent" speed="1" style="width: 260px; height: 260px;" autoplay></lottie-player>
+        <h2 class="text-slate-900 font-extrabold text-2xl mt-4 tracking-tight">PP MOD</h2>
+        <p class="text-xs text-slate-400 mt-1 font-semibold tracking-wider">POWERED BY VAREON STUDIO</p>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div class="app-shell">
+        
+        <!-- Header (sticky on top) -->
+        <header id="appHeader" class="app-header hidden flex items-center justify-between gap-2 bg-white/95 backdrop-blur px-3 py-2.5 rounded-2xl border border-slate-200/80 shadow-[0_10px_24px_-14px_rgba(15,23,42,.35)]">
+            <div class="flex items-center gap-2 min-w-0 flex-1">
+                <div class="logo-tile">
+                    <img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-6 h-6 object-contain" alt="PP MOD">
+                    <span class="live-dot"></span>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <h1 class="text-[15px] font-extrabold text-slate-900 tracking-tight leading-tight">PP MOD<span class="ver-badge">PRO</span></h1>
+                    <button onclick="goToProfile()" class="flex items-center gap-1 text-[10px] font-bold text-slate-500 hover:text-amber-600 transition-colors cursor-pointer">
+                        <i data-lucide="wallet" class="w-3 h-3"></i> <span id="balanceAmt">0 BDT</span>
+                    </button>
+                </div>
+            </div>
+            <button onclick="resetToHome()" title="Home" aria-label="Home" class="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-slate-900 hover:bg-slate-700 active:scale-95 rounded-xl text-white transition-all cursor-pointer shadow-md">
+                <i data-lucide="home" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="goToProfile()" title="Profile" aria-label="Profile" class="w-8 h-8 flex-shrink-0 rounded-full bg-slate-200 border border-slate-300 overflow-hidden relative flex items-center justify-center cursor-pointer">
+                <span id="avatarFallback" class="text-xs font-extrabold text-slate-500">?</span>
+                <img id="avatarImg" class="hidden absolute inset-0 w-full h-full object-cover" alt="">
+            </button>
+        </header>
+
+        <!-- SCREEN 0: LOGIN (Google only) -->
+        <main id="screenLogin" class="screen fit-home">
+            <div class="flex-1 flex items-center justify-center py-6">
+                <div class="w-full bg-white rounded-3xl border border-slate-200/80 shadow-sm p-7 text-center space-y-4">
+                    <div class="mx-auto w-16 h-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-amber-100 to-orange-100 border border-amber-200 shadow-md">
+                        <img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-9 h-9 object-contain" alt="PP MOD">
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">PP MOD <span class="ver-badge">PRO</span></h2>
+                        <p class="text-[11px] font-semibold text-slate-400 mt-1">Play Points Task Automation</p>
+                    </div>
+                    <button onclick="window.ppfb?ppfb.login():toast('Loading, please wait...')" class="w-full flex items-center justify-center gap-2.5 py-3.5 px-4 bg-white border border-slate-200 rounded-2xl font-bold text-sm text-slate-700 hover:bg-slate-50 active:scale-98 transition-all cursor-pointer shadow-sm">
+                        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 2.18 7.06l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/></svg>
+                        Sign in with Google
+                    </button>
+                    <p class="text-[10px] text-slate-400 font-medium">Only Google accounts supported</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- SCREEN 1: GAME SELECTION -->
+        <main id="screenGameSelect" class="screen fit-home hidden">
+            
+            <!-- Hero / Server Status -->
+            <section class="hero hero-v2">
+                <div class="hero-shine"></div>
+                <div class="hero-ring r1"></div>
+                <div class="hero-ring r2"></div>
+                <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Automation Server</p>
+                <h2 class="hero-title2 mt-0.5">Pick a game & <span class="hero-accent">start your task</span></h2>
+                <span class="status-pill"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Active & Ready</span>
+                <div class="hero-icon float"><i data-lucide="gamepad-2" class="w-6 h-6"></i></div>
+            </section>
+
+            <div id="noticeBar" style="display:none" class="items-start gap-2 bg-amber-50 border border-amber-200 rounded-2xl px-3.5 py-2.5">
+                <i data-lucide="megaphone" class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5"></i>
+                <p id="noticeText" class="text-[11px] font-semibold text-amber-800 leading-snug"></p>
+            </div>
+
+            <!-- Title & Status -->
+            <div class="flex items-center justify-between px-1 pt-1">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700" id="totalGamesLabel">Available Games</span>
+                <span id="selectedCount" class="sel-pill sel-empty">No game selected</span>
+            </div>
+
+            <!-- Enhanced Game List Grid -->
+            <div class="fit-grid" id="gameGrid">
+                
+                <button onclick="selectGame(this, '8ball pool (50)', 'border-red-500 bg-red-50/70 text-red-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/19/af/80/19af80a7-eb95-39bc-f7a8-6147cf933c39/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg" alt="8ball pool" loading="lazy" onerror="this.style.display='none'"><span class="g-name">8ball pool</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Angry birds 2 (50)', 'border-amber-500 bg-amber-50/70 text-amber-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/78/04/ca/7804ca49-20cd-e1f6-77e0-2b24b0dadcb8/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg" alt="Angry birds 2" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Angry birds 2</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Best Fiends(50)', 'border-emerald-500 bg-emerald-50/70 text-emerald-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/2d/9a/7d/2d9a7da6-eb4b-3b25-a751-8258da75a0a8/AppIcon-0-0-1x_U007emarketing-0-5-85-220.png/512x512bb.jpg" alt="Best Fiends" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Best Fiends</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Dice dreams (50)', 'border-sky-500 bg-sky-50/70 text-sky-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f1/71/03/f171036e-5a26-9eb3-2d93-e9154db3e9b6/AppIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg" alt="Dice dreams" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Dice dreams™</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Disney Solitaire', 'border-red-500 bg-red-50/70 text-red-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/3c/13/4d/3c134dff-c40d-b4b5-dc23-42661a0762d9/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg" alt="Disney Solitaire" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Disney Solitaire</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Domino dreams (50)', 'border-amber-500 bg-amber-50/70 text-amber-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/97/4d/16/974d164e-52d6-61b2-8ece-8d509eb232ab/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg" alt="Domino dreams" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Domino dreams™</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Farm heroes saga', 'border-emerald-500 bg-emerald-50/70 text-emerald-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c2/a1/63/c2a1633a-82e8-f6ab-5e3a-b0ef5ac3629b/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg" alt="Farm heroes" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Farm heroes</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Fruit ninja (50)', 'border-sky-500 bg-sky-50/70 text-sky-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/6b/52/f2/6b52f27e-eba6-6f6e-9a7f-5ca0b6b1a9e2/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg" alt="Fruit ninja" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Fruit ninja</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Hey day (All)', 'border-red-500 bg-red-50/70 text-red-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/68/e4/de/68e4de8b-0e48-d1bc-004b-1346c3cf511b/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg" alt="Hey day" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Hey day</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">All</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Lords mobile (50)', 'border-amber-500 bg-amber-50/70 text-amber-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4d/e8/f2/4de8f2eb-2d7d-7f28-ddc7-d6f62ca67b49/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/512x512bb.jpg" alt="Lords mobile" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Lords mobile</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Mobile legends (50)', 'border-emerald-500 bg-emerald-50/70 text-emerald-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/d9/88/76/d9887647-00fd-09c8-8a61-c6c31a1bfe2a/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/512x512bb.jpg" alt="Mobile legends" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Mobile legends</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Mobile Legends.US', 'border-sky-500 bg-sky-50/70 text-sky-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/78/e1/77/78e177f1-e174-dfe5-bbd9-f4f2988d9b89/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/512x512bb.jpg" alt="Mobile Legends US" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Mobile Leg. US</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Summoners War (50)', 'border-red-500 bg-red-50/70 text-red-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f7/18/a7/f718a783-120f-0a08-30dc-be8e99c24f4a/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg" alt="Summoners War" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Summoners War</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'War machines (50)', 'border-amber-500 bg-amber-50/70 text-amber-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5e/ba/cc/5ebacc73-5314-8783-7d09-49e15d803755/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg" alt="War machines" loading="lazy" onerror="this.style.display='none'"><span class="g-name">War machines</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Yalla Ludo', 'border-emerald-500 bg-emerald-50/70 text-emerald-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/61/ad/c6/61adc661-dd73-03b1-0f3e-4743d237bb5e/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/512x512bb.jpg" alt="Yalla Ludo" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Yalla Ludo</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+
+                <button onclick="selectGame(this, 'Zenless Zone Zero (50)', 'border-sky-500 bg-sky-50/70 text-sky-950')" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">
+                    <img class="g-logo" src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/2d/4a/fb/2d4afb82-bdb9-cc80-b5b7-d1d7f515b2ae/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/512x512bb.jpg" alt="Zenless Zone" loading="lazy" onerror="this.style.display='none'"><span class="g-name">Zenless Zone</span>
+                    <span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5">50</span>
+                </button>
+            </div>
+
+            <!-- Sticky CTA -->
+            <div class="cta-bar">
+                <button id="startBtn" disabled onclick="goToPaymentScreen()" class="w-full flex items-center justify-center gap-2 py-4 px-4 text-white font-extrabold rounded-2xl transition-all text-sm cursor-pointer">
+                    <i data-lucide="rocket" class="w-4 h-4"></i> <span id="startBtnLabel">Select a game to continue</span>
+                </button>
+            </div>
+        </main>
+
+        <!-- SCREEN 2: PAYMENT SCREEN -->
+        <main id="screenPayment" class="screen space-y-4 hidden fit-scroll">
+            <div class="steps px-1">
+                <span class="step done"><span class="n">✓</span> Games</span>
+                <span class="step-line"></span>
+                <span class="step active"><span class="n">2</span> Payment</span>
+                <span class="step-line"></span>
+                <span class="step"><span class="n">3</span> Receipt</span>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2.5">
+                <div class="flex items-center gap-2.5">
+                    <img id="payGameLogo" class="w-9 h-9 rounded-xl object-cover bg-slate-100 flex-shrink-0" alt="">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Selected Task</p>
+                        <p id="payGame" class="text-sm font-extrabold text-slate-900 truncate">—</p>
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Fee</p>
+                        <p class="text-base font-extrabold text-amber-600"><span data-fee>20</span> BDT</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl px-3 py-2">
+                    <span class="text-[11px] font-bold text-slate-500 flex items-center gap-1.5"><i data-lucide="wallet" class="w-3.5 h-3.5"></i> Wallet Balance</span>
+                    <span id="payBalance" class="text-sm font-extrabold text-slate-900">0 BDT</span>
+                </div>
+                <button id="walletPayBtn" onclick="window.ppfb&&ppfb.payWallet()" class="w-full flex items-center justify-center gap-2 py-3.5 px-4 text-white font-extrabold rounded-xl transition-all text-sm cursor-pointer">
+                    <i data-lucide="zap" class="w-4 h-4"></i> <span>Pay from Wallet</span>
+                </button>
+                <p id="walletNote" class="hidden text-[11px] font-semibold text-rose-600 text-center">Insufficient balance — top up below (min 20 BDT)</p>
+            </div>
+            <div class="flex items-center gap-2 px-1">
+                <span class="flex-1 h-px bg-slate-200"></span>
+                <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Top up manually</span>
+                <span class="flex-1 h-px bg-slate-200"></span>
+            </div>
+
+            <!-- Payment Wallets -->
+            <div class="space-y-2.5">
+                <div class="p-3.5 bg-white border border-slate-200/80 rounded-2xl shadow-2xs flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdjxXCpOG7jJdpeVHm9R_xCZ6hrcRr23H-Y99mIloKRA&s=10" class="w-9 h-9 rounded-xl object-contain">
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">bKash (Send Money)</p>
+                            <p data-wallet="bkash" class="text-xs font-mono text-pink-600 font-bold select-all">01647712206</p>
+                        </div>
+                    </div>
+                    <button data-copy="bkash" onclick="copyNumber('01647712206')" class="text-xs bg-pink-50 hover:bg-pink-100 text-pink-600 font-bold px-3 py-1.5 rounded-xl border border-pink-200 active:scale-95 transition-all">Copy</button>
+                </div>
+
+                <div class="p-3.5 bg-white border border-slate-200/80 rounded-2xl shadow-2xs flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU9xlcZDT6VNZ0dLPxDpO6t-kCTbGa1om1cAuXVCNboA&s=10" class="w-9 h-9 rounded-xl object-contain">
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">Nagad (Send Money)</p>
+                            <p data-wallet="nagad" class="text-xs font-mono text-orange-600 font-bold select-all">01647712206</p>
+                        </div>
+                    </div>
+                    <button data-copy="nagad" onclick="copyNumber('01647712206')" class="text-xs bg-orange-50 hover:bg-orange-100 text-orange-600 font-bold px-3 py-1.5 rounded-xl border border-orange-200 active:scale-95 transition-all">Copy</button>
+                </div>
+
+                <div class="p-3.5 bg-white border border-slate-200/80 rounded-2xl shadow-2xs flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTP0eawh77HPEryf218TiXutIyR4EXTAJhbiWHg_ManMg&s=10" class="w-9 h-9 rounded-xl object-contain">
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">Rocket (Send Money)</p>
+                            <p data-wallet="rocket" class="text-xs font-mono text-purple-600 font-bold select-all">01647712206</p>
+                        </div>
+                    </div>
+                    <button data-copy="rocket" onclick="copyNumber('01647712206')" class="text-xs bg-purple-50 hover:bg-purple-100 text-purple-600 font-bold px-3 py-1.5 rounded-xl border border-purple-200 active:scale-95 transition-all">Copy</button>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="space-y-3.5 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5">Deposit Amount (min 20 BDT)</label>
+                    <input type="number" id="topupAmount" min="20" value="20" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5">Select Payment Method</label>
+                    <input type="hidden" id="payMethod" value="bKash">
+                    <div class="relative" id="payMethodWrap">
+                        <button type="button" id="payMethodBtn" onclick="togglePayMenu(event)" class="w-full flex items-center gap-2.5 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500 transition-all cursor-pointer">
+                            <img id="payMethodLogo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdjxXCpOG7jJdpeVHm9R_xCZ6hrcRr23H-Y99mIloKRA&s=10" class="w-7 h-7 rounded-lg object-contain bg-white border border-slate-100" alt="">
+                            <span id="payMethodName" class="flex-1 text-left">bKash</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+                        </button>
+                        <div id="payMethodMenu" class="pay-menu hidden">
+                            <button type="button" onclick="setPayMethod('bKash')" data-val="bKash" class="pay-opt picked">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdjxXCpOG7jJdpeVHm9R_xCZ6hrcRr23H-Y99mIloKRA&s=10" class="w-7 h-7 rounded-lg object-contain bg-white border border-slate-100" alt="">
+                                <span class="flex-1 text-left">bKash</span>
+                                <span class="pay-tick">✓</span>
+                            </button>
+                            <button type="button" onclick="setPayMethod('Nagad')" data-val="Nagad" class="pay-opt">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU9xlcZDT6VNZ0dLPxDpO6t-kCTbGa1om1cAuXVCNboA&s=10" class="w-7 h-7 rounded-lg object-contain bg-white border border-slate-100" alt="">
+                                <span class="flex-1 text-left">Nagad</span>
+                                <span class="pay-tick">✓</span>
+                            </button>
+                            <button type="button" onclick="setPayMethod('Rocket')" data-val="Rocket" class="pay-opt">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTP0eawh77HPEryf218TiXutIyR4EXTAJhbiWHg_ManMg&s=10" class="w-7 h-7 rounded-lg object-contain bg-white border border-slate-100" alt="">
+                                <span class="flex-1 text-left">Rocket</span>
+                                <span class="pay-tick">✓</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1.5">Transaction ID (TrxID)</label>
+                    <input type="text" id="trxId" placeholder="Enter TrxID after send money" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono uppercase font-semibold focus:outline-none focus:border-amber-500">
+                </div>
+
+                <div class="space-y-2 pt-2">
+                    <button id="depositBtn" onclick="submitPayment()" class="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl shadow-md transition-all text-sm cursor-pointer active:scale-98">
+                        Submit Deposit
+                    </button>
+                    <button onclick="goBackToGameSelect()" class="w-full py-2.5 px-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 font-semibold rounded-xl transition-all text-xs cursor-pointer">
+                        ⬅ Back
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- SCREEN 3: SUCCESS & RECEIPT -->
+        <main id="screenSuccess" class="screen space-y-4 hidden fit-scroll text-center bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+            <div class="steps px-1 text-left">
+                <span class="step done"><span class="n">✓</span> Games</span>
+                <span class="step-line"></span>
+                <span class="step done"><span class="n">✓</span> Payment</span>
+                <span class="step-line"></span>
+                <span class="step active"><span class="n">3</span> Receipt</span>
+            </div>
+            <div class="flex justify-center">
+                <lottie-player src="https://lottie.host/41d6fc95-7f61-416c-b296-53a5836c22c2/BgBmgewgEu.json" background="transparent" speed="1" style="width: 130px; height: 130px;" autoplay></lottie-player>
+            </div>
+
+            <div class="space-y-1">
+                <h2 id="successTitle" class="text-base font-extrabold text-slate-900">Payment Submitted!</h2>
+                <p id="successMsg" class="text-xs text-slate-600 font-medium">অনুগ্রহ করে নিচের রিসিটের স্ক্রিনশট নিন এবং এডমিনকে পাঠান।</p>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-left space-y-2.5 shadow-2xs">
+                <div class="flex justify-between items-center text-xs border-b border-dashed border-slate-200 pb-2">
+                    <span class="text-slate-400 font-medium">Selected Game:</span>
+                    <span class="flex items-center gap-1.5 min-w-0">
+                        <img id="receiptGameLogo" class="w-5 h-5 rounded-md object-cover flex-shrink-0" alt="">
+                        <span id="receiptGame" class="font-bold text-slate-800 truncate"></span>
+                    </span>
+                </div>
+                <div class="flex justify-between text-xs border-b border-dashed border-slate-200 pb-2">
+                    <span class="text-slate-400 font-medium">Payment Method:</span>
+                    <span id="receiptMethod" class="font-bold text-slate-800"></span>
+                </div>
+                <div class="flex justify-between text-xs border-b border-dashed border-slate-200 pb-2">
+                    <span class="text-slate-400 font-medium">Amount:</span>
+                    <span class="text-base font-black text-amber-600"><span id="receiptAmount">20</span> BDT</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-slate-400 font-medium">TrxID:</span>
+                    <span id="receiptTrx" class="font-mono font-bold text-slate-800 uppercase"></span>
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <a id="adminLink" href="https://t.me/Blackmoney54" target="_blank" class="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-md transition-all text-sm active:scale-98">
+                    <i data-lucide="send" class="w-4 h-4"></i> Send Screenshot to Admin (@Blackmoney54)
+                </a>
+            </div>
+        </main>
+
+        <!-- SCREEN 4: PROFILE & ORDER TRACKING -->
+        <main id="screenProfile" class="screen space-y-4 hidden fit-scroll">
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 text-center space-y-1">
+                <img id="profilePhoto" class="w-16 h-16 rounded-2xl object-cover mx-auto bg-slate-100 border border-slate-200" alt="">
+                <h2 id="profileName" class="text-base font-extrabold text-slate-900 pt-1">User</h2>
+                <p id="profileEmail" class="text-[11px] text-slate-400 font-medium"></p>
+                <div class="flex items-center justify-between bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl px-4 py-3 mt-3">
+                    <span class="text-[11px] font-bold text-slate-300 flex items-center gap-1.5"><i data-lucide="wallet" class="w-4 h-4 text-amber-400"></i> Wallet Balance</span>
+                    <span id="profileBalance" class="text-lg font-extrabold text-amber-400">0 BDT</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button onclick="resetToHome()" class="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 font-bold rounded-xl transition-all text-xs cursor-pointer">Home</button>
+                    <button onclick="window.ppfb&&ppfb.logout()" class="py-2.5 px-4 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 font-bold rounded-xl transition-all text-xs cursor-pointer">Logout</button>
+                </div>
+            </div>
+            <div class="flex items-center justify-between px-1">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700">My Orders</span>
+                <button onclick="window.ppfb&&ppfb.openProfile()" class="text-[11px] font-bold text-amber-600 flex items-center gap-1 cursor-pointer"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Refresh</button>
+            </div>
+            <div id="historyList" class="space-y-2"></div>
+        </main>
+
+        <footer id="appFooter" class="hidden text-center text-[11px] text-slate-400 flex-shrink-0">
+            Powered by <span class="font-bold text-slate-600">VAREON Studio</span>
+        </footer>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast" role="status" aria-live="polite"><span id="toastMsg"></span></div>
+
+    <script>
+        if (window.lucide) lucide.createIcons();
+        window.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.game-card');
+            const ACCENTS = ['red', 'amber', 'emerald', 'sky'];
+            cards.forEach((c, i) => {
+                c.dataset.accent = ACCENTS[i % ACCENTS.length];
+                c.setAttribute('aria-pressed', 'false');
+            });
+            document.getElementById('totalGamesLabel').innerText = `Games (${cards.length})`;
+
+            setTimeout(() => {
+                const splash = document.getElementById('splashScreen');
+                if (!splash) return;
+                splash.style.opacity = '0';
+                setTimeout(() => splash.remove(), 500);
+            }, 2800);
+        });
+
+        let tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
+        if (tg) { try { tg.expand(); } catch (e) {} }
+
+        let selectedGame = null;
+        let selectedGameLogo = '';
+        let toastTimer;
+
+        function toast(msg) {
+            document.getElementById('toastMsg').textContent = msg;
+            const t = document.getElementById('toast');
+            t.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+        }
+
+        function selectGame(element, gameName) {
+            document.querySelectorAll('.game-card').forEach(card => {
+                card.classList.remove('is-selected');
+                card.setAttribute('aria-pressed', 'false');
+            });
+
+            element.classList.add('is-selected');
+            element.setAttribute('aria-pressed', 'true');
+
+            selectedGame = gameName;
+            const gLogo = element.querySelector('img.g-logo');
+            selectedGameLogo = gLogo ? gLogo.src : '';
+            if (window.ppfb) window.ppfb.ev('game_select', { game: gameName });
+            const pill = document.getElementById('selectedCount');
+            pill.classList.remove('sel-empty');
+            pill.classList.add('sel-active');
+            pill.innerHTML = '';
+            const dot = document.createElement('span');
+            dot.className = 'dot';
+            pill.appendChild(dot);
+            pill.appendChild(document.createTextNode(gameName));
+
+            document.getElementById('startBtn').removeAttribute('disabled');
+            document.getElementById('startBtnLabel').innerText = 'Proceed with Selection';
+        }
+
+        function showScreen(id) {
+            ['screenLogin', 'screenGameSelect', 'screenPayment', 'screenSuccess', 'screenProfile'].forEach(s => {
+                const el = document.getElementById(s);
+                if (el) el.classList.toggle('hidden', s !== id);
+            });
+            const logged = id !== 'screenLogin';
+            const h = document.getElementById('appHeader');
+            if (h) h.classList.toggle('hidden', !logged);
+            const f = document.getElementById('appFooter');
+            if (f) f.classList.toggle('hidden', !logged);
+        }
+
+        function goToProfile() {
+            if (window.ppfb && window.ppfb.openProfile) window.ppfb.openProfile();
+            else toast('Loading, please wait...');
+        }
+
+        function goToPaymentScreen() {
+            if (!selectedGame) return;
+            if (window.ppfb) window.ppfb.ev('begin_checkout', { game: selectedGame });
+            window._payGame = selectedGame;
+            const card = document.querySelector('.game-card.is-selected img.g-logo');
+            window._payGameLogo = card ? card.src : '';
+            document.getElementById('payGame').innerText = selectedGame;
+            const pl = document.getElementById('payGameLogo');
+            if (window._payGameLogo) { pl.src = window._payGameLogo; pl.style.display = ''; }
+            else { pl.style.display = 'none'; }
+            if (window.ppfb && window.ppfb.refreshPay) window.ppfb.refreshPay();
+            document.getElementById('screenPayment').scrollTop = 0;
+            showScreen('screenPayment');
+        }
+
+        function goBackToGameSelect() {
+            showScreen('screenGameSelect');
+        }
+
+        async function submitPayment() {
+            const amtEl = document.getElementById('topupAmount');
+            const amount = Math.floor(Number(amtEl.value));
+            if (!amount || amount < 20) {
+                toast('Minimum deposit is 20 BDT');
+                return;
+            }
+            const trxId = document.getElementById('trxId').value.trim();
+            if (!trxId) {
+                toast('Please enter your Transaction ID (TrxID)');
+                return;
+            }
+            if (!window.ppfb || !window.ppfb.saveDeposit) {
+                toast('Loading, please wait...');
+                return;
+            }
+            const btn = document.getElementById('depositBtn');
+            btn.disabled = true;
+            try {
+                const method = document.getElementById('payMethod').value;
+                const r = await window.ppfb.saveDeposit({ method: method, amount: amount, trxId: trxId });
+                if (!r.ok) {
+                    toast(r.error || 'Deposit failed, try again');
+                    return;
+                }
+                window.ppfb.ev('deposit_submit', { method: method, amount: amount });
+                fillReceipt({
+                    title: 'Deposit Submitted!',
+                    msg: 'Admin approval er por balance add hobe. Then wallet diye pay koro.',
+                    game: 'Wallet Top-up', logo: '', method: method,
+                    amount: amount + ' BDT', trx: trxId.toUpperCase()
+                });
+                document.getElementById('trxId').value = '';
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function fillReceipt(o) {
+            document.getElementById('successTitle').innerText = o.title;
+            document.getElementById('successMsg').innerText = o.msg;
+            document.getElementById('receiptGame').innerText = o.game;
+            const rl = document.getElementById('receiptGameLogo');
+            if (o.logo) { rl.src = o.logo; rl.style.display = ''; }
+            else { rl.style.display = 'none'; }
+            document.getElementById('receiptMethod').innerText = o.method;
+            document.getElementById('receiptAmount').innerText = o.amount;
+            document.getElementById('receiptTrx').innerText = o.trx;
+            showScreen('screenSuccess');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function resetToHome() {
+            if (!(window.ppfb && window.ppfb.user)) {
+                showScreen('screenLogin');
+                return;
+            }
+            showScreen('screenGameSelect');
+
+            selectedGame = null;
+            selectedGameLogo = '';
+            const pill = document.getElementById('selectedCount');
+            pill.classList.remove('sel-active');
+            pill.classList.add('sel-empty');
+            pill.innerText = "No game selected";
+            const btn = document.getElementById('startBtn');
+            btn.setAttribute('disabled', 'true');
+            document.getElementById('startBtnLabel').innerText = "Select a game to continue";
+            document.querySelectorAll('.game-card').forEach(card => {
+                card.classList.remove('is-selected');
+                card.setAttribute('aria-pressed', 'false');
+            });
+            document.getElementById('trxId').value = "";
+        }
+
+        function copyNumber(num) {
+            const done = () => toast('Number copied: ' + num);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(num).then(done).catch(() => toast('Copy failed — number: ' + num));
+            } else {
+                toast('Copy this number: ' + num);
+            }
+        }
+
+        const PAY_LOGOS = {
+            bKash: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdjxXCpOG7jJdpeVHm9R_xCZ6hrcRr23H-Y99mIloKRA&s=10',
+            Nagad: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU9xlcZDT6VNZ0dLPxDpO6t-kCTbGa1om1cAuXVCNboA&s=10',
+            Rocket: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTP0eawh77HPEryf218TiXutIyR4EXTAJhbiWHg_ManMg&s=10'
+        };
+
+        function togglePayMenu(e) {
+            e.stopPropagation();
+            document.getElementById('payMethodMenu').classList.toggle('hidden');
+        }
+
+        function setPayMethod(v) {
+            document.getElementById('payMethod').value = v;
+            document.getElementById('payMethodName').innerText = v;
+            document.getElementById('payMethodLogo').src = PAY_LOGOS[v];
+            document.querySelectorAll('.pay-opt').forEach(o => o.classList.toggle('picked', o.dataset.val === v));
+            document.getElementById('payMethodMenu').classList.add('hidden');
+        }
+
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('payMethodMenu');
+            const wrap = document.getElementById('payMethodWrap');
+            if (menu && wrap && !menu.classList.contains('hidden') && !wrap.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAQmiWD9fP0nFpl7ShPjE51udtyFWo6jpA",
+            authDomain: "ppmod1.firebaseapp.com",
+            projectId: "ppmod1",
+            storageBucket: "ppmod1.firebasestorage.app",
+            messagingSenderId: "826595248931",
+            appId: "1:826595248931:web:d55b761c1b9e245437da96",
+            measurementId: "G-CN9LJ502BL"
+        };
+
+        const DEFAULTS = { fee: 20, bkash: '01647712206', nagad: '01647712206', rocket: '01647712206', admin: 'https://t.me/Blackmoney54', notice: '' };
+
+        window.ppfb = {
+            config: { ...DEFAULTS },
+            ready: false,
+            ev() {},
+            saveOrder() { return Promise.resolve(false); }
+        };
+
+        function applyConfig(c) {
+            const cfg = { ...DEFAULTS, ...c };
+            cfg.fee = Number(cfg.fee) || DEFAULTS.fee;
+            window.ppfb.config = cfg;
+            document.querySelectorAll('[data-fee]').forEach(el => { el.textContent = cfg.fee; });
+            { const nums = { bkash: cfg.bkash, nagad: cfg.nagad, rocket: cfg.rocket };
+              Object.keys(nums).forEach(k => {
+                const val = (nums[k] || '').toString().trim() || DEFAULTS[k];
+                const numEl = document.querySelector('[data-wallet="' + k + '"]');
+                if (numEl) numEl.textContent = val;
+                const btn = document.querySelector('[data-copy="' + k + '"]');
+                if (btn) btn.setAttribute('onclick', "copyNumber('" + val + "')");
+              }); }
+            const admin = document.getElementById('adminLink');
+            if (admin && (cfg.admin || '').toString().trim()) admin.href = cfg.admin;
+            const bar = document.getElementById('noticeBar');
+            const barTxt = document.getElementById('noticeText');
+            if (bar && barTxt && (cfg.notice || '').toString().trim()) {
+                barTxt.textContent = cfg.notice;
+                bar.style.display = 'flex';
+            }
+        }
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            window.ppfb.ready = true;
+            try {
+                const mod = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js');
+                const analytics = mod.getAnalytics(app);
+                window.ppfb.ev = (name, params) => { try { mod.logEvent(analytics, name, params || {}); } catch (e) {} };
+            } catch (e) {}
+            window.ppfb.saveOrder = async (order) => {
+                try {
+                    await addDoc(collection(db, 'orders'), { ...order, status: 'pending', createdAt: serverTimestamp() });
+                    return true;
+                } catch (e) { console.warn('order save failed:', e); return false; }
+            };
+            try {
+                const snap = await getDoc(doc(db, 'config', 'app'));
+                applyConfig(snap.exists() ? snap.data() : {});
+            } catch (e) { applyConfig({}); }
+            window.ppfb.ev('app_open');
+        } catch (e) {
+            console.warn('firebase init failed, using defaults:', e);
+            applyConfig({});
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp as _initApp, getApp as _getApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getFirestore as _getFS, doc as _doc, getDoc as _getDoc, setDoc as _setDoc, collection as _col, addDoc as _addDoc, serverTimestamp as _ts, runTransaction as _tx, query as _q, where as _where, orderBy as _orderBy, limit as _limit, getDocs as _getDocs, onSnapshot as _snap } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+        import { getAuth as _getAuth, GoogleAuthProvider as _GAP, signInWithRedirect as _redir, getRedirectResult as _redirRes, onAuthStateChanged as _onAuth, signOut as _signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+        const FB = {
+            apiKey: "AIzaSyAQmiWD9fP0nFpl7ShPjE51udtyFWo6jpA",
+            authDomain: "ppmod1.firebaseapp.com",
+            projectId: "ppmod1",
+            storageBucket: "ppmod1.firebasestorage.app",
+            messagingSenderId: "826595248931",
+            appId: "1:826595248931:web:d55b761c1b9e245437da96",
+            measurementId: "G-CN9LJ502BL"
+        };
+
+        window.ppfb = window.ppfb || { config: { fee: 20 }, balance: 0, user: null, ev() {}, refreshPay() {}, saveOrder() { return Promise.resolve(false); } };
+
+        let app, db, auth;
+        try {
+            try { app = _getApp(); } catch (e) { app = _initApp(FB); }
+            db = _getFS(app);
+            auth = _getAuth(app);
+        } catch (e) { console.warn('firebase auth module init failed:', e); }
+
+        const provider = new _GAP();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        let unsubBalance = null;
+
+        function setBalanceUI(v) {
+            window.ppfb.balance = Number(v) || 0;
+            const t = window.ppfb.balance + ' BDT';
+            ['balanceAmt', 'profileBalance', 'payBalance'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = t;
+            });
+            refreshPayUI();
+        }
+
+        function refreshPayUI() {
+            const fee = (window.ppfb.config && window.ppfb.config.fee) || 20;
+            const bal = window.ppfb.balance || 0;
+            const btn = document.getElementById('walletPayBtn');
+            if (btn) {
+                const label = btn.querySelector('span');
+                if (bal >= fee) { btn.disabled = false; if (label) label.textContent = 'Pay ' + fee + ' BDT from Wallet'; }
+                else { btn.disabled = true; if (label) label.textContent = 'Insufficient Balance'; }
+            }
+            const note = document.getElementById('walletNote');
+            if (note) note.classList.toggle('hidden', bal >= fee);
+        }
+        window.ppfb.refreshPay = refreshPayUI;
+
+        function setProfileUI(u) {
+            const nm = document.getElementById('profileName');
+            if (nm) nm.textContent = u.displayName || 'User';
+            const em = document.getElementById('profileEmail');
+            if (em) em.textContent = u.email || '';
+            const ph = document.getElementById('profilePhoto');
+            if (ph && u.photoURL) ph.src = u.photoURL;
+            const av = document.getElementById('avatarImg');
+            const fb = document.getElementById('avatarFallback');
+            if (u.photoURL && av) { av.src = u.photoURL; av.classList.remove('hidden'); if (fb) fb.classList.add('hidden'); }
+            else if (fb) { fb.textContent = (u.displayName || 'U').charAt(0).toUpperCase(); if (av) av.classList.add('hidden'); fb.classList.remove('hidden'); }
+        }
+
+        async function ensureUser(u) {
+            const ref = _doc(db, 'users', u.uid);
+            const snap = await _getDoc(ref);
+            if (!snap.exists()) {
+                await _setDoc(ref, { uid: u.uid, name: u.displayName || 'User', email: u.email || '', photo: u.photoURL || '', balance: 0, createdAt: _ts() });
+            }
+            if (unsubBalance) unsubBalance();
+            unsubBalance = _snap(ref, s => {
+                if (s.exists()) setBalanceUI(s.data().balance);
+            }, e => console.warn('balance listener:', e));
+            setProfileUI(u);
+        }
+
+        window.ppfb.login = () => {
+            if (!auth) { toast('Loading, please wait...'); return; }
+            _redir(auth, provider).catch(e => { console.warn(e); toast('Login failed, try again'); });
+        };
+        window.ppfb.logout = async () => {
+            try { if (auth) await _signOut(auth); } catch (e) {}
+        };
+
+        window.ppfb.payWallet = async () => {
+            const u = auth && auth.currentUser;
+            const game = window._payGame;
+            if (!u) { toast('Please login first'); return; }
+            if (!game) { toast('No game selected'); return; }
+            const fee = (window.ppfb.config && window.ppfb.config.fee) || 20;
+            const trx = 'WLT-' + Date.now().toString(36).toUpperCase();
+            const logo = window._payGameLogo || '';
+            try {
+                await _tx(db, async (t) => {
+                    const uref = _doc(db, 'users', u.uid);
+                    const us = await t.get(uref);
+                    if (!us.exists()) throw new Error('nouser');
+                    const bal = Number(us.data().balance || 0);
+                    if (bal < fee) throw new Error('insufficient');
+                    t.update(uref, { balance: bal - fee });
+                    t.set(_doc(_col(db, 'orders')), { uid: u.uid, game: game, method: 'Wallet', trxId: trx, amount: fee, status: 'paid', createdAt: _ts() });
+                });
+                setBalanceUI((window.ppfb.balance || 0) - fee);
+                fillReceipt({ title: 'Payment Successful!', msg: 'Fee paid from wallet. Admin will complete your task soon.', game: game, logo: logo, method: 'Wallet', amount: fee + ' BDT', trx: trx });
+                if (window.ppfb.ev) window.ppfb.ev('wallet_pay', { game: game });
+            } catch (e) {
+                console.warn(e);
+                toast(e && e.message === 'insufficient' ? 'Insufficient balance — please top up' : 'Payment failed, try again');
+                refreshPayUI();
+            }
+        };
+
+        window.ppfb.saveDeposit = async ({ method, amount, trxId }) => {
+            const u = auth && auth.currentUser;
+            if (!u) return { ok: false, error: 'Please login first' };
+            try {
+                await _addDoc(_col(db, 'deposits'), { uid: u.uid, method: method, amount: Number(amount), trxId: trxId.toUpperCase(), status: 'pending', createdAt: _ts() });
+                return { ok: true };
+            } catch (e) { console.warn(e); return { ok: false, error: 'Deposit failed: ' + (e.code || 'try again') }; }
+        };
+
+        function escapeHtml(s) {
+            return (s || '').toString().replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+        function fmtDate(ts) {
+            try {
+                if (!ts || !ts.toDate) return 'Just now';
+                return ts.toDate().toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+            } catch (e) { return ''; }
+        }
+        function statusPill(s) {
+            const m = {
+                pending: ['Pending', 'background:#fef3c7;color:#92400e;border:1px solid #fcd34d'],
+                paid: ['Paid', 'background:#e0f2fe;color:#075985;border:1px solid #7dd3fc'],
+                approved: ['Approved', 'background:#d1fae5;color:#065f46;border:1px solid #6ee7b7'],
+                completed: ['Completed', 'background:#d1fae5;color:#065f46;border:1px solid #6ee7b7'],
+                rejected: ['Rejected', 'background:#fee2e2;color:#991b1b;border:1px solid #fca5a5']
+            };
+            const v = m[s] || m.pending;
+            return '<span style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:9999px;white-space:nowrap;' + v[1] + '">' + v[0] + '</span>';
+        }
+        async function fetchList(col, u) {
+            try {
+                const s = await _getDocs(_q(_col(db, col), _where('uid', '==', u.uid), _orderBy('createdAt', 'desc'), _limit(20)));
+                const a = []; s.forEach(d => a.push({ id: d.id, ...d.data() })); return a;
+            } catch (e) {
+                const s = await _getDocs(_q(_col(db, col), _where('uid', '==', u.uid), _limit(25)));
+                const a = []; s.forEach(d => a.push({ id: d.id, ...d.data() }));
+                const ms = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : 0);
+                a.sort((x, y) => ms(y) - ms(x));
+                return a.slice(0, 20);
+            }
+        }
+        window.ppfb.openProfile = async () => {
+            showScreen('screenProfile');
+            const u = auth && auth.currentUser;
+            if (u) setProfileUI(u);
+            const list = document.getElementById('historyList');
+            if (list) list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">Loading...</p>';
+            if (!u || !db) return;
+            try {
+                const [orders, deps] = await Promise.all([fetchList('orders', u), fetchList('deposits', u)]);
+                const items = [
+                    ...orders.map(o => ({ kind: 'TASK', ...o })),
+                    ...deps.map(d => ({ kind: 'TOP-UP', ...d }))
+                ];
+                const ms = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : 0);
+                items.sort((a, b) => ms(b) - ms(a));
+                if (!items.length) { list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">No orders yet</p>'; return; }
+                list.innerHTML = items.map(it => {
+                    const title = it.kind === 'TASK' ? escapeHtml(it.game || 'Task') : 'Wallet Top-up';
+                    return '<div class="bg-white border border-slate-200 rounded-xl px-3 py-2.5 flex items-center gap-2.5">'
+                        + '<div class="flex-1 min-w-0"><p class="text-xs font-bold text-slate-800 truncate">' + title + '</p>'
+                        + '<p class="text-[10px] text-slate-400 font-mono truncate">' + escapeHtml(it.method || '') + ' • ' + escapeHtml(it.trxId || '') + ' • ' + fmtDate(it.createdAt) + '</p></div>'
+                        + '<div class="text-right flex-shrink-0"><p class="text-xs font-extrabold text-slate-900">' + Number(it.amount || 0) + ' BDT</p><div class="mt-1">' + statusPill(it.status) + '</div></div>'
+                        + '</div>';
+                }).join('');
+            } catch (e) { console.warn(e); if (list) list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">Failed to load</p>'; }
+        };
+
+        if (auth) {
+            _redirRes(auth).catch(() => {});
+            _onAuth(auth, async (u) => {
+                if (u) {
+                    window.ppfb.user = u;
+                    try { await ensureUser(u); } catch (e) { console.warn(e); }
+                    showScreen('screenGameSelect');
+                    if (window.ppfb.ev) window.ppfb.ev('login');
+                } else {
+                    window.ppfb.user = null;
+                    if (unsubBalance) { unsubBalance(); unsubBalance = null; }
+                    setBalanceUI(0);
+                    showScreen('screenLogin');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
