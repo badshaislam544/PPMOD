@@ -166,6 +166,9 @@
         #gameGrid .game-card { padding: .5rem .6rem; }
         #gameGrid .game-card > span:last-child { font-size: 10px; padding: 3px 7px; }
         #gameGrid .game-card > span:last-child img { width: 12px; height: 12px; }
+        .g-letter { width: 30px; height: 30px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center;
+            justify-content: center; font-size: 14px; font-weight: 800; color: #fff;
+            background: linear-gradient(135deg, #f59e0b, #f97316); box-shadow: 0 2px 6px -2px rgba(15,23,42,.3); }
     </style>
 </head>
 <body class="app-body bg-slate-100 text-slate-800 selection:bg-amber-500 selection:text-white">
@@ -561,6 +564,13 @@
                     <button onclick="window.ppfb&&ppfb.logout()" class="py-2.5 px-4 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 font-bold rounded-xl transition-all text-xs cursor-pointer">Logout</button>
                 </div>
             </div>
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 space-y-2.5">
+                <p class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Redeem Code</p>
+                <div class="flex gap-2">
+                    <input id="redeemInput" placeholder="CODE LIKHUN" class="flex-1 min-w-0 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold uppercase focus:outline-none focus:border-amber-500">
+                    <button onclick="redeemGo()" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition-all cursor-pointer flex-shrink-0">Redeem</button>
+                </div>
+            </div>
             <div class="flex items-center justify-between px-1">
                 <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700">My Orders</span>
                 <button onclick="window.ppfb&&ppfb.openProfile()" class="text-[11px] font-bold text-amber-600 flex items-center gap-1 cursor-pointer"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Refresh</button>
@@ -723,6 +733,19 @@
             }
         }
 
+        async function redeemGo() {
+            const inp = document.getElementById('redeemInput');
+            const code = (inp.value || '').trim();
+            if (!code) { toast('Code likhun'); return; }
+            if (!window.ppfb || !window.ppfb.redeem) { toast('Loading, please wait...'); return; }
+            inp.disabled = true;
+            try {
+                const r = await window.ppfb.redeem(code);
+                toast(r.ok ? ('+' + r.amount + ' BDT added!') : (r.error || 'Redeem failed'));
+                if (r.ok) inp.value = '';
+            } finally { inp.disabled = false; }
+        }
+
         function fillReceipt(o) {
             document.getElementById('successTitle').innerText = o.title;
             document.getElementById('successMsg').innerText = o.msg;
@@ -796,7 +819,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-        import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+        import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp, query, where, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyAQmiWD9fP0nFpl7ShPjE51udtyFWo6jpA",
@@ -816,6 +839,44 @@
             ev() {},
             saveOrder() { return Promise.resolve(false); }
         };
+
+        const PP_LOGO = 'https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png';
+        const ACC = ['red', 'amber', 'emerald', 'sky'];
+        const DEFAULT_OFFERS = [
+            { name: '8ball pool', points: 50, order: 1, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/19/af/80/19af80a7-eb95-39bc-f7a8-6147cf933c39/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg' },
+            { name: 'Angry birds 2', points: 50, order: 2, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/78/04/ca/7804ca49-20cd-e1f6-77e0-2b24b0dadcb8/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg' },
+            { name: 'Best Fiends', points: 50, order: 3, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/2d/9a/7d/2d9a7da6-eb4b-3b25-a751-8258da75a0a8/AppIcon-0-0-1x_U007emarketing-0-5-85-220.png/512x512bb.jpg' },
+            { name: 'Dice dreams™', points: 50, order: 4, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f1/71/03/f171036e-5a26-9eb3-2d93-e9154db3e9b6/AppIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg' },
+            { name: 'Disney Solitaire', points: 50, order: 5, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/3c/13/4d/3c134dff-c40d-b4b5-dc23-42661a0762d9/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg' },
+            { name: 'Domino dreams™', points: 50, order: 6, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/97/4d/16/974d164e-52d6-61b2-8ece-8d509eb232ab/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg' },
+            { name: 'Farm heroes', points: 50, order: 7, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c2/a1/63/c2a1633a-82e8-f6ab-5e3a-b0ef5ac3629b/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg' },
+            { name: 'Fruit ninja', points: 50, order: 8, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/6b/52/f2/6b52f27e-eba6-6f6e-9a7f-5ca0b6b1a9e2/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg' },
+            { name: 'Hey day', points: 'All', order: 9, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/68/e4/de/68e4de8b-0e48-d1bc-004b-1346c3cf511b/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg' },
+            { name: 'Lords mobile', points: 50, order: 10, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4d/e8/f2/4de8f2eb-2d7d-7f28-ddc7-d6f62ca67b49/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/512x512bb.jpg' },
+            { name: 'Mobile legends', points: 50, order: 11, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/d9/88/76/d9887647-00fd-09c8-8a61-c6c31a1bfe2a/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/512x512bb.jpg' },
+            { name: 'Mobile Leg. US', points: 50, order: 12, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/78/e1/77/78e177f1-e174-dfe5-bbd9-f4f2988d9b89/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/512x512bb.jpg' },
+            { name: 'Summoners War', points: 50, order: 13, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f7/18/a7/f718a783-120f-0a08-30dc-be8e99c24f4a/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg' },
+            { name: 'War machines', points: 50, order: 14, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/5e/ba/cc/5ebacc73-5314-8783-7d09-49e15d803755/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg' },
+            { name: 'Yalla Ludo', points: 50, order: 15, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/61/ad/c6/61adc661-dd73-03b1-0f3e-4743d237bb5e/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/512x512bb.jpg' },
+            { name: 'Zenless Zone', points: 50, order: 16, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/2d/4a/fb/2d4afb82-bdb9-cc80-b5b7-d1d7f515b2ae/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/512x512bb.jpg' }
+        ];
+        function escH(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+        function escQ(s) { return (s || '').toString().replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
+        function renderOffers(list) {
+            const grid = document.getElementById('gameGrid');
+            if (!grid || !list.length) return;
+            grid.innerHTML = list.map((o, i) => {
+                const nm = (o.name || 'Game').toString();
+                const pts = (o.points !== undefined && o.points !== null && o.points !== '') ? o.points : 50;
+                const tag = nm + ' (' + pts + ')';
+                const lg = o.logo ? '<img class="g-logo" src="' + o.logo + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '<span class="g-letter">' + escH(nm.charAt(0).toUpperCase()) + '</span>';
+                return '<button onclick="selectGame(this, \'' + escQ(tag) + '\')" data-accent="' + ACC[i % 4] + '" class="game-card flex items-center justify-between p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 transition-all text-left shadow-2xs group cursor-pointer active:scale-98">'
+                    + lg + '<span class="g-name">' + escH(nm) + '</span>'
+                    + '<span class="flex items-center gap-1 text-[11px] font-extrabold bg-slate-100 text-slate-700 px-2 py-1 rounded-lg"><img src="' + PP_LOGO + '" class="w-3.5 h-3.5">' + escH(pts) + '</span></button>';
+            }).join('');
+            const lbl = document.getElementById('totalGamesLabel');
+            if (lbl) lbl.innerText = 'Games (' + list.length + ')';
+        }
 
         function applyConfig(c) {
             const cfg = { ...DEFAULTS, ...c };
@@ -859,6 +920,13 @@
                 const snap = await getDoc(doc(db, 'config', 'app'));
                 applyConfig(snap.exists() ? snap.data() : {});
             } catch (e) { applyConfig({}); }
+            try {
+                const qs = await getDocs(query(collection(db, 'offers'), where('active', '==', true), limit(60)));
+                const list = [];
+                qs.forEach(d => list.push({ id: d.id, ...d.data() }));
+                list.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+                renderOffers(list.length ? list : DEFAULT_OFFERS);
+            } catch (e) { renderOffers(DEFAULT_OFFERS); }
             window.ppfb.ev('app_open');
         } catch (e) {
             console.warn('firebase init failed, using defaults:', e);
@@ -999,6 +1067,35 @@
                 await _addDoc(_col(db, 'deposits'), { uid: u.uid, name: u.displayName || '', email: u.email || '', method: method, amount: Number(amount), trxId: trxId.toUpperCase(), status: 'pending', createdAt: _ts() });
                 return { ok: true };
             } catch (e) { console.warn(e); return { ok: false, error: 'Deposit failed: ' + (e.code || 'try again') }; }
+        };
+
+        window.ppfb.redeem = async (raw) => {
+            const u = auth && auth.currentUser;
+            if (!u) return { ok: false, error: 'Please login first' };
+            const code = (raw || '').toString().toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 32);
+            if (!code) return { ok: false, error: 'Code likhun' };
+            try {
+                let credited = 0;
+                await _tx(db, async (t) => {
+                    const cref = _doc(db, 'codes', code);
+                    const cs = await t.get(cref);
+                    if (!cs.exists() || cs.data().active !== true) throw new Error('invalid');
+                    const amt = Number(cs.data().amount || 0);
+                    if (!amt || amt <= 0) throw new Error('invalid');
+                    const uref = _doc(db, 'users', u.uid);
+                    const us = await t.get(uref);
+                    if (!us.exists()) throw new Error('nouser');
+                    t.update(uref, { balance: (Number(us.data().balance) || 0) + amt, lastRedeem: code });
+                    credited = amt;
+                });
+                return { ok: true, amount: credited };
+            } catch (e) {
+                console.warn(e);
+                const m = e && e.message;
+                if (m === 'invalid') return { ok: false, error: 'Bhulo ba bondho code' };
+                if (e && e.code === 'permission-denied') return { ok: false, error: 'Ei code age use hoyeche' };
+                return { ok: false, error: 'Redeem failed, abar try korun' };
+            }
         };
 
         function escapeHtml(s) {
