@@ -127,6 +127,14 @@
             box-shadow: 0 12px 24px -10px rgba(16,185,129,.6); }
         #walletPayBtn:active:not(:disabled) { transform: scale(.97); }
         #walletPayBtn:disabled { background: #e2e8f0; color: #94a3b8; box-shadow: none; cursor: not-allowed; }
+        .pay-spinner { width: 16px; height: 16px; border-radius: 9999px; flex-shrink: 0;
+            border: 2.5px solid rgba(255,255,255,.4); border-top-color: #fff;
+            animation: paySpin .7s linear infinite; display: inline-block; }
+        @keyframes paySpin { to { transform: rotate(360deg); } }
+        .hist-thumb { width: 38px; height: 38px; border-radius: 12px; object-fit: cover; flex-shrink: 0;
+            background: #f1f5f9; box-shadow: 0 2px 6px -2px rgba(15,23,42,.25); }
+        .hist-tile { width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0; display: flex;
+            align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #fff; }
 
         /* Brand text: Play Points colors */
         .brand-text { background: linear-gradient(92deg, #4285F4 5%, #EA4335 38%, #F59E0B 68%, #34A853 95%);
@@ -169,6 +177,25 @@
         .g-letter { width: 30px; height: 30px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center;
             justify-content: center; font-size: 14px; font-weight: 800; color: #fff;
             background: linear-gradient(135deg, #f59e0b, #f97316); box-shadow: 0 2px 6px -2px rgba(15,23,42,.3); }
+
+        /* Offer slider */
+        #offerSlider { scrollbar-width: none; }
+        #offerSlider::-webkit-scrollbar { display: none; }
+        .oslide { scroll-snap-align: start; flex-shrink: 0; width: 86px; display: flex; flex-direction: column;
+            align-items: center; gap: 4px; padding: 8px 4px; background: #fff; border: 1px solid #e2e8f0;
+            border-radius: 14px; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
+        .oslide:active { transform: scale(.94); }
+        .oslide img { width: 40px; height: 40px; border-radius: 12px; object-fit: cover; }
+        .oslide span { font-size: 9px; font-weight: 700; color: #475569; white-space: nowrap; max-width: 78px;
+            overflow: hidden; text-overflow: ellipsis; }
+
+        /* Popup modal + banned overlay */
+        .pop-overlay { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center;
+            padding: 24px; background: rgba(2,6,23,.6); backdrop-filter: blur(4px); }
+        .pop-card { width: 100%; max-width: 320px; background: #fff; border-radius: 20px; padding: 22px;
+            text-align: center; box-shadow: 0 24px 60px -12px rgba(0,0,0,.4);
+            animation: popIn .3s cubic-bezier(.34,1.56,.64,1) both; }
+        @keyframes popIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
     </style>
 </head>
 <body class="app-body bg-slate-100 text-slate-800 selection:bg-amber-500 selection:text-white">
@@ -257,6 +284,9 @@
                 <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700" id="totalGamesLabel">Available Games</span>
                 <span id="selectedCount" class="sel-pill sel-empty">No game selected</span>
             </div>
+
+            <!-- Offer Slider -->
+            <div id="offerSlider" class="flex gap-2 overflow-x-auto pb-1 -mx-0.5 px-0.5" style="scroll-snap-type:x mandatory;"></div>
 
             <!-- Enhanced Game List Grid -->
             <div class="fit-grid" id="gameGrid">
@@ -571,6 +601,15 @@
                     <button onclick="redeemGo()" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition-all cursor-pointer flex-shrink-0">Redeem</button>
                 </div>
             </div>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="openWithdraw()" class="py-2.5 px-3 bg-emerald-50 border border-emerald-200 text-emerald-700 font-extrabold rounded-xl text-xs cursor-pointer flex items-center justify-center gap-1.5">
+                    <i data-lucide="banknote" class="w-3.5 h-3.5"></i> Cash Out
+                </button>
+                <button onclick="openSupport()" class="py-2.5 px-3 bg-violet-50 border border-violet-200 text-violet-700 font-extrabold rounded-xl text-xs cursor-pointer flex items-center justify-center gap-1.5">
+                    <i data-lucide="messages-square" class="w-3.5 h-3.5"></i> Support
+                </button>
+            </div>
+            <div id="ticketList" class="space-y-2"></div>
             <div class="flex items-center justify-between px-1">
                 <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700">My Orders</span>
                 <button onclick="window.ppfb&&ppfb.openProfile()" class="text-[11px] font-bold text-amber-600 flex items-center gap-1 cursor-pointer"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Refresh</button>
@@ -581,6 +620,96 @@
         <footer id="appFooter" class="text-center text-[11px] text-slate-400 flex-shrink-0">
             Powered by <span class="font-bold text-slate-600">VAREON Studio</span>
         </footer>
+    </div>
+
+    <!-- Popup modal (admin notice, once per visit) -->
+    <div id="popModal" class="pop-overlay" style="display:none">
+        <div class="pop-card space-y-2">
+            <div class="mx-auto w-12 h-12 rounded-2xl flex items-center justify-center bg-amber-100 border border-amber-200">
+                <i data-lucide="megaphone" class="w-5 h-5 text-amber-600"></i>
+            </div>
+            <h3 id="popTitle" class="text-base font-extrabold text-slate-900"></h3>
+            <p id="popMsg" class="text-xs text-slate-500 font-medium leading-relaxed"></p>
+            <button onclick="closePopup()" class="w-full py-3 bg-slate-900 hover:bg-slate-700 text-white font-extrabold rounded-xl text-sm transition-all cursor-pointer">OK</button>
+        </div>
+    </div>
+
+    <!-- Broadcast popup (admin sent) -->
+    <div id="bcModal" class="pop-overlay" style="display:none">
+        <div class="pop-card space-y-2">
+            <div class="mx-auto w-12 h-12 rounded-2xl flex items-center justify-center bg-violet-100 border border-violet-200">
+                <i data-lucide="megaphone" class="w-5 h-5 text-violet-600"></i>
+            </div>
+            <h3 id="bcTitle" class="text-base font-extrabold text-slate-900"></h3>
+            <p id="bcMsg" class="text-xs text-slate-500 font-medium leading-relaxed whitespace-pre-wrap"></p>
+            <button onclick="closeBroadcast()" class="w-full py-3 bg-violet-600 hover:bg-violet-700 text-white font-extrabold rounded-xl text-sm transition-all cursor-pointer">OK</button>
+        </div>
+    </div>
+
+    <!-- Maintenance overlay -->
+    <div id="maintOverlay" class="pop-overlay" style="display:none">
+        <div class="pop-card space-y-2">
+            <div class="mx-auto w-12 h-12 rounded-2xl flex items-center justify-center bg-amber-100 border border-amber-200">
+                <i data-lucide="wrench" class="w-5 h-5 text-amber-600"></i>
+            </div>
+            <h3 class="text-base font-extrabold text-slate-900">Under Maintenance</h3>
+            <p id="maintMsg" class="text-xs text-slate-500 font-medium leading-relaxed"></p>
+            <button onclick="location.reload()" class="w-full py-3 bg-slate-900 hover:bg-slate-700 text-white font-extrabold rounded-xl text-sm transition-all cursor-pointer">Retry</button>
+        </div>
+    </div>
+
+    <!-- Cash out / Withdraw modal -->
+    <div id="wdModal" class="pop-overlay" style="display:none">
+        <div class="pop-card space-y-3">
+            <div class="mx-auto w-12 h-12 rounded-2xl flex items-center justify-center bg-emerald-100 border border-emerald-200">
+                <i data-lucide="banknote" class="w-5 h-5 text-emerald-600"></i>
+            </div>
+            <div class="text-center">
+                <h3 class="text-base font-extrabold text-slate-900">Cash Out</h3>
+                <p class="text-[11px] text-slate-400 font-medium">Available: <span id="wdAvail" class="font-extrabold text-slate-700">0 BDT</span></p>
+            </div>
+            <div>
+                <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-1">Your bKash/Nagad/Rocket number</label>
+                <input id="wdPhone" inputmode="numeric" placeholder="01XXXXXXXXX" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+                <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-1">Amount (BDT)</label>
+                <input id="wdAmount" type="number" placeholder="100" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:border-emerald-500">
+            </div>
+            <div class="flex gap-2">
+                <select id="wdMethod" class="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-emerald-500">
+                    <option>bKash</option><option>Nagad</option><option>Rocket</option>
+                </select>
+                <button id="wdReqBtn" onclick="submitWithdraw()" class="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs transition-all cursor-pointer disabled:opacity-60">Request</button>
+            </div>
+            <button onclick="closeWd()" class="w-full py-2.5 bg-slate-100 border border-slate-200 text-slate-600 font-bold rounded-xl text-xs transition-all cursor-pointer">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Support modal -->
+    <div id="spModal" class="pop-overlay" style="display:none">
+        <div class="pop-card space-y-3">
+            <div class="mx-auto w-12 h-12 rounded-2xl flex items-center justify-center bg-violet-100 border border-violet-200">
+                <i data-lucide="messages-square" class="w-5 h-5 text-violet-600"></i>
+            </div>
+            <h3 class="text-base font-extrabold text-slate-900 text-center">Send Problem</h3>
+            <input id="spSubject" placeholder="Topic (e.g: deposit hoyeche na)" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-violet-500">
+            <textarea id="spMsg" rows="3" placeholder="Details likhun..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:border-violet-500"></textarea>
+            <button onclick="submitTicket()" class="w-full py-3 bg-violet-600 hover:bg-violet-700 text-white font-extrabold rounded-xl text-sm transition-all cursor-pointer">Send to Admin</button>
+            <button onclick="closeSp()" class="w-full py-2.5 bg-slate-100 border border-slate-200 text-slate-600 font-bold rounded-xl text-xs transition-all cursor-pointer">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Banned overlay -->
+    <div id="banOverlay" class="pop-overlay" style="display:none">
+        <div class="pop-card space-y-2">
+            <div class="mx-auto w-12 h-12 rounded-2xl flex items-center justify-center bg-rose-100 border border-rose-200">
+                <i data-lucide="ban" class="w-5 h-5 text-rose-600"></i>
+            </div>
+            <h3 class="text-base font-extrabold text-slate-900">Account Banned</h3>
+            <p class="text-xs text-slate-500 font-medium leading-relaxed">Tomar account ti bondho ache. Admin er sathe contact korun.</p>
+            <button onclick="window.ppfb&&ppfb.logout()" class="w-full py-3 bg-slate-900 hover:bg-slate-700 text-white font-extrabold rounded-xl text-sm transition-all cursor-pointer">Logout</button>
+        </div>
     </div>
 
     <!-- Toast -->
@@ -659,6 +788,16 @@
             else toast('Loading, please wait...');
         }
 
+        function sliderPick(i) {
+            const cards = document.querySelectorAll('#gameGrid .game-card');
+            if (cards[i]) {
+                cards[i].click();
+                cards[i].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+        }
+
+        function closePopup() { document.getElementById('popModal').style.display = 'none'; }
+
         function goToPaymentScreen() {
             if (!selectedGame) return;
             if (!(window.ppfb && window.ppfb.user)) { toast('Please login first'); showScreen('screenLogin'); return; }
@@ -698,8 +837,9 @@
         async function submitPayment() {
             const amtEl = document.getElementById('topupAmount');
             const amount = Math.floor(Number(amtEl.value));
-            if (!amount || amount < 20) {
-                toast('Minimum deposit is 20 BDT');
+            const minDep = Number((window.ppfb && window.ppfb.config && window.ppfb.config.minDeposit) || 20);
+            if (!amount || amount < minDep) {
+                toast('Minimum deposit is ' + minDep + ' BDT');
                 return;
             }
             const trxId = document.getElementById('trxId').value.trim();
@@ -831,7 +971,7 @@
             measurementId: "G-CN9LJ502BL"
         };
 
-        const DEFAULTS = { fee: 20, bkash: '01647712206', nagad: '01647712206', rocket: '01647712206', admin: 'https://t.me/Blackmoney54', notice: '' };
+        const DEFAULTS = { fee: 20, minDeposit: 20, minWithdraw: 50, bkash: '01647712206', nagad: '01647712206', rocket: '01647712206', admin: 'https://t.me/Blackmoney54', support: 'https://t.me/Blackmoney54', notice: '', maintenance: false, maintMsg: 'App ti maintenance e ache. Ektokhon porer janabo.' };
 
         window.ppfb = {
             config: { ...DEFAULTS },
@@ -876,6 +1016,12 @@
             }).join('');
             const lbl = document.getElementById('totalGamesLabel');
             if (lbl) lbl.innerText = 'Games (' + list.length + ')';
+            const sl = document.getElementById('offerSlider');
+            if (sl) sl.innerHTML = list.map((o, i) => {
+                const nm = (o.name || '').toString();
+                const im = o.logo ? '<img src="' + o.logo + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '<span class="g-letter">' + escH(nm.charAt(0).toUpperCase()) + '</span>';
+                return '<button onclick="sliderPick(' + i + ')" class="oslide">' + im + '<span>' + escH(nm) + '</span></button>';
+            }).join('');
         }
 
         function applyConfig(c) {
@@ -899,6 +1045,44 @@
                 barTxt.textContent = cfg.notice;
                 bar.style.display = 'flex';
             }
+            const pt = (cfg.popupTitle || '').toString().trim();
+            const pm = (cfg.popupMsg || '').toString().trim();
+            const pu = (cfg.popupUntil || '').toString().trim();
+            if (pt && pm && !window._popShown && (!pu || Date.now() < Date.parse(pu))) {
+                window._popShown = true;
+                document.getElementById('popTitle').textContent = pt;
+                document.getElementById('popMsg').textContent = pm;
+                document.getElementById('popModal').style.display = 'flex';
+                if (window.lucide) lucide.createIcons();
+            }
+            // broadcast
+            const bt = (cfg.bcTitle || '').toString().trim();
+            const bm = (cfg.bcMsg || '').toString().trim();
+            const bu = (cfg.bcUntil || '').toString().trim();
+            const bid = (cfg.bcId || '').toString().trim();
+            const seenKey = 'pp_bc_' + bid;
+            let seen = false;
+            try { seen = bid ? localStorage.getItem(seenKey) === '1' : false; } catch (e) {}
+            if (bid && bt && bm && !seen && (!bu || Date.now() < Date.parse(bu))) {
+                try { localStorage.setItem(seenKey, '1'); } catch (e) {}
+                setTimeout(() => {
+                    document.getElementById('bcTitle').textContent = bt;
+                    document.getElementById('bcMsg').textContent = bm;
+                    document.getElementById('bcModal').style.display = 'flex';
+                    if (window.lucide) lucide.createIcons();
+                }, 1600);
+            }
+            // maintenance
+            if (cfg.maintenance === true) {
+                const mm = document.getElementById('maintMsg');
+                if (mm) mm.textContent = (cfg.maintMsg || '').toString().trim() || 'App ti maintenance e ache. Ektokhon porer janabo.';
+                const ov = document.getElementById('maintOverlay');
+                if (ov) { ov.style.display = 'flex'; if (window.lucide) lucide.createIcons(); }
+            }
+        }
+        function closeBroadcast() {
+            const m = document.getElementById('bcModal');
+            if (m) m.style.display = 'none';
         }
 
         try {
@@ -973,11 +1157,12 @@
         }
 
         function refreshPayUI() {
+            const btn = document.getElementById('walletPayBtn');
+            if (window._paying) { if (btn) btn.disabled = true; return; }
             const fee = (window.ppfb.config && window.ppfb.config.fee) || 20;
             const bal = window.ppfb.balance || 0;
-            const btn = document.getElementById('walletPayBtn');
             if (btn) {
-                const label = btn.querySelector('span');
+                const label = btn.querySelector('span:last-child') || btn.querySelector('span');
                 if (bal >= fee) { btn.disabled = false; if (label) label.textContent = 'Pay ' + fee + ' BDT from Wallet'; }
                 else { btn.disabled = true; if (label) label.textContent = 'Insufficient Balance'; }
             }
@@ -1001,15 +1186,36 @@
             if (pu) pu.textContent = u.uid;
         }
 
+        function setBannedUI(on) {
+            const o = document.getElementById('banOverlay');
+            if (o) o.style.display = on ? 'flex' : 'none';
+            if (window.lucide && on) lucide.createIcons();
+        }
         async function ensureUser(u) {
             const ref = _doc(db, 'users', u.uid);
             const snap = await _getDoc(ref);
             if (!snap.exists()) {
                 await _setDoc(ref, { uid: u.uid, name: u.displayName || 'User', email: u.email || '', photo: u.photoURL || '', balance: 0, createdAt: _ts() });
+            } else if (snap.data().banned === true) {
+                window.ppfb.banned = true;
+                setBannedUI(true);
+                setProfileUI(u);
+                return;
             }
+            window.ppfb.banned = false;
+            setBannedUI(false);
             if (unsubBalance) unsubBalance();
             unsubBalance = _snap(ref, s => {
-                if (s.exists()) setBalanceUI(s.data().balance);
+                if (s.exists()) {
+                    if (s.data().banned === true) {
+                        window.ppfb.banned = true;
+                        setBannedUI(true);
+                        return;
+                    }
+                    window.ppfb.banned = false;
+                    setBannedUI(false);
+                    setBalanceUI(s.data().balance);
+                }
             }, e => console.warn('balance listener:', e));
             setProfileUI(u);
         }
@@ -1033,11 +1239,22 @@
         };
 
         window.ppfb.payWallet = async () => {
+            if (window._paying) return;
             const u = auth && auth.currentUser;
             const game = window._payGame;
             if (!u) { toast('Please login first'); return; }
             if (!game) { toast('No game selected'); return; }
+            if (window.ppfb.banned) { toast('Account banned, admin er sathe contact korun'); return; }
             const fee = (window.ppfb.config && window.ppfb.config.fee) || 20;
+            if ((window.ppfb.balance || 0) < fee) { toast('Insufficient balance — please top up'); refreshPayUI(); return; }
+            const btn = document.getElementById('walletPayBtn');
+            window._paying = true;
+            let origHtml = '';
+            if (btn) {
+                btn.disabled = true;
+                origHtml = btn.innerHTML;
+                btn.innerHTML = '<span class="pay-spinner"></span><span>Processing...</span>';
+            }
             const trx = 'WLT-' + Date.now().toString(36).toUpperCase();
             const logo = window._payGameLogo || '';
             try {
@@ -1048,7 +1265,7 @@
                     const bal = Number(us.data().balance || 0);
                     if (bal < fee) throw new Error('insufficient');
                     t.update(uref, { balance: bal - fee });
-                    t.set(_doc(_col(db, 'orders')), { uid: u.uid, name: u.displayName || '', email: u.email || '', game: game, method: 'Wallet', trxId: trx, amount: fee, status: 'paid', createdAt: _ts() });
+                    t.set(_doc(_col(db, 'orders')), { uid: u.uid, name: u.displayName || '', email: u.email || '', game: game, logo: (window._payGameLogo || ''), method: 'Wallet', trxId: trx, amount: fee, status: 'paid', createdAt: _ts() });
                 });
                 setBalanceUI((window.ppfb.balance || 0) - fee);
                 fillReceipt({ title: 'Payment Successful!', msg: 'Fee paid from wallet. Admin will complete your task soon.', game: game, logo: logo, method: 'Wallet', amount: fee, trx: trx });
@@ -1056,6 +1273,13 @@
             } catch (e) {
                 console.warn(e);
                 toast(e && e.message === 'insufficient' ? 'Insufficient balance — please top up' : 'Payment failed, try again');
+            } finally {
+                window._paying = false;
+                if (btn) {
+                    btn.innerHTML = origHtml;
+                    if (window.lucide) lucide.createIcons();
+                    btn.disabled = false;
+                }
                 refreshPayUI();
             }
         };
@@ -1063,6 +1287,7 @@
         window.ppfb.saveDeposit = async ({ method, amount, trxId }) => {
             const u = auth && auth.currentUser;
             if (!u) return { ok: false, error: 'Please login first' };
+            if (window.ppfb.banned) return { ok: false, error: 'Account banned' };
             try {
                 await _addDoc(_col(db, 'deposits'), { uid: u.uid, name: u.displayName || '', email: u.email || '', method: method, amount: Number(amount), trxId: trxId.toUpperCase(), status: 'pending', createdAt: _ts() });
                 return { ok: true };
@@ -1072,6 +1297,7 @@
         window.ppfb.redeem = async (raw) => {
             const u = auth && auth.currentUser;
             if (!u) return { ok: false, error: 'Please login first' };
+            if (window.ppfb.banned) return { ok: false, error: 'Account banned' };
             const code = (raw || '').toString().toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 32);
             if (!code) return { ok: false, error: 'Code likhun' };
             try {
@@ -1097,6 +1323,99 @@
                 return { ok: false, error: 'Redeem failed, abar try korun' };
             }
         };
+
+        /* ---- Cash out (withdraw) ---- */
+        window.openWithdraw = () => {
+            const u = auth && auth.currentUser;
+            if (!u) { toast('Please login first'); showScreen('screenLogin'); return; }
+            if (window.ppfb.banned) { toast('Account banned'); return; }
+            const min = Number((window.ppfb.config && window.ppfb.config.minWithdraw) || 50);
+            const bal = window.ppfb.balance || 0;
+            if (bal < min) { toast('Minimum ' + min + ' BDT cash out kora jay'); return; }
+            const av = document.getElementById('wdAvail');
+            if (av) av.textContent = bal + ' BDT';
+            const am = document.getElementById('wdAmount');
+            if (am) am.placeholder = 'Min ' + min;
+            const mo = document.getElementById('wdModal');
+            if (mo) mo.style.display = 'flex';
+            if (window.lucide) lucide.createIcons();
+        };
+        window.closeWd = () => { const m = document.getElementById('wdModal'); if (m) m.style.display = 'none'; };
+        window.submitWithdraw = async () => {
+            if (window._wdSending) return;
+            const u = auth && auth.currentUser;
+            if (!u || !db) { toast('Please login first'); return; }
+            const phone = (document.getElementById('wdPhone').value || '').replace(/[^0-9+]/g, '').slice(0, 18);
+            const amount = Math.floor(Number(document.getElementById('wdAmount').value) || 0);
+            const method = document.getElementById('wdMethod').value;
+            const min = Number((window.ppfb.config && window.ppfb.config.minWithdraw) || 50);
+            if (phone.length < 6) { toast('Sothik number din'); return; }
+            if (amount < min) { toast('Minimum ' + min + ' BDT'); return; }
+            if (amount > (window.ppfb.balance || 0)) { toast('Balance er beshi taka'); return; }
+            window._wdSending = true;
+            const wbtn = document.getElementById('wdReqBtn');
+            if (wbtn) { wbtn.disabled = true; wbtn.textContent = 'Sending...'; }
+            try {
+                await _addDoc(_col(db, 'withdrawals'), {
+                    uid: u.uid, name: u.displayName || '', email: u.email || '', photo: u.photoURL || '',
+                    phone: phone, amount: amount, method: method, status: 'pending', createdAt: _ts()
+                });
+                closeWd();
+                document.getElementById('wdPhone').value = '';
+                document.getElementById('wdAmount').value = '';
+                toast('Request sent, admin review korbe');
+                if (window.ppfb.ev) window.ppfb.ev('withdraw_request', { amount: amount, method: method });
+            } catch (e) { console.warn(e); toast('Request fail, abar try korun'); }
+            finally { window._wdSending = false; if (wbtn) { wbtn.disabled = false; wbtn.textContent = 'Request'; } }
+        };
+
+        /* ---- Support ticket ---- */
+        window.openSupport = () => {
+            const u = auth && auth.currentUser;
+            if (!u) { toast('Please login first'); showScreen('screenLogin'); return; }
+            const m = document.getElementById('spModal');
+            if (m) m.style.display = 'flex';
+            if (window.lucide) lucide.createIcons();
+        };
+        window.closeSp = () => { const m = document.getElementById('spModal'); if (m) m.style.display = 'none'; };
+        window.submitTicket = async () => {
+            const u = auth && auth.currentUser;
+            if (!u || !db) { toast('Please login first'); return; }
+            const subject = (document.getElementById('spSubject').value || '').trim().slice(0, 80);
+            const msg = (document.getElementById('spMsg').value || '').trim().slice(0, 800);
+            if (!msg) { toast('Problem likhun'); return; }
+            try {
+                await _addDoc(_col(db, 'tickets'), {
+                    uid: u.uid, name: u.displayName || '', email: u.email || '', photo: u.photoURL || '',
+                    subject: subject || 'Problem', msg: msg, status: 'open', createdAt: _ts()
+                });
+                closeSp();
+                document.getElementById('spSubject').value = '';
+                document.getElementById('spMsg').value = '';
+                toast('Sent! Admin reply debe');
+                loadTickets();
+            } catch (e) { console.warn(e); toast('Send fail'); }
+        };
+        async function loadTickets() {
+            const box = document.getElementById('ticketList');
+            if (!box || !db) return;
+            const u = auth && auth.currentUser;
+            if (!u) { box.innerHTML = ''; return; }
+            try {
+                const s = await _getDocs(_q(_col(db, 'tickets'), _where('uid', '==', u.uid), _limit(10)));
+                const a = []; s.forEach(d => a.push({ id: d.id, ...d.data() }));
+                const ms = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : 0);
+                a.sort((x, y) => ms(y) - ms(x));
+                if (!a.length) { box.innerHTML = ''; return; }
+                box.innerHTML = '<p class="text-xs font-extrabold uppercase tracking-wider text-slate-700">My Support</p>' + a.map(t =>
+                    '<div class="bg-white border border-slate-200 rounded-xl p-3 space-y-1">'
+                    + '<div class="flex items-start justify-between gap-2"><p class="text-xs font-bold text-slate-800 truncate">' + escapeHtml(t.subject || 'Problem') + '</p>'
+                    + '<span class="st text-[10px] font-extrabold px-2 py-0.5 rounded-full" style="' + (t.reply ? 'background:#d1fae5;color:#065f46' : 'background:#fef3c7;color:#92400e') + '">' + (t.reply ? 'ANSWERED' : 'WAITING') + '</span></div>'
+                    + '<p class="text-[11px] text-slate-500 font-medium">' + escapeHtml(t.msg || '') + '</p>'
+                    + (t.reply ? '<div class="bg-violet-50 border border-violet-100 rounded-lg px-2.5 py-2"><p class="text-[9px] font-extrabold uppercase tracking-wider text-violet-600">Admin</p><p class="text-[11px] text-violet-900 font-semibold">' + escapeHtml(t.reply) + '</p></div>' : '')
+                    + '</div>').join('');
+            } catch (e) { console.warn(e); }
+        }
 
         function escapeHtml(s) {
             return (s || '').toString().replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -1130,6 +1449,30 @@
                 return a.slice(0, 20);
             }
         }
+        window.loadTickets = loadTickets;
+        const METHOD_LOGO = {
+            bKash: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdjxXCpOG7jJdpeVHm9R_xCZ6hrcRr23H-Y99mIloKRA&s=10',
+            Nagad: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU9xlcZDT6VNZ0dLPxDpO6t-kCTbGa1om1cAuXVCNboA&s=10',
+            Rocket: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTP0eawh77HPEryf218TiXutIyR4EXTAJhbiWHg_ManMg&s=10',
+            Wallet: 'https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png'
+        };
+        function histThumb(it) {
+            if (it.kind === 'TASK' && it.logo) {
+                return '<img src="' + escapeHtml(it.logo) + '" class="hist-thumb" loading="lazy" onerror="this.style.display=\'none\'">';
+            }
+            const ml = it.method && METHOD_LOGO[it.method];
+            if (ml) {
+                return '<img src="' + ml + '" class="hist-thumb" loading="lazy" onerror="this.style.display=\'none\'">';
+            }
+            if (it.kind === 'TOP-UP') {
+                return '<span class="hist-tile" style="background:linear-gradient(135deg,#10b981,#059669)">+</span>';
+            }
+            if (it.kind === 'PAYOUT') {
+                return '<span class="hist-tile" style="background:linear-gradient(135deg,#f43f5e,#e11d48)">৳</span>';
+            }
+            const ch = ((it.game || 'T').toString().charAt(0) || 'T').toUpperCase();
+            return '<span class="hist-tile" style="background:linear-gradient(135deg,#8b5cf6,#4f46e5)">' + escapeHtml(ch) + '</span>';
+        }
         window.ppfb.openProfile = async () => {
             showScreen('screenProfile');
             const u = auth && auth.currentUser;
@@ -1137,20 +1480,26 @@
             const list = document.getElementById('historyList');
             if (list) list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">Loading...</p>';
             if (!u || !db) return;
+            loadTickets();
             try {
-                const [orders, deps] = await Promise.all([fetchList('orders', u), fetchList('deposits', u)]);
+                const [orders, deps, wds] = await Promise.all([fetchList('orders', u), fetchList('deposits', u), fetchList('withdrawals', u)]);
                 const items = [
                     ...orders.map(o => ({ kind: 'TASK', ...o })),
-                    ...deps.map(d => ({ kind: 'TOP-UP', ...d }))
+                    ...deps.map(d => ({ kind: 'TOP-UP', ...d })),
+                    ...wds.map(d => ({ kind: 'PAYOUT', ...d }))
                 ];
                 const ms = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : 0);
                 items.sort((a, b) => ms(b) - ms(a));
                 if (!items.length) { list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">No orders yet</p>'; return; }
                 list.innerHTML = items.map(it => {
-                    const title = it.kind === 'TASK' ? escapeHtml(it.game || 'Task') : 'Wallet Top-up';
+                    let title = 'Wallet Top-up';
+                    let info = escapeHtml(it.method || '') + ' • ' + escapeHtml(it.trxId || '');
+                    if (it.kind === 'TASK') { title = escapeHtml(it.game || 'Task'); }
+                    else if (it.kind === 'PAYOUT') { title = 'Cash Out'; info = escapeHtml(it.method || '') + ' • ' + escapeHtml(it.phone || ''); }
                     return '<div class="bg-white border border-slate-200 rounded-xl px-3 py-2.5 flex items-center gap-2.5">'
+                        + histThumb(it)
                         + '<div class="flex-1 min-w-0"><p class="text-xs font-bold text-slate-800 truncate">' + title + '</p>'
-                        + '<p class="text-[10px] text-slate-400 font-mono truncate">' + escapeHtml(it.method || '') + ' • ' + escapeHtml(it.trxId || '') + ' • ' + fmtDate(it.createdAt) + '</p></div>'
+                        + '<p class="text-[10px] text-slate-400 font-mono truncate">' + info + ' • ' + fmtDate(it.createdAt) + '</p></div>'
                         + '<div class="text-right flex-shrink-0"><p class="text-xs font-extrabold text-slate-900">' + Number(it.amount || 0) + ' BDT</p><div class="mt-1">' + statusPill(it.status) + '</div></div>'
                         + '</div>';
                 }).join('');
