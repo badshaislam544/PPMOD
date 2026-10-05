@@ -827,7 +827,7 @@
     <script type="module">
         import { initializeApp as _initApp, getApp as _getApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
         import { getFirestore as _getFS, doc as _doc, getDoc as _getDoc, setDoc as _setDoc, collection as _col, addDoc as _addDoc, serverTimestamp as _ts, runTransaction as _tx, query as _q, where as _where, orderBy as _orderBy, limit as _limit, getDocs as _getDocs, onSnapshot as _snap } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-        import { getAuth as _getAuth, GoogleAuthProvider as _GAP, signInWithRedirect as _redir, getRedirectResult as _redirRes, onAuthStateChanged as _onAuth, signOut as _signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+        import { getAuth as _getAuth, GoogleAuthProvider as _GAP, signInWithPopup as _popup, signInWithRedirect as _redir, getRedirectResult as _redirRes, onAuthStateChanged as _onAuth, signOut as _signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
         const FB = {
             apiKey: "AIzaSyAQmiWD9fP0nFpl7ShPjE51udtyFWo6jpA",
@@ -904,9 +904,19 @@
             setProfileUI(u);
         }
 
-        window.ppfb.login = () => {
+        window.ppfb.login = async () => {
             if (!auth) { toast('Loading, please wait...'); return; }
-            _redir(auth, provider).catch(e => { console.warn(e); toast('Login failed, try again'); });
+            try {
+                await _popup(auth, provider);
+            } catch (e) {
+                console.warn(e);
+                if (e && (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment' || e.code === 'auth/cancelled-popup-request')) {
+                    try { await _redir(auth, provider); }
+                    catch (e2) { console.warn(e2); toast('Login failed, try again'); }
+                } else if (!e || e.code !== 'auth/popup-closed-by-user') {
+                    toast('Login failed, try again');
+                }
+            }
         };
         window.ppfb.logout = async () => {
             try { if (auth) await _signOut(auth); } catch (e) {}
