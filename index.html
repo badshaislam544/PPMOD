@@ -181,7 +181,7 @@
     <div class="app-shell">
         
         <!-- Header (sticky on top) -->
-        <header id="appHeader" class="app-header hidden flex items-center justify-between gap-2 bg-white/95 backdrop-blur px-3 py-2.5 rounded-2xl border border-slate-200/80 shadow-[0_10px_24px_-14px_rgba(15,23,42,.35)]">
+        <header id="appHeader" class="app-header hidden flex items-center justify-between gap-2 bg-white/95 backdrop-blur px-3.5 py-3 rounded-[1.4rem] border border-slate-200/80 shadow-[0_14px_28px_-14px_rgba(15,23,42,.35)]">
             <div class="flex items-center gap-2 min-w-0 flex-1">
                 <div class="logo-tile">
                     <img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-6 h-6 object-contain" alt="PP MOD">
@@ -349,7 +349,7 @@
                 <span class="step-line"></span>
                 <span class="step"><span class="n">3</span> Receipt</span>
             </div>
-            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2.5">
+            <div id="payOrderCard" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
                 <div class="flex items-center gap-2.5">
                     <img id="payGameLogo" class="w-9 h-9 rounded-xl object-cover bg-slate-100 flex-shrink-0" alt="">
                     <div class="flex-1 min-w-0">
@@ -361,6 +361,16 @@
                         <p class="text-base font-extrabold text-amber-600"><span data-fee>20</span> BDT</p>
                     </div>
                 </div>
+            </div>
+            <div id="payTabs" class="grid grid-cols-2 gap-1 bg-slate-200/70 rounded-2xl p-1">
+                <button id="tabWallet" onclick="switchPayTab('wallet')" class="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-extrabold bg-white text-slate-900 shadow-sm transition-all cursor-pointer">
+                    <i data-lucide="wallet" class="w-4 h-4"></i> Wallet
+                </button>
+                <button id="tabAddMoney" onclick="switchPayTab('addmoney')" class="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-slate-500 transition-all cursor-pointer">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Money
+                </button>
+            </div>
+            <div id="paneWallet" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2.5">
                 <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl px-3 py-2">
                     <span class="text-[11px] font-bold text-slate-500 flex items-center gap-1.5"><i data-lucide="wallet" class="w-3.5 h-3.5"></i> Wallet Balance</span>
                     <span id="payBalance" class="text-sm font-extrabold text-slate-900">0 BDT</span>
@@ -368,13 +378,9 @@
                 <button id="walletPayBtn" onclick="window.ppfb&&ppfb.payWallet()" class="w-full flex items-center justify-center gap-2 py-3.5 px-4 text-white font-extrabold rounded-xl transition-all text-sm cursor-pointer">
                     <i data-lucide="zap" class="w-4 h-4"></i> <span>Pay from Wallet</span>
                 </button>
-                <p id="walletNote" class="hidden text-[11px] font-semibold text-rose-600 text-center">Insufficient balance — top up below (min 20 BDT)</p>
+                <p id="walletNote" class="hidden text-[11px] font-semibold text-rose-600 text-center">Insufficient balance — Add Money diye top up korun (min 20 BDT)</p>
             </div>
-            <div class="flex items-center gap-2 px-1">
-                <span class="flex-1 h-px bg-slate-200"></span>
-                <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Top up manually</span>
-                <span class="flex-1 h-px bg-slate-200"></span>
-            </div>
+            <div id="paneAddMoney" class="hidden space-y-4">
 
             <!-- Payment Wallets -->
             <div class="space-y-2.5">
@@ -452,15 +458,16 @@
                     <input type="text" id="trxId" placeholder="Enter TrxID after send money" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono uppercase font-semibold focus:outline-none focus:border-amber-500">
                 </div>
 
-                <div class="space-y-2 pt-2">
+                <div class="pt-2">
                     <button id="depositBtn" onclick="submitPayment()" class="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl shadow-md transition-all text-sm cursor-pointer active:scale-98">
                         Submit Deposit
                     </button>
-                    <button onclick="goBackToGameSelect()" class="w-full py-2.5 px-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 font-semibold rounded-xl transition-all text-xs cursor-pointer">
-                        ⬅ Back
-                    </button>
                 </div>
             </div>
+            </div>
+            <button onclick="payBack()" class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 font-semibold rounded-xl transition-all text-xs cursor-pointer">
+                ⬅ Back
+            </button>
         </main>
 
         <!-- SCREEN 3: SUCCESS & RECEIPT -->
@@ -508,6 +515,11 @@
                     <i data-lucide="send" class="w-4 h-4"></i> Send Screenshot to Admin (@Blackmoney54)
                 </a>
             </div>
+            <div class="pt-1">
+                <button onclick="resetToHome()" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 font-bold rounded-xl transition-all text-xs cursor-pointer">
+                    Back to Home
+                </button>
+            </div>
         </main>
 
         <!-- SCREEN 4: PROFILE & ORDER TRACKING -->
@@ -523,6 +535,9 @@
                 <button onclick="copyNumber(document.getElementById('profileUid').innerText)" class="w-full mt-3 flex items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 cursor-pointer">
                     <span class="text-[10px] font-bold text-slate-400 flex-shrink-0">MY UID (tap to copy)</span>
                     <span id="profileUid" class="text-[10px] font-mono font-bold text-slate-600 truncate">—</span>
+                </button>
+                <button onclick="enterTopup()" class="w-full mt-2 py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all text-xs cursor-pointer flex items-center justify-center gap-1.5">
+                    <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Top Up Wallet
                 </button>
                 <div class="grid grid-cols-2 gap-2 pt-2">
                     <button onclick="resetToHome()" class="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 font-bold rounded-xl transition-all text-xs cursor-pointer">Home</button>
@@ -632,12 +647,48 @@
             if (window._payGameLogo) { pl.src = window._payGameLogo; pl.style.display = ''; }
             else { pl.style.display = 'none'; }
             if (window.ppfb && window.ppfb.refreshPay) window.ppfb.refreshPay();
+            window._topupOnly = false;
+            window._payReturn = 'home';
+            document.getElementById('payOrderCard').classList.remove('hidden');
+            document.getElementById('payTabs').classList.remove('hidden');
+            document.getElementById('paneWallet').classList.remove('hidden');
+            const _fee = (window.ppfb && window.ppfb.config && window.ppfb.config.fee) || 20;
+            switchPayTab((window.ppfb && window.ppfb.balance >= _fee) ? 'wallet' : 'addmoney');
             document.getElementById('screenPayment').scrollTop = 0;
             showScreen('screenPayment');
         }
 
-        function goBackToGameSelect() {
-            showScreen('screenGameSelect');
+        function switchPayTab(tab) {
+            window._payTab = tab;
+            const w = tab === 'wallet';
+            const on = 'flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-extrabold bg-white text-slate-900 shadow-sm transition-all cursor-pointer';
+            const off = 'flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-slate-500 transition-all cursor-pointer';
+            const bW = document.getElementById('tabWallet');
+            const bA = document.getElementById('tabAddMoney');
+            if (bW) bW.className = w ? on : off;
+            if (bA) bA.className = w ? off : on;
+            document.getElementById('paneWallet').classList.toggle('hidden', !w);
+            document.getElementById('paneAddMoney').classList.toggle('hidden', w);
+        }
+
+        function enterTopup() {
+            window._topupOnly = true;
+            window._payReturn = 'profile';
+            document.getElementById('payOrderCard').classList.add('hidden');
+            document.getElementById('payTabs').classList.add('hidden');
+            document.getElementById('paneWallet').classList.add('hidden');
+            document.getElementById('paneAddMoney').classList.remove('hidden');
+            document.getElementById('screenPayment').scrollTop = 0;
+            showScreen('screenPayment');
+        }
+
+        function payBack() {
+            if (window._payReturn === 'profile') {
+                if (window.ppfb && window.ppfb.openProfile) window.ppfb.openProfile();
+                else showScreen('screenProfile');
+            } else {
+                showScreen('screenGameSelect');
+            }
         }
 
         async function submitPayment() {
