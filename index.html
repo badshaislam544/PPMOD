@@ -181,7 +181,7 @@
     <div class="app-shell">
         
         <!-- Header (sticky on top) -->
-        <header id="appHeader" class="app-header hidden flex items-center justify-between gap-2 bg-white/95 backdrop-blur px-3.5 py-3 rounded-[1.4rem] border border-slate-200/80 shadow-[0_14px_28px_-14px_rgba(15,23,42,.35)]">
+        <header id="appHeader" class="app-header flex items-center justify-between gap-2 bg-white/95 backdrop-blur px-3.5 py-3 rounded-[1.4rem] border border-slate-200/80 shadow-[0_14px_28px_-14px_rgba(15,23,42,.35)]">
             <div class="flex items-center gap-2 min-w-0 flex-1">
                 <div class="logo-tile">
                     <img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-6 h-6 object-contain" alt="PP MOD">
@@ -204,7 +204,7 @@
         </header>
 
         <!-- SCREEN 0: LOGIN (Google only) -->
-        <main id="screenLogin" class="screen fit-home">
+        <main id="screenLogin" class="screen fit-home hidden">
             <div class="flex-1 flex items-center justify-center py-6">
                 <div class="w-full bg-white rounded-3xl border border-slate-200/80 shadow-sm p-7 text-center space-y-4">
                     <div class="mx-auto w-16 h-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-amber-100 to-orange-100 border border-amber-200 shadow-md">
@@ -219,12 +219,13 @@
                         Sign in with Google
                     </button>
                     <p class="text-[10px] text-slate-400 font-medium">Only Google accounts supported</p>
+                    <button onclick="showScreen('screenGameSelect')" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-2xl transition-all text-xs cursor-pointer">Continue as Guest</button>
                 </div>
             </div>
         </main>
 
         <!-- SCREEN 1: GAME SELECTION -->
-        <main id="screenGameSelect" class="screen fit-home hidden">
+        <main id="screenGameSelect" class="screen fit-home">
             
             <!-- Hero / Server Status -->
             <section class="hero hero-v2">
@@ -240,6 +241,12 @@
             <div id="noticeBar" style="display:none" class="items-start gap-2 bg-amber-50 border border-amber-200 rounded-2xl px-3.5 py-2.5">
                 <i data-lucide="megaphone" class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5"></i>
                 <p id="noticeText" class="text-[11px] font-semibold text-amber-800 leading-snug"></p>
+            </div>
+
+            <div id="ghostBanner" class="flex items-center gap-2.5 text-white rounded-2xl px-4 py-3 shadow-md" style="background: linear-gradient(135deg, #f59e0b, #f97316);">
+                <i data-lucide="log-in" class="w-5 h-5 flex-shrink-0"></i>
+                <p class="flex-1 text-[11px] font-bold leading-snug">Login kore wallet + order tracking use korun</p>
+                <button onclick="showScreen('screenLogin')" class="bg-white text-amber-700 text-[11px] font-extrabold px-3 py-1.5 rounded-xl flex-shrink-0 cursor-pointer">Login</button>
             </div>
 
             <!-- Title & Status -->
@@ -362,14 +369,6 @@
                     </div>
                 </div>
             </div>
-            <div id="payTabs" class="grid grid-cols-2 gap-1 bg-slate-200/70 rounded-2xl p-1">
-                <button id="tabWallet" onclick="switchPayTab('wallet')" class="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-extrabold bg-white text-slate-900 shadow-sm transition-all cursor-pointer">
-                    <i data-lucide="wallet" class="w-4 h-4"></i> Wallet
-                </button>
-                <button id="tabAddMoney" onclick="switchPayTab('addmoney')" class="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-slate-500 transition-all cursor-pointer">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Add Money
-                </button>
-            </div>
             <div id="paneWallet" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2.5">
                 <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl px-3 py-2">
                     <span class="text-[11px] font-bold text-slate-500 flex items-center gap-1.5"><i data-lucide="wallet" class="w-3.5 h-3.5"></i> Wallet Balance</span>
@@ -378,11 +377,31 @@
                 <button id="walletPayBtn" onclick="window.ppfb&&ppfb.payWallet()" class="w-full flex items-center justify-center gap-2 py-3.5 px-4 text-white font-extrabold rounded-xl transition-all text-sm cursor-pointer">
                     <i data-lucide="zap" class="w-4 h-4"></i> <span>Pay from Wallet</span>
                 </button>
-                <p id="walletNote" class="hidden text-[11px] font-semibold text-rose-600 text-center">Insufficient balance — Add Money diye top up korun (min 20 BDT)</p>
+                <div id="walletNote" class="hidden text-center bg-rose-50 border border-rose-200 rounded-xl px-3 py-2.5 space-y-2">
+                    <p class="text-[11px] font-semibold text-rose-600">Insufficient balance — age top up korun (min 20 BDT)</p>
+                    <button onclick="enterTopup('payment')" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl transition-all text-xs cursor-pointer flex items-center justify-center gap-1.5">
+                        <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Add Money
+                    </button>
+                </div>
             </div>
-            <div id="paneAddMoney" class="hidden space-y-4">
+            <!-- wallets moved to Add Money screen -->
 
-            <!-- Payment Wallets -->
+            <!-- deposit form moved to Add Money screen -->
+            <button onclick="payBack()" class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 font-semibold rounded-xl transition-all text-xs cursor-pointer">
+                ⬅ Back
+            </button>
+        </main>
+
+        <!-- SCREEN: ADD MONEY / TOPUP (transaction screen, game flow theke alada) -->
+        <main id="screenTopup" class="screen space-y-4 hidden fit-scroll">
+            <section class="relative overflow-hidden rounded-2xl p-4 text-white border border-emerald-700/40" style="background: radial-gradient(130% 170% at 85% -20%, #065f46 0%, #064e3b 55%, #022c22 100%); box-shadow: 0 14px 30px -16px rgba(2,44,34,.6);">
+                <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-300 relative z-10">Wallet Transaction</p>
+                <h2 class="text-lg font-extrabold tracking-tight mt-0.5 relative z-10">Add Money</h2>
+                <span class="inline-flex items-center gap-1.5 mt-2 text-[11px] font-bold text-emerald-100 bg-white/10 border border-white/20 px-3 py-1 rounded-full relative z-10">Minimum deposit 20 BDT</span>
+                <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full" style="background: radial-gradient(circle, rgba(52,211,153,.4), transparent 70%);"></div>
+                <div class="absolute -left-10 -bottom-12 w-32 h-32 rounded-full" style="background: radial-gradient(circle, rgba(45,212,191,.25), transparent 70%);"></div>
+            </section>
+
             <div class="space-y-2.5">
                 <div class="p-3.5 bg-white border border-slate-200/80 rounded-2xl shadow-2xs flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -418,33 +437,32 @@
                 </div>
             </div>
 
-            <!-- Form -->
             <div class="space-y-3.5 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1.5">Deposit Amount (min 20 BDT)</label>
-                    <input type="number" id="topupAmount" min="20" value="20" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-amber-500">
+                    <input type="number" id="topupAmount" min="20" value="20" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1.5">Select Payment Method</label>
-                    <input type="hidden" id="payMethod" value="bKash">
-                    <div class="relative" id="payMethodWrap">
-                        <button type="button" id="payMethodBtn" onclick="togglePayMenu(event)" class="w-full flex items-center gap-2.5 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-amber-500 transition-all cursor-pointer">
-                            <img id="payMethodLogo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdjxXCpOG7jJdpeVHm9R_xCZ6hrcRr23H-Y99mIloKRA&s=10" class="w-7 h-7 rounded-lg object-contain bg-white border border-slate-100" alt="">
-                            <span id="payMethodName" class="flex-1 text-left">bKash</span>
+                    <input type="hidden" id="topMethod" value="bKash">
+                    <div class="relative" id="topMethodWrap">
+                        <button type="button" onclick="toggleMenu(event, 'topMenu')" class="w-full flex items-center gap-2.5 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500 transition-all cursor-pointer">
+                            <img id="topMethodLogo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdjxXCpOG7jJdpeVHm9R_xCZ6hrcRr23H-Y99mIloKRA&s=10" class="w-7 h-7 rounded-lg object-contain bg-white border border-slate-100" alt="">
+                            <span id="topMethodName" class="flex-1 text-left">bKash</span>
                             <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
                         </button>
-                        <div id="payMethodMenu" class="pay-menu hidden">
-                            <button type="button" onclick="setPayMethod('bKash')" data-val="bKash" class="pay-opt picked">
+                        <div id="topMenu" class="pay-menu hidden">
+                            <button type="button" onclick="setMethod('top', 'bKash')" data-val="bKash" class="pay-opt top-opt picked">
                                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdjxXCpOG7jJdpeVHm9R_xCZ6hrcRr23H-Y99mIloKRA&s=10" class="w-7 h-7 rounded-lg object-contain bg-white border border-slate-100" alt="">
                                 <span class="flex-1 text-left">bKash</span>
                                 <span class="pay-tick">✓</span>
                             </button>
-                            <button type="button" onclick="setPayMethod('Nagad')" data-val="Nagad" class="pay-opt">
+                            <button type="button" onclick="setMethod('top', 'Nagad')" data-val="Nagad" class="pay-opt top-opt">
                                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU9xlcZDT6VNZ0dLPxDpO6t-kCTbGa1om1cAuXVCNboA&s=10" class="w-7 h-7 rounded-lg object-contain bg-white border border-slate-100" alt="">
                                 <span class="flex-1 text-left">Nagad</span>
                                 <span class="pay-tick">✓</span>
                             </button>
-                            <button type="button" onclick="setPayMethod('Rocket')" data-val="Rocket" class="pay-opt">
+                            <button type="button" onclick="setMethod('top', 'Rocket')" data-val="Rocket" class="pay-opt top-opt">
                                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTP0eawh77HPEryf218TiXutIyR4EXTAJhbiWHg_ManMg&s=10" class="w-7 h-7 rounded-lg object-contain bg-white border border-slate-100" alt="">
                                 <span class="flex-1 text-left">Rocket</span>
                                 <span class="pay-tick">✓</span>
@@ -455,7 +473,7 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1.5">Transaction ID (TrxID)</label>
-                    <input type="text" id="trxId" placeholder="Enter TrxID after send money" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono uppercase font-semibold focus:outline-none focus:border-amber-500">
+                    <input type="text" id="trxId" placeholder="Enter TrxID after send money" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono uppercase font-semibold focus:outline-none focus:border-emerald-500">
                 </div>
 
                 <div class="pt-2">
@@ -463,7 +481,6 @@
                         Submit Deposit
                     </button>
                 </div>
-            </div>
             </div>
             <button onclick="payBack()" class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 font-semibold rounded-xl transition-all text-xs cursor-pointer">
                 ⬅ Back
@@ -536,7 +553,7 @@
                     <span class="text-[10px] font-bold text-slate-400 flex-shrink-0">MY UID (tap to copy)</span>
                     <span id="profileUid" class="text-[10px] font-mono font-bold text-slate-600 truncate">—</span>
                 </button>
-                <button onclick="enterTopup()" class="w-full mt-2 py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all text-xs cursor-pointer flex items-center justify-center gap-1.5">
+                <button onclick="enterTopup('profile')" class="w-full mt-2 py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all text-xs cursor-pointer flex items-center justify-center gap-1.5">
                     <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Top Up Wallet
                 </button>
                 <div class="grid grid-cols-2 gap-2 pt-2">
@@ -551,7 +568,7 @@
             <div id="historyList" class="space-y-2"></div>
         </main>
 
-        <footer id="appFooter" class="hidden text-center text-[11px] text-slate-400 flex-shrink-0">
+        <footer id="appFooter" class="text-center text-[11px] text-slate-400 flex-shrink-0">
             Powered by <span class="font-bold text-slate-600">VAREON Studio</span>
         </footer>
     </div>
@@ -620,24 +637,21 @@
         }
 
         function showScreen(id) {
-            ['screenLogin', 'screenGameSelect', 'screenPayment', 'screenSuccess', 'screenProfile'].forEach(s => {
+            ['screenLogin', 'screenGameSelect', 'screenPayment', 'screenTopup', 'screenSuccess', 'screenProfile'].forEach(s => {
                 const el = document.getElementById(s);
                 if (el) el.classList.toggle('hidden', s !== id);
             });
-            const logged = id !== 'screenLogin';
-            const h = document.getElementById('appHeader');
-            if (h) h.classList.toggle('hidden', !logged);
-            const f = document.getElementById('appFooter');
-            if (f) f.classList.toggle('hidden', !logged);
         }
 
         function goToProfile() {
-            if (window.ppfb && window.ppfb.openProfile) window.ppfb.openProfile();
+            if (!(window.ppfb && window.ppfb.user)) { toast('Please login first'); showScreen('screenLogin'); return; }
+            if (window.ppfb.openProfile) window.ppfb.openProfile();
             else toast('Loading, please wait...');
         }
 
         function goToPaymentScreen() {
             if (!selectedGame) return;
+            if (!(window.ppfb && window.ppfb.user)) { toast('Please login first'); showScreen('screenLogin'); return; }
             if (window.ppfb) window.ppfb.ev('begin_checkout', { game: selectedGame });
             window._payGame = selectedGame;
             const card = document.querySelector('.game-card.is-selected img.g-logo');
@@ -647,45 +661,25 @@
             if (window._payGameLogo) { pl.src = window._payGameLogo; pl.style.display = ''; }
             else { pl.style.display = 'none'; }
             if (window.ppfb && window.ppfb.refreshPay) window.ppfb.refreshPay();
-            window._topupOnly = false;
-            window._payReturn = 'home';
-            document.getElementById('payOrderCard').classList.remove('hidden');
-            document.getElementById('payTabs').classList.remove('hidden');
-            document.getElementById('paneWallet').classList.remove('hidden');
-            const _fee = (window.ppfb && window.ppfb.config && window.ppfb.config.fee) || 20;
-            switchPayTab((window.ppfb && window.ppfb.balance >= _fee) ? 'wallet' : 'addmoney');
             document.getElementById('screenPayment').scrollTop = 0;
             showScreen('screenPayment');
         }
 
-        function switchPayTab(tab) {
-            window._payTab = tab;
-            const w = tab === 'wallet';
-            const on = 'flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-extrabold bg-white text-slate-900 shadow-sm transition-all cursor-pointer';
-            const off = 'flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold text-slate-500 transition-all cursor-pointer';
-            const bW = document.getElementById('tabWallet');
-            const bA = document.getElementById('tabAddMoney');
-            if (bW) bW.className = w ? on : off;
-            if (bA) bA.className = w ? off : on;
-            document.getElementById('paneWallet').classList.toggle('hidden', !w);
-            document.getElementById('paneAddMoney').classList.toggle('hidden', w);
-        }
-
-        function enterTopup() {
-            window._topupOnly = true;
-            window._payReturn = 'profile';
-            document.getElementById('payOrderCard').classList.add('hidden');
-            document.getElementById('payTabs').classList.add('hidden');
-            document.getElementById('paneWallet').classList.add('hidden');
-            document.getElementById('paneAddMoney').classList.remove('hidden');
-            document.getElementById('screenPayment').scrollTop = 0;
-            showScreen('screenPayment');
+        function enterTopup(from) {
+            if (!(window.ppfb && window.ppfb.user)) { toast('Please login first'); showScreen('screenLogin'); return; }
+            window._topupReturn = from || 'payment';
+            document.getElementById('screenTopup').scrollTop = 0;
+            showScreen('screenTopup');
         }
 
         function payBack() {
-            if (window._payReturn === 'profile') {
-                if (window.ppfb && window.ppfb.openProfile) window.ppfb.openProfile();
-                else showScreen('screenProfile');
+            if (!document.getElementById('screenTopup').classList.contains('hidden')) {
+                if (window._topupReturn === 'profile') {
+                    if (window.ppfb && window.ppfb.openProfile) window.ppfb.openProfile();
+                    else showScreen('screenProfile');
+                } else {
+                    showScreen('screenPayment');
+                }
             } else {
                 showScreen('screenGameSelect');
             }
@@ -710,7 +704,7 @@
             const btn = document.getElementById('depositBtn');
             btn.disabled = true;
             try {
-                const method = document.getElementById('payMethod').value;
+                const method = document.getElementById('topMethod').value;
                 const r = await window.ppfb.saveDeposit({ method: method, amount: amount, trxId: trxId });
                 if (!r.ok) {
                     toast(r.error || 'Deposit failed, try again');
@@ -721,7 +715,7 @@
                     title: 'Deposit Submitted!',
                     msg: 'Admin approval er por balance add hobe. Then wallet diye pay koro.',
                     game: 'Wallet Top-up', logo: '', method: method,
-                    amount: amount + ' BDT', trx: trxId.toUpperCase()
+                    amount: amount, trx: trxId.toUpperCase()
                 });
                 document.getElementById('trxId').value = '';
             } finally {
@@ -744,10 +738,6 @@
         }
 
         function resetToHome() {
-            if (!(window.ppfb && window.ppfb.user)) {
-                showScreen('screenLogin');
-                return;
-            }
             showScreen('screenGameSelect');
 
             selectedGame = null;
@@ -781,22 +771,23 @@
             Rocket: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTP0eawh77HPEryf218TiXutIyR4EXTAJhbiWHg_ManMg&s=10'
         };
 
-        function togglePayMenu(e) {
-            e.stopPropagation();
-            document.getElementById('payMethodMenu').classList.toggle('hidden');
+        function toggleMenu(e, id) {
+            if (e) e.stopPropagation();
+            const m = document.getElementById(id);
+            if (m) m.classList.toggle('hidden');
         }
 
-        function setPayMethod(v) {
-            document.getElementById('payMethod').value = v;
-            document.getElementById('payMethodName').innerText = v;
-            document.getElementById('payMethodLogo').src = PAY_LOGOS[v];
-            document.querySelectorAll('.pay-opt').forEach(o => o.classList.toggle('picked', o.dataset.val === v));
-            document.getElementById('payMethodMenu').classList.add('hidden');
+        function setMethod(prefix, v) {
+            document.getElementById(prefix + 'Method').value = v;
+            document.getElementById(prefix + 'MethodName').innerText = v;
+            document.getElementById(prefix + 'MethodLogo').src = PAY_LOGOS[v];
+            document.querySelectorAll('.' + prefix + '-opt').forEach(o => o.classList.toggle('picked', o.dataset.val === v));
+            document.getElementById(prefix + 'Menu').classList.add('hidden');
         }
 
         document.addEventListener('click', (e) => {
-            const menu = document.getElementById('payMethodMenu');
-            const wrap = document.getElementById('payMethodWrap');
+            const menu = document.getElementById('topMenu');
+            const wrap = document.getElementById('topMethodWrap');
             if (menu && wrap && !menu.classList.contains('hidden') && !wrap.contains(e.target)) {
                 menu.classList.add('hidden');
             }
@@ -992,7 +983,7 @@
                     t.set(_doc(_col(db, 'orders')), { uid: u.uid, name: u.displayName || '', email: u.email || '', game: game, method: 'Wallet', trxId: trx, amount: fee, status: 'paid', createdAt: _ts() });
                 });
                 setBalanceUI((window.ppfb.balance || 0) - fee);
-                fillReceipt({ title: 'Payment Successful!', msg: 'Fee paid from wallet. Admin will complete your task soon.', game: game, logo: logo, method: 'Wallet', amount: fee + ' BDT', trx: trx });
+                fillReceipt({ title: 'Payment Successful!', msg: 'Fee paid from wallet. Admin will complete your task soon.', game: game, logo: logo, method: 'Wallet', amount: fee, trx: trx });
                 if (window.ppfb.ev) window.ppfb.ev('wallet_pay', { game: game });
             } catch (e) {
                 console.warn(e);
@@ -1076,13 +1067,17 @@
                 if (u) {
                     window.ppfb.user = u;
                     try { await ensureUser(u); } catch (e) { console.warn(e); }
+                    const gb = document.getElementById('ghostBanner');
+                    if (gb) gb.classList.add('hidden');
                     showScreen('screenGameSelect');
                     if (window.ppfb.ev) window.ppfb.ev('login');
                 } else {
                     window.ppfb.user = null;
                     if (unsubBalance) { unsubBalance(); unsubBalance = null; }
                     setBalanceUI(0);
-                    showScreen('screenLogin');
+                    const gb2 = document.getElementById('ghostBanner');
+                    if (gb2) gb2.classList.remove('hidden');
+                    showScreen('screenGameSelect');
                 }
             });
         }
