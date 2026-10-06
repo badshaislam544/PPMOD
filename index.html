@@ -486,30 +486,12 @@
             <div class="space-y-3.5 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label class="text-xs font-bold text-slate-700">Select PP Coins (1 Coin = 7 BDT)</label>
-                        <span class="text-[10px] font-extrabold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">Rate: 7৳/Coin</span>
+                        <label id="coinRateLabel" class="text-xs font-bold text-slate-700">Select PP Coins (1 Coin = 7 BDT)</label>
+                        <span id="coinRateBadge" class="text-[10px] font-extrabold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">Rate: 7৳/Coin</span>
                     </div>
 
                     <!-- Preset Coin Boxes -->
-                    <div class="grid grid-cols-3 gap-2 mb-2.5">
-                        <button type="button" onclick="setCoinPack(3)" class="coin-pack-btn p-2.5 bg-slate-50 hover:bg-amber-50 active:scale-95 border-2 border-slate-200 hover:border-amber-400 rounded-xl text-center transition-all cursor-pointer">
-                            <div class="flex items-center justify-center gap-1 font-extrabold text-xs text-slate-800">
-                                <img src="PPCOIN.png" class="w-4 h-4 object-contain"> 3 Coins
-                            </div>
-                            <p class="text-[10px] font-bold text-emerald-600 mt-0.5">21 BDT</p>
-                        </button>
-                        <button type="button" onclick="setCoinPack(15)" class="coin-pack-btn p-2.5 bg-slate-50 hover:bg-amber-50 active:scale-95 border-2 border-slate-200 hover:border-amber-400 rounded-xl text-center transition-all cursor-pointer">
-                            <div class="flex items-center justify-center gap-1 font-extrabold text-xs text-slate-800">
-                                <img src="PPCOIN.png" class="w-4 h-4 object-contain"> 15 Coins
-                            </div>
-                            <p class="text-[10px] font-bold text-emerald-600 mt-0.5">105 BDT</p>
-                        </button>
-                        <button type="button" onclick="setCoinPack(30)" class="coin-pack-btn p-2.5 bg-slate-50 hover:bg-amber-50 active:scale-95 border-2 border-slate-200 hover:border-amber-400 rounded-xl text-center transition-all cursor-pointer">
-                            <div class="flex items-center justify-center gap-1 font-extrabold text-xs text-slate-800">
-                                <img src="PPCOIN.png" class="w-4 h-4 object-contain"> 30 Coins
-                            </div>
-                            <p class="text-[10px] font-bold text-emerald-600 mt-0.5">210 BDT</p>
-                        </button>
+                    <div id="coinPackGrid" class="grid grid-cols-3 gap-2 mb-2.5">
                     </div>
 
                     <!-- Manual Coin & Amount Inputs -->
@@ -568,7 +550,7 @@
                         Telegram Stars Payment Instructions:
                     </p>
                     <p class="text-[11px] text-amber-800 leading-snug font-medium">
-                        <span class="font-extrabold text-amber-950 font-mono">@Blackmoney54</span> এ Stars সেন্ড/গিফট করে আপনার প্রোফাইল লিংক ও সেন্ড করার স্ক্রিনশট পাঠিয়ে দিন। নিচের বক্সে আপনার নিজের টেলিগ্রাম ইউজারনেমটি লিখুন।
+                        <span id="starAdminName" class="font-extrabold text-amber-950 font-mono">@Blackmoney54</span> এ Stars সেন্ড/গিফট করে আপনার প্রোফাইল লিংক ও সেন্ড করার স্ক্রিনশট পাঠিয়ে দিন। নিচের বক্সে আপনার নিজের টেলিগ্রাম ইউজারনেমটি লিখুন।
                     </p>
                 </div>
 
@@ -986,7 +968,45 @@
         function getCoinRate() {
             return Number(window.ppfb && window.ppfb.config && window.ppfb.config.coinRate) || 7;
         }
-        const STARS_PER_COIN = 6; // 3 Coins = 18 Stars
+        function getStarRate() {
+            const c = window.ppfb && window.ppfb.config;
+            if (c && c.starPack3) return Number(c.starPack3) / 3;
+            return Number(c && c.starRate) || 6;
+        }
+        function getStarAdmin() {
+            const c = window.ppfb && window.ppfb.config;
+            const v = ((c && (c.starAdmin || c.tgStars)) || '@Blackmoney54').toString().trim();
+            return v || '@Blackmoney54';
+        }
+        function starsEnabled() {
+            const c = window.ppfb && window.ppfb.config;
+            return !c || c.starsEnabled !== false;
+        }
+        function snapStars(v) {
+            v = Math.max(1, Math.floor(Number(v) || 0));
+            if (isStarsPayment()) v = Math.max(3, Math.round(v / 3) * 3);
+            return v;
+        }
+        function refreshPackLabels() {
+            const stars = isStarsPayment();
+            const r = stars ? getStarRate() : getCoinRate();
+            const unit = stars ? ' Stars' : ' BDT';
+            const packs = stars ? [3, 6, 9, 12] : [3, 15, 30];
+            const g = document.getElementById('coinPackGrid');
+            if (g) {
+                g.className = 'grid gap-2 mb-2.5 ' + (stars ? 'grid-cols-4' : 'grid-cols-3');
+                g.innerHTML = packs.map(c =>
+                    '<button type="button" onclick="setCoinPack(' + c + ')" class="coin-pack-btn p-2.5 bg-slate-50 hover:bg-amber-50 active:scale-95 border-2 border-slate-200 hover:border-amber-400 rounded-xl text-center transition-all cursor-pointer">'
+                    + '<div class="flex items-center justify-center gap-1 font-extrabold text-xs text-slate-800"><img src="PPCOIN.png" class="w-4 h-4 object-contain"> ' + c + ' Coins</div>'
+                    + '<p class="text-[10px] font-bold text-emerald-600 mt-0.5">' + Math.round(c * r) + unit + '</p></button>'
+                ).join('');
+            }
+            const lbl = document.getElementById('coinRateLabel');
+            if (lbl) lbl.textContent = stars ? 'Select PP Coins (3 Coins = ' + Math.round(3 * r) + ' Stars)' : 'Select PP Coins (1 Coin = ' + r + ' BDT)';
+            const bdg = document.getElementById('coinRateBadge');
+            if (bdg) bdg.textContent = stars ? ('Rate: ' + Math.round(3 * r) + '⭐ / 3 Coins') : ('Rate: ' + r + '৳/Coin');
+            if (window.lucide) lucide.createIcons();
+        }
 
         function isStarsPayment() {
             const el = document.getElementById('topMethod');
@@ -994,29 +1014,29 @@
         }
 
         function setCoinPack(coins) {
-            const c = Math.max(1, Math.floor(Number(coins) || 3));
+            const c = snapStars(coins) || 3;
             const coinEl = document.getElementById('topupCoins');
             const amtEl = document.getElementById('topupAmount');
             const rate = getCoinRate();
             if (coinEl) coinEl.value = c;
             if (amtEl) {
-                amtEl.value = isStarsPayment() ? (c * STARS_PER_COIN) : (c * rate);
+                amtEl.value = isStarsPayment() ? (c * getStarRate()) : (c * rate);
             }
         }
 
         function onCoinInput(val) {
-            const coins = Math.max(0, Math.floor(Number(val) || 0));
+            const coins = snapStars(val);
             const amtEl = document.getElementById('topupAmount');
             const rate = getCoinRate();
             if (amtEl) {
-                amtEl.value = isStarsPayment() ? (coins * STARS_PER_COIN) : (coins * rate);
+                amtEl.value = isStarsPayment() ? (coins * getStarRate()) : (coins * rate);
             }
         }
 
         function onAmountInput(val) {
             const amt = Math.max(0, Math.floor(Number(val) || 0));
             const coinEl = document.getElementById('topupCoins');
-            const rate = isStarsPayment() ? STARS_PER_COIN : getCoinRate();
+            const rate = isStarsPayment() ? getStarRate() : getCoinRate();
             if (coinEl) coinEl.value = Math.floor(amt / rate);
         }
 
@@ -1024,9 +1044,9 @@
             const amtEl = document.getElementById('topupAmount');
             const coinsEl = document.getElementById('topupCoins');
             const amount = Math.floor(Number(amtEl ? amtEl.value : 0));
-            const coins = Math.floor(Number(coinsEl ? coinsEl.value : 0)) || Math.floor(amount / COIN_RATE);
+            const coins = Math.floor(Number(coinsEl ? coinsEl.value : 0)) || Math.floor(amount / getCoinRate());
             if (!coins || coins < 3) {
-                toast('Minimum deposit is 3 Coins (21 BDT)');
+                toast('Minimum 3 Coins (' + (3 * getCoinRate()) + ' BDT / ' + (3 * getStarRate()) + ' Stars)');
                 return;
             }
             const trxId = document.getElementById('trxId').value.trim();
@@ -1054,7 +1074,7 @@
                 fillReceipt({
                     title: 'Deposit Submitted!',
                     msg: isStars
-                        ? '@Blackmoney54 e Stars sent er screenshot pathiye din. Verify kore ' + coins + ' PP Coins dewa hobe.'
+                        ? getStarAdmin() + ' e Stars sent er screenshot pathiye din. Verify kore ' + coins + ' PP Coins dewa hobe.'
                         : 'Admin approval er por ' + coins + ' PP Coins balance e add hobe.',
                     game: coins + ' PP Coins Top-up', logo: 'PPCOIN.png', method: method,
                     amount: amount + (isStars ? ' Stars (' : ' BDT (') + coins + ' Coins)',
@@ -1140,7 +1160,7 @@
                     accPass: pass,
                     userTgId: tgId,
                     adminMsg: 'এডমিন আপনার কাজটি প্রসেস করছে। প্রয়োজন হলে কোডের জন্য এখানে মেসেজ দেবে।',
-                    status: 'paid'
+                    status: 'pending'
                 }, { merge: true });
 
                 // Send instant notification to Admin via Telegram Bot
@@ -1163,7 +1183,7 @@
                     method: 'PP Coins',
                     amount: '3 Coins',
                     trx: orderId,
-                    status: 'paid'
+                    status: 'pending'
                 });
                 trackLiveOrder(orderId);
             } catch (e) {
@@ -1291,6 +1311,7 @@
             // Sync current amount representation
             const cEl = document.getElementById('topupCoins');
             if (cEl) onCoinInput(cEl.value);
+            if (window.refreshPackLabels) refreshPackLabels();
         }
 
         document.addEventListener('click', (e) => {
@@ -1316,7 +1337,7 @@
             measurementId: "G-CN9LJ502BL"
         };
 
-        const DEFAULTS = { fee: 20, minDeposit: 20, bkash: '01647712206', nagad: '01647712206', rocket: '01647712206', admin: 'https://t.me/Blackmoney54', support: 'https://t.me/Blackmoney54', notice: '', maintenance: false, maintMsg: 'App ti maintenance e ache. Ektokhon porer janabo.' };
+        const DEFAULTS = { fee: 20, minDeposit: 20, coinRate: 7, starRate: 6, starPack3: 18, starsEnabled: true, starAdmin: '@Blackmoney54', bkash: '01647712206', nagad: '01647712206', rocket: '01647712206', admin: 'https://t.me/Blackmoney54', support: 'https://t.me/Blackmoney54', notice: '', maintenance: false, maintMsg: 'App ti maintenance e ache. Ektokhon porer janabo.' };
 
         window.ppfb = {
             config: { ...DEFAULTS },
@@ -1375,14 +1396,19 @@
             const cfg = { ...DEFAULTS, ...c };
             cfg.fee = Number(cfg.fee) || 3;
             cfg.coinRate = Number(cfg.coinRate) || 7;
+            cfg.starRate = Number(cfg.starRate) || 6;
+            if (cfg.starsEnabled === false || cfg.starsEnabled === 'false' || cfg.starsEnabled === 0) cfg.starsEnabled = false;
+            else cfg.starsEnabled = true;
+            cfg.starAdmin = (cfg.starAdmin || '@Blackmoney54').toString().trim() || '@Blackmoney54';
             window.ppfb.config = cfg;
             document.querySelectorAll('[data-fee]').forEach(el => { el.textContent = cfg.fee; });
-            const pack1 = document.querySelector('.coin-pack-btn:nth-child(1) p');
-            const pack2 = document.querySelector('.coin-pack-btn:nth-child(2) p');
-            const pack3 = document.querySelector('.coin-pack-btn:nth-child(3) p');
-            if (pack1) pack1.textContent = (3 * cfg.coinRate) + ' BDT';
-            if (pack2) pack2.textContent = (15 * cfg.coinRate) + ' BDT';
-            if (pack3) pack3.textContent = (3 * cfg.coinRate) + ' BDT';
+            if (window.refreshPackLabels) refreshPackLabels();
+            document.querySelectorAll('.top-opt').forEach(o => {
+                if (o.dataset.val === 'Telegram Stars') o.style.display = cfg.starsEnabled ? '' : 'none';
+            });
+            if (!cfg.starsEnabled && window.isStarsPayment && isStarsPayment() && window.setMethod) setMethod('top', 'bKash');
+            const sn = document.getElementById('starAdminName');
+            if (sn) sn.textContent = cfg.starAdmin;
             { const nums = { bkash: cfg.bkash, nagad: cfg.nagad, rocket: cfg.rocket };
               Object.keys(nums).forEach(k => {
                 const val = (nums[k] || '').toString().trim() || DEFAULTS[k];
@@ -1644,7 +1670,7 @@
                     t.update(uref, { balance: bal - feeCoins });
                 });
 
-                // Step B: Create paid order
+                // Step B: Create pending order (admin completes after credentials)
                 let ordId = 'ORD-' + Date.now();
                 try {
                     const ordRef = await _addDoc(_col(db, 'orders'), {
@@ -1656,7 +1682,7 @@
                         method: 'PP Coins',
                         trxId: trx,
                         amount: feeCoins,
-                        status: 'paid',
+                        status: 'pending',
                         createdAt: _ts()
                     });
                     ordId = ordRef.id;
@@ -1886,6 +1912,8 @@
                 ];
                 const ms = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : (x.createdAt ? new Date(x.createdAt).getTime() : 0));
                 items.sort((a, b) => ms(b) - ms(a));
+                window._histItems = {};
+                items.forEach(it => { if (it.id) window._histItems[it.id] = it; });
                 if (!items.length) { list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">No orders found</p>'; return; }
                 list.innerHTML = items.map(it => {
                     let title = 'Wallet Top-up';
@@ -1904,22 +1932,32 @@
         };
 
         window.openOrderReceipt = async (orderId) => {
-            try {
-                const s = await _getDoc(_doc(db, 'orders', orderId));
-                if (!s.exists()) return;
-                const ord = s.data();
-                fillReceipt({
-                    title: ord.status === 'completed' ? 'Task Completed' : (ord.status === 'rejected' ? 'Task Cancelled' : 'Task In Progress'),
-                    msg: ord.status === 'completed' ? 'আপনার কাজটি সফলভাবে সম্পন্ন হয়েছিল।' : 'এডমিন অর্ডারটি প্রসেস করছে।',
-                    game: ord.game || 'Task',
-                    logo: ord.logo,
-                    method: ord.method || 'PP Coins',
-                    amount: (ord.amount || 3) + ' Coins',
-                    trx: ord.trxId || orderId,
-                    status: ord.status
-                });
-                trackLiveOrder(orderId);
-            } catch (e) { toast('Order load failed'); }
+            let ord = (window._histItems && window._histItems[orderId]) || null;
+            if (!ord) {
+                try {
+                    const s = await _getDoc(_doc(db, 'orders', orderId));
+                    if (!s.exists()) { toast('Order not found'); return; }
+                    ord = { id: orderId, ...s.data() };
+                } catch (e) { toast('Order load failed'); return; }
+            }
+            if (!ord.accEmail && (ord.status === 'pending' || ord.status === 'paid')) {
+                window._currentOrderId = orderId;
+                window._payGame = ord.game || window._payGame;
+                window._payGameLogo = ord.logo || window._payGameLogo || '';
+                openCredentialScreen(ord.game, window._payGameLogo);
+                return;
+            }
+            fillReceipt({
+                title: ord.status === 'completed' ? 'Task Completed' : (ord.status === 'rejected' ? 'Task Cancelled' : 'Task In Progress'),
+                msg: ord.status === 'completed' ? 'আপনার কাজটি সফলভাবে সম্পন্ন হয়েছিল।' : 'এডমিন অর্ডারটি প্রসেস করছে।',
+                game: ord.game || 'Task',
+                logo: ord.logo,
+                method: ord.method || 'PP Coins',
+                amount: (ord.amount || 3) + ' Coins',
+                trx: ord.trxId || orderId,
+                status: ord.status
+            });
+            trackLiveOrder(orderId);
         };
 
         function msOf(x) { return (x && x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : 0); }
