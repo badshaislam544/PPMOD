@@ -76,8 +76,7 @@
         #startBtn:disabled { background: #e2e8f0; color: #94a3b8; box-shadow: none; cursor: not-allowed; }
 
         /* Steps */
-        .steps { display: flex; align-items: center; gap: 6px; }
-        .step { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; color: #94a3b8;
+        .steps { display: flex; align-items: center; gap: 6px; }        .step { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; color: #94a3b8;
             text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; }
         .step .n { width: 18px; height: 18px; border-radius: 9999px; display: flex; align-items: center;
             justify-content: center; font-size: 10px; background: #e2e8f0; color: #64748b; }
@@ -107,7 +106,8 @@
         .fit-home { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: .65rem; }
         .fit-scroll { flex: 1; min-height: 0; overflow-y: auto; padding-bottom: .25rem; }
         .fit-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0,1fr));
-            grid-template-rows: repeat(8, minmax(46px, 1fr)); gap: 8px; overflow-y: auto; padding: 2px; }
+            grid-auto-rows: minmax(54px, auto); gap: 8px; overflow-y: auto; padding: 2px; align-content: start; }
+        #gameGrid .game-card > span:last-child { flex-shrink: 0; white-space: nowrap; }
         .cta-bar { padding: 2px 2px 0; background: none; }
 
         /* Custom payment dropdown */
@@ -196,6 +196,43 @@
             text-align: center; box-shadow: 0 24px 60px -12px rgba(0,0,0,.4);
             animation: popIn .3s cubic-bezier(.34,1.56,.64,1) both; }
         @keyframes popIn { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+
+        /* 3D success tick (no external files) */
+        .tick3d { width: 84px; height: 84px; border-radius: 9999px; margin: 0 auto; position: relative;
+            display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 900; color: #fff;
+            background: linear-gradient(135deg, #34d399, #059669);
+            box-shadow: 0 14px 30px -10px rgba(16,185,129,.65), inset 0 -5px 10px rgba(0,0,0,.18), inset 0 4px 8px rgba(255,255,255,.35);
+            animation: tickPop .55s cubic-bezier(.34,1.56,.64,1) both; }
+        .tick3d::after { content: ""; position: absolute; inset: -8px; border-radius: 9999px;
+            border: 3px solid rgba(16,185,129,.45); animation: tickRing 1.6s ease-out infinite; }
+        @keyframes tickPop { 0% { transform: scale(.3) rotateY(90deg); opacity: 0; }
+            60% { transform: scale(1.08) rotateY(0deg); opacity: 1; } 100% { transform: scale(1); } }
+        @keyframes tickRing { 0% { transform: scale(.85); opacity: 1; } 100% { transform: scale(1.25); opacity: 0; } }
+        .tick3d span { display: inline-block; animation: tickDraw .35s .3s both; text-shadow: 0 2px 4px rgba(0,0,0,.25); }
+        @keyframes tickDraw { from { transform: scale(0); } to { transform: scale(1); } }
+        /* Pending pulse rings */
+        .pendPulse { width: 72px; height: 72px; border-radius: 9999px; margin: 0 auto; position: relative;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #fbbf24, #f97316);
+            box-shadow: 0 12px 26px -10px rgba(249,115,22,.6), inset 0 -4px 8px rgba(0,0,0,.15), inset 0 3px 6px rgba(255,255,255,.35);
+            font-size: 30px; font-weight: 900; color: #fff; }
+        .pendPulse::after { content: ""; position: absolute; inset: -7px; border-radius: 9999px;
+            border: 3px solid rgba(249,115,22,.5); animation: tickRing 1.4s ease-out infinite; }
+        .pendPulse span { animation: pendBounce 1.2s ease-in-out infinite; display: inline-block; }
+        @keyframes pendBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+        /* Small-screen safety: fit every screen, wrap long text instead of breaking layout */
+        .screen { overflow-x: hidden; min-width: 0; }
+        .screen p, .screen span, .pop-card p, .toast { overflow-wrap: anywhere; }
+        .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        input, textarea, select, button { min-width: 0; }
+        @media (max-width: 380px) {
+            .step { font-size: 9px; letter-spacing: .02em; gap: 3px; }
+            .steps { gap: 4px; }
+            .hero-title2 { font-size: 15px; }
+            .g-name { font-size: 11px; }
+            .app-header { padding-left: .65rem; padding-right: .65rem; }
+        }
     </style>
 </head>
 <body class="app-body bg-slate-100 text-slate-800 selection:bg-amber-500 selection:text-white">
@@ -214,23 +251,24 @@
         <header id="appHeader" class="app-header flex items-center justify-between gap-2 bg-white/95 backdrop-blur px-3.5 py-3 rounded-[1.4rem] border border-slate-200/80 shadow-[0_14px_28px_-14px_rgba(15,23,42,.35)]">
             <div class="flex items-center gap-2 min-w-0 flex-1">
                 <div class="logo-tile">
-                    <img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-6 h-6 object-contain" alt="PP MOD">
+                    <img src="https://i.logos-download.com/101056/33083-s2560-a061b8868652552e6d7a5ad796ea5ac9.png/Google_Play_Points_Logo_2019-s2560.png" class="w-6 h-6 object-contain" alt="PP MOD" onerror="this.onerror=null;this.src='https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png'">
                     <span class="live-dot"></span>
                 </div>
-                <div class="min-w-0 flex-1">
-                    <h1 class="text-[15px] font-extrabold text-slate-900 tracking-tight leading-tight"><span class="brand-text">PP MOD</span><span class="ver-badge">PRO</span></h1>
-                    <button onclick="goToProfile()" class="flex items-center gap-1 text-[10px] font-bold text-slate-500 hover:text-amber-600 transition-colors cursor-pointer">
-                        <img src="PPCOIN.png" class="w-3.5 h-3.5 object-contain" alt="Coin"> <span id="balanceAmt">0 Coins</span>
-                    </button>
+                <div class="min-w-0 flex-1 leading-tight">
+                    <h1 class="text-[17px] font-extrabold text-slate-900 tracking-tight truncate"><span class="brand-text">PP MOD</span><span class="ver-badge">PRO</span></h1>
+                    <p class="text-[8px] font-semibold text-slate-400 tracking-wide truncate">© VAREON Studio</p>
                 </div>
             </div>
-            <button onclick="resetToHome()" title="Home" aria-label="Home" class="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-slate-900 hover:bg-slate-700 active:scale-95 rounded-xl text-white transition-all cursor-pointer shadow-md">
-                <i data-lucide="home" class="w-3.5 h-3.5"></i>
-            </button>
-            <button onclick="goToProfile()" title="Profile" aria-label="Profile" class="w-8 h-8 flex-shrink-0 rounded-full bg-slate-200 border border-slate-300 overflow-hidden relative flex items-center justify-center cursor-pointer">
-                <span id="avatarFallback" class="text-xs font-extrabold text-slate-500">?</span>
-                <img id="avatarImg" class="hidden absolute inset-0 w-full h-full object-cover" alt="">
-            </button>
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button onclick="enterTopup('coin')" title="Open Wallet" class="flex items-center gap-1.5 pl-1.5 pr-2 py-1 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 active:scale-95 border border-amber-200/70 rounded-full transition-all cursor-pointer shadow-sm">
+                    <img src="PPCOIN.png" class="w-4 h-4 object-contain flex-shrink-0" alt="Coin">
+                    <span id="balanceAmt" class="text-[11px] font-extrabold text-amber-700 whitespace-nowrap">0 Coins</span>
+                </button>
+                <button onclick="goToProfile()" title="Profile" aria-label="Profile" class="w-8 h-8 rounded-full bg-slate-200 border border-slate-300 overflow-hidden relative flex items-center justify-center cursor-pointer">
+                    <span id="avatarFallback" class="text-xs font-extrabold text-slate-500">?</span>
+                    <img id="avatarImg" class="hidden absolute inset-0 w-full h-full object-cover" alt="">
+                </button>
+            </div>
         </header>
 
         <!-- SCREEN 0: LOGIN (Google only) -->
@@ -372,10 +410,10 @@
                 </button>
             </div>
 
-            <!-- Sticky CTA -->
-            <div class="cta-bar">
-                <button id="startBtn" disabled onclick="goToPaymentScreen()" class="w-full flex items-center justify-center gap-2 py-4 px-4 text-white font-extrabold rounded-2xl transition-all text-sm cursor-pointer">
-                    <i data-lucide="rocket" class="w-4 h-4"></i> <span id="startBtnLabel">Select a game to continue</span>
+            <!-- Sticky CTA (only after a game is selected) -->
+            <div class="cta-bar hidden" id="ctaBar">
+                <button id="startBtn" onclick="goToPaymentScreen()" class="w-full flex items-center justify-center gap-2 py-4 px-4 text-white font-extrabold rounded-2xl transition-all text-sm cursor-pointer">
+                    <i data-lucide="rocket" class="w-4 h-4"></i> <span id="startBtnLabel">Proceed with Selection</span>
                 </button>
             </div>
         </main>
@@ -431,8 +469,14 @@
         <main id="screenTopup" class="screen space-y-4 hidden fit-scroll">
             <section class="relative overflow-hidden rounded-2xl p-4 text-white border border-emerald-700/40" style="background: radial-gradient(130% 170% at 85% -20%, #065f46 0%, #064e3b 55%, #022c22 100%); box-shadow: 0 14px 30px -16px rgba(2,44,34,.6);">
                 <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-300 relative z-10">Wallet Transaction</p>
-                <h2 class="text-lg font-extrabold tracking-tight mt-0.5 relative z-10">Add Money</h2>
-                <span class="inline-flex items-center gap-1.5 mt-2 text-[11px] font-bold text-emerald-100 bg-white/10 border border-white/20 px-3 py-1 rounded-full relative z-10">Minimum deposit 20 BDT</span>
+                <div class="flex items-end justify-between gap-2 relative z-10">
+                    <h2 class="text-lg font-extrabold tracking-tight mt-0.5">Add Money</h2>
+                    <div class="text-right flex-shrink-0">
+                        <p class="text-[9px] font-bold uppercase tracking-widest text-emerald-300">Your Balance</p>
+                        <p id="topupBalance" class="text-base font-extrabold text-amber-300 flex items-center justify-end gap-1"><img src="PPCOIN.png" class="w-4 h-4 object-contain"> 0 Coins</p>
+                    </div>
+                </div>
+                <span class="inline-flex items-center gap-1.5 mt-2 text-[11px] font-bold text-emerald-100 bg-white/10 border border-white/20 px-3 py-1 rounded-full relative z-10">Minimum buy 3 Coins</span>
                 <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full" style="background: radial-gradient(circle, rgba(52,211,153,.4), transparent 70%);"></div>
                 <div class="absolute -left-10 -bottom-12 w-32 h-32 rounded-full" style="background: radial-gradient(circle, rgba(45,212,191,.25), transparent 70%);"></div>
             </section>
@@ -611,17 +655,21 @@
                     <input type="text" id="accPass" placeholder="Password দিন" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-amber-500">
                 </div>
                 <div>
-                    <div class="flex items-center justify-between mb-1">
-                        <label class="text-xs font-bold text-slate-700">Your Telegram Chat ID (নোটিফিকেশনের জন্য)</label>
-                        <a href="https://t.me/Ppmod_bot" target="_blank" class="text-[10px] font-extrabold text-indigo-600 hover:underline flex items-center gap-0.5">
-                            <i data-lucide="bot" class="w-3 h-3"></i> @Ppmod_bot থেকে জানুন
+                <div id="tgRowWrap">
+                    <div class="flex items-center justify-between flex-wrap gap-1 mb-1">
+                        <label class="text-xs font-bold text-slate-700">Your Telegram Chat ID <span class="text-slate-400 font-semibold">(optional)</span></label>
+                        <a id="idBotLink" href="https://t.me/userinfobot" target="_blank" class="text-[10px] font-extrabold text-indigo-600 hover:underline flex items-center gap-0.5">
+                            <i data-lucide="bot" class="w-3 h-3"></i> <span id="idBotName">find chat id</span>
                         </a>
                     </div>
                     <input type="text" id="accTgId" placeholder="e.g. 123456789 বা @username" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-amber-500">
+                    <p class="text-[10px] text-slate-500 font-semibold mt-1.5 leading-snug">🔔 অর্ডার আপডেট পেতে <a id="notifyBotLink" href="https://t.me/Ppmod_bot" target="_blank" class="text-indigo-600 font-extrabold hover:underline"><span id="notifyBotName">@Ppmod_bot</span></a> বটটি Start করে রাখুন।</p>
+                </div>
+                <p id="tgConnectedLine" class="hidden text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">✓ Telegram Connected: <span id="tgConnectedId" class="font-mono"></span> <span class="text-slate-500 font-semibold">(বদলাতে Profile › Connect Telegram)</span></p>
                 </div>
 
                 <button id="submitCredBtn" onclick="submitOrderCredentials()" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold rounded-xl shadow-md transition-all text-sm cursor-pointer flex items-center justify-center gap-2 active:scale-98">
-                    <i data-lucide="send" class="w-4 h-4"></i> Submit to Admin
+                    <i data-lucide="send" class="w-4 h-4"></i> Submit
                 </button>
             </div>
         </main>
@@ -635,17 +683,17 @@
                 <span class="step-line"></span>
                 <span class="step done"><span class="n">✓</span> Details</span>
                 <span class="step-line"></span>
-                <span class="step active"><span class="n">4</span> Status</span>
+                <span class="step active" id="stepStatus"><span class="n">4</span> Status</span>
             </div>
 
             <!-- Animated Status Icon Box -->
-            <div id="receiptStatusAnim" class="flex justify-center">
-                <lottie-player src="https://lottie.host/41d6fc95-7f61-416c-b296-53a5836c22c2/BgBmgewgEu.json" background="transparent" speed="1" style="width: 130px; height: 130px;" autoplay loop></lottie-player>
+            <div id="receiptStatusAnim" class="flex justify-center min-h-[84px] items-center">
+                <div class="pendPulse"><span>◷</span></div>
             </div>
 
             <div class="space-y-1">
                 <h2 id="successTitle" class="text-base font-extrabold text-slate-900">Task Processing</h2>
-                <p id="successMsg" class="text-xs text-slate-600 font-medium leading-relaxed">এডমিন আপনার কাজটি করছে। সম্পন্ন হলে নোটিফিকেশন পাবেন।</p>
+                <p id="successMsg" class="text-xs text-slate-600 font-medium leading-relaxed">সার্ভার আপনার কাজটি করছে। সম্পন্ন হলে নোটিফিকেশন পাবেন।</p>
             </div>
 
             <!-- Admin Live Message / 2FA Code Request Desk -->
@@ -653,13 +701,13 @@
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span class="text-xs font-black uppercase tracking-wider text-indigo-900">Admin Message Desk</span>
+                        <span class="text-xs font-black uppercase tracking-wider text-indigo-900">Server Message Desk</span>
                     </div>
                     <span class="text-[10px] font-extrabold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">Live</span>
                 </div>
                 <div class="p-3 bg-white/90 border border-indigo-100 rounded-xl">
                     <p id="adminLiveMsgText" class="text-xs font-bold text-slate-800 leading-relaxed whitespace-pre-wrap">
-                        অপেক্ষা করুন, এডমিন লগইন করছে। কোনো টু-স্টেপ কোড বা অনুমোদনের প্রয়োজন হলে এখানে মেসেজ দেওয়া হবে।
+                        অপেক্ষা করুন, সার্ভার প্রসেস করছে। কোনো টু-স্টেপ কোড বা অনুমোদনের প্রয়োজন হলে এখানে মেসেজ দেওয়া হবে।
                     </p>
                 </div>
             </div>
@@ -672,25 +720,20 @@
                         <span id="receiptGame" class="font-bold text-slate-800 truncate"></span>
                     </span>
                 </div>
-                <div class="flex justify-between text-xs border-b border-dashed border-slate-200 pb-2">
-                    <span class="text-slate-400 font-medium">Payment Method:</span>
-                    <span id="receiptMethod" class="font-bold text-slate-800"></span>
+                <div class="flex justify-between items-center gap-2 text-xs border-b border-dashed border-slate-200 pb-2">
+                    <span class="text-slate-400 font-medium flex-shrink-0">Payment Method:</span>
+                    <span id="receiptMethod" class="font-bold text-slate-800 truncate text-right"></span>
                 </div>
-                <div class="flex justify-between text-xs border-b border-dashed border-slate-200 pb-2">
-                    <span class="text-slate-400 font-medium">Amount:</span>
-                    <span class="text-base font-black text-amber-600"><span id="receiptAmount">20</span> BDT</span>
+                <div class="flex justify-between items-center gap-2 text-xs border-b border-dashed border-slate-200 pb-2">
+                    <span class="text-slate-400 font-medium flex-shrink-0">Amount:</span>
+                    <span class="text-base font-black text-amber-600 whitespace-nowrap"><span id="receiptAmount">—</span></span>
                 </div>
-                <div class="flex justify-between text-xs">
-                    <span class="text-slate-400 font-medium">TrxID:</span>
-                    <span id="receiptTrx" class="font-mono font-bold text-slate-800 uppercase"></span>
+                <div class="flex justify-between items-center gap-2 text-xs">
+                    <span class="text-slate-400 font-medium flex-shrink-0">TrxID:</span>
+                    <span id="receiptTrx" class="font-mono font-bold text-slate-800 uppercase break-all text-right"></span>
                 </div>
             </div>
 
-            <div class="pt-2">
-                <a id="adminLink" href="https://t.me/Blackmoney54" target="_blank" class="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl shadow-md transition-all text-sm active:scale-98">
-                    <i data-lucide="send" class="w-4 h-4"></i> Send Screenshot to Admin (@Blackmoney54)
-                </a>
-            </div>
             <div class="pt-1">
                 <button onclick="resetToHome()" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 font-bold rounded-xl transition-all text-xs cursor-pointer">
                     Back to Home
@@ -700,24 +743,49 @@
 
         <!-- SCREEN 4: PROFILE & ORDER TRACKING -->
         <main id="screenProfile" class="screen space-y-4 hidden fit-scroll">
-            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 text-center space-y-1">
-                <img id="profilePhoto" class="w-16 h-16 rounded-2xl object-cover mx-auto bg-slate-100 border border-slate-200" alt="">
-                <h2 id="profileName" class="text-base font-extrabold text-slate-900 pt-1">User</h2>
-                <p id="profileEmail" class="text-[11px] text-slate-400 font-medium"></p>
-                <div class="flex items-center justify-between bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl px-4 py-3 mt-3 shadow-md">
-                    <span class="text-[11px] font-bold text-slate-300 flex items-center gap-1.5"><img src="PPCOIN.png" class="w-5 h-5 object-contain"> PP Coins Balance</span>
-                    <span id="profileBalance" class="text-lg font-extrabold text-amber-400 flex items-center gap-1"><img src="PPCOIN.png" class="w-5 h-5 object-contain"> 0 Coins</span>
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                <div class="relative h-20 overflow-hidden" style="background:linear-gradient(120deg,#1e1b4b 0%,#6d28d9 55%,#b45309 135%)">
+                    <img src="https://i.logos-download.com/101056/33083-s2560-a061b8868652552e6d7a5ad796ea5ac9.png/Google_Play_Points_Logo_2019-s2560.png" alt="" loading="lazy" class="absolute right-2 top-1/2 -translate-y-1/2 w-20 h-20 object-contain opacity-30 blur-[1px]" onerror="this.style.display='none'">
+                    <div class="absolute -left-8 -bottom-14 w-36 h-36 rounded-full" style="background:radial-gradient(circle,rgba(251,191,36,.35),transparent 70%)"></div>
+                    <div class="absolute top-2 right-2.5 flex items-center gap-1.5">
+                        <a href="https://t.me/Blackmoney54" target="_blank" title="Support" class="w-6 h-6 rounded-full bg-white/15 border border-white/25 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 active:scale-90 transition-all cursor-pointer">
+                            <i data-lucide="life-buoy" class="w-3 h-3"></i>
+                        </a>
+                        <a href="https://t.me/googleplaypointhack" target="_blank" title="Telegram Channel" class="w-6 h-6 rounded-full bg-white/15 border border-white/25 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 active:scale-90 transition-all cursor-pointer">
+                            <span class="relative w-4 h-4 flex flex-shrink-0">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="TG" class="absolute inset-0 w-full h-full object-contain" onerror="this.remove()">
+                            </span>
+                        </a>
+                        <button onclick="window.ppfb&&ppfb.logout()" title="Logout" class="w-6 h-6 rounded-full bg-white/15 border border-white/25 backdrop-blur-sm flex items-center justify-center text-white hover:bg-rose-500/60 active:scale-90 transition-all cursor-pointer">
+                            <i data-lucide="log-out" class="w-3 h-3"></i>
+                        </button>
+                    </div>
                 </div>
-                <button onclick="copyNumber(document.getElementById('profileUid').innerText)" class="w-full mt-3 flex items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 cursor-pointer">
-                    <span class="text-[10px] font-bold text-slate-400 flex-shrink-0">MY UID (tap to copy)</span>
-                    <span id="profileUid" class="text-[10px] font-mono font-bold text-slate-600 truncate">—</span>
+                <div class="px-3.5 pb-3.5">
+                <div class="flex items-center gap-2.5">
+                <div class="flex-shrink-0">
+                <img id="profilePhoto" class="w-14 h-14 rounded-xl object-cover bg-slate-100 border-2 border-white shadow-md -mt-7 relative" alt="">
+                </div>
+                <div class="min-w-0 flex-1">
+                <h2 id="profileName" class="text-[15px] font-extrabold text-slate-900 truncate leading-tight">User</h2>
+                <p id="profileEmail" class="text-[10px] text-slate-400 font-medium truncate"></p>
+                </div>
+                </div>
+                <button onclick="copyNumber(document.getElementById('profileUid').innerText)" class="mt-2 w-full flex items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 cursor-pointer">
+                    <span class="text-[9px] font-extrabold text-slate-400 flex-shrink-0">MY UID (tap to copy)</span>
+                    <span class="flex items-center gap-1 min-w-0">
+                        <span id="profileUid" class="text-[10px] font-mono font-bold text-slate-600 truncate">—</span>
+                        <i data-lucide="copy" class="w-3 h-3 text-slate-400 flex-shrink-0"></i>
+                    </span>
                 </button>
-                <button onclick="enterTopup('profile')" class="w-full mt-2 py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all text-xs cursor-pointer flex items-center justify-center gap-1.5">
+                <div class="flex items-center justify-between bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl px-3 py-2 mt-2.5 shadow-md">
+                    <span class="text-[10px] font-bold text-slate-300 flex items-center gap-1"><img src="PPCOIN.png" class="w-4 h-4 object-contain"> Balance</span>
+                    <span id="profileBalance" class="text-sm font-extrabold text-amber-400 flex items-center gap-1"><img src="PPCOIN.png" class="w-4 h-4 object-contain"> 0 Coins</span>
+                </div>
+                <button onclick="enterTopup('profile')" class="w-full mt-2 py-2 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all text-xs cursor-pointer flex items-center justify-center gap-1.5">
                     <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Buy PP Coins
                 </button>
-                <div class="grid grid-cols-2 gap-2 pt-2">
-                    <button onclick="resetToHome()" class="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 font-bold rounded-xl transition-all text-xs cursor-pointer">Home</button>
-                    <button onclick="window.ppfb&&ppfb.logout()" class="py-2.5 px-4 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 font-bold rounded-xl transition-all text-xs cursor-pointer">Logout</button>
                 </div>
             </div>
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 space-y-2.5">
@@ -727,30 +795,90 @@
                     <button onclick="redeemGo()" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition-all cursor-pointer flex-shrink-0">Redeem</button>
                 </div>
             </div>
-            <div class="grid grid-cols-2 gap-2">
-                <a href="https://t.me/Blackmoney54" target="_blank" class="py-2.5 px-3 bg-violet-50 hover:bg-violet-100 border border-violet-200 text-violet-700 font-extrabold rounded-xl text-xs cursor-pointer flex items-center justify-center gap-1.5 transition-all">
-                    <i data-lucide="send" class="w-3.5 h-3.5"></i> Support
-                </a>
-                <a href="https://t.me/googleplaypointhack" target="_blank" class="py-2.5 px-3 bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-700 font-extrabold rounded-xl text-xs cursor-pointer flex items-center justify-center gap-1.5 transition-all">
-                    <i data-lucide="megaphone" class="w-3.5 h-3.5"></i> Channel
-                </a>
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 space-y-2">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Connect Telegram</p>
+                    <span id="tgConnBadge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full" style="background:#f1f5f9;color:#64748b">NOT CONNECTED</span>
+                </div>
+                <p class="text-[10px] text-slate-400 font-semibold leading-snug">একবার connect করলে order-এ বারবার Chat ID দিতে হবে না। পরে বদলানো যাবে।</p>
+                <div class="flex items-center justify-between gap-2 text-[10px] font-extrabold">
+                    <a id="connIdBotLink" href="https://t.me/userinfobot" target="_blank" class="text-indigo-600 hover:underline flex items-center gap-0.5">
+                        <i data-lucide="bot" class="w-3 h-3"></i> <span id="connIdBotName">find chat id</span>
+                    </a>
+                    <a id="connNotifyLink" href="https://t.me/Ppmod_bot" target="_blank" class="text-emerald-600 hover:underline flex items-center gap-0.5">
+                        <i data-lucide="bell-ring" class="w-3 h-3"></i> <span id="connNotifyName">@Ppmod_bot Start</span>
+                    </a>
+                </div>
+                <div class="flex gap-2">
+                    <input id="tgChatInput" inputmode="numeric" placeholder="Chat ID (e.g. 123456789)" class="flex-1 min-w-0 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-sky-500">
+                    <button id="tgConnBtn" onclick="saveTgChat()" class="px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl text-xs transition-all cursor-pointer flex-shrink-0">Connect</button>
+                </div>
             </div>
-            <div id="ticketList" class="space-y-2"></div>
             <div class="flex items-center justify-between px-1">
                 <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700">My Orders</span>
-                <button onclick="window.ppfb&&ppfb.openProfile()" class="text-[11px] font-bold text-amber-600 flex items-center gap-1 cursor-pointer"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Refresh</button>
+                <span class="flex items-center gap-2">
+                    <button onclick="viewAllHistory()" class="text-[11px] font-bold text-slate-700 underline underline-offset-2 cursor-pointer">View All</button>
+                    <button onclick="window.ppfb&&ppfb.openProfile()" class="text-[11px] font-bold text-amber-600 flex items-center gap-1 cursor-pointer"><i data-lucide="refresh-cw" class="w-3 h-3"></i> Refresh</button>
+                </span>
             </div>
-            <div id="historyList" class="space-y-2"></div>
+            <div id="historyList" class="space-y-2 max-h-[320px] overflow-y-auto pr-1"></div>
         </main>
 
-        <footer id="appFooter" class="text-center text-[11px] text-slate-400 flex-shrink-0">
-            Powered by <span class="font-bold text-slate-600">VAREON Studio</span>
-        </footer>
+        <!-- SCREEN: FULL HISTORY (View All, last 10 days) -->
+        <main id="screenHistory" class="screen space-y-3 hidden fit-scroll">
+            <div class="flex items-center gap-2">
+                <button onclick="showScreen('screenProfile')" class="w-9 h-9 flex-shrink-0 flex items-center justify-center bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 transition-all cursor-pointer">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </button>
+                <div class="min-w-0">
+                    <h2 class="text-sm font-extrabold text-slate-900">Full History <span id="histCount" class="text-[11px] font-bold text-slate-400"></span></h2>
+                    <p class="text-[10px] text-slate-400 font-semibold">Last 10 days only — older auto-deleted</p>
+                </div>
+            </div>
+            <div id="historyFullList" class="space-y-2"></div>
+        </main>
+
+        <!-- SCREEN: STORE (Coming Soon) -->
+        <main id="screenStore" class="screen hidden fit-scroll">
+            <div class="flex-1 flex items-center justify-center py-8">
+                <div class="w-full bg-white rounded-3xl border border-slate-200/80 shadow-sm p-8 text-center space-y-3">
+                    <div class="mx-auto w-16 h-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-violet-100 to-purple-100 border border-violet-200 shadow-md">
+                        <i data-lucide="shopping-bag" class="w-8 h-8 text-violet-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-extrabold text-slate-900 tracking-tight">Store</h2>
+                        <span class="inline-block mt-1.5 text-[10px] font-black uppercase tracking-widest text-white bg-violet-600 px-3 py-1 rounded-full">Coming Soon</span>
+                        <p class="text-[11px] font-semibold text-slate-400 mt-2 leading-relaxed">Exciting rewards &amp; gift items<br>are on the way. Stay tuned!</p>
+                    </div>
+                    <button onclick="resetToHome()" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-2xl transition-all text-xs cursor-pointer">Back to Home</button>
+                </div>
+            </div>
+        </main>
+
+        <nav id="bottomNav" class="flex-shrink-0 grid grid-cols-4 gap-1 bg-white/95 backdrop-blur px-3 py-2 rounded-[1.4rem] border border-slate-200/80 shadow-[0_14px_28px_-14px_rgba(15,23,42,.35)]">
+            <button data-navbtn="home" onclick="navGo('home')" class="flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-all cursor-pointer active:scale-95 text-amber-600">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span class="text-[10px] font-extrabold">Home</span>
+            </button>
+            <button data-navbtn="store" onclick="navGo('store')" class="relative flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-all cursor-pointer active:scale-95 text-slate-400 hover:text-slate-600">
+                <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                <span class="text-[10px] font-extrabold">Store</span>
+            </button>
+            <button data-navbtn="wallet" onclick="navGo('wallet')" class="flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-all cursor-pointer active:scale-95 text-slate-400 hover:text-slate-600">
+                <i data-lucide="wallet" class="w-5 h-5"></i>
+                <span class="text-[10px] font-extrabold">Wallet</span>
+            </button>
+            <button data-navbtn="profile" onclick="navGo('profile')" class="flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-all cursor-pointer active:scale-95 text-slate-400 hover:text-slate-600">
+                <i data-lucide="user" class="w-5 h-5"></i>
+                <span class="text-[10px] font-extrabold">Profile</span>
+            </button>
+        </nav>
     </div>
 
     <!-- Popup modal (admin notice, once per visit) -->
     <div id="popModal" class="pop-overlay" style="display:none">
         <div class="pop-card space-y-2">
+            <img id="popImg" class="hidden w-full h-32 object-cover rounded-xl" alt="" onerror="this.classList.add('hidden')">
             <div class="mx-auto w-12 h-12 rounded-2xl flex items-center justify-center bg-amber-100 border border-amber-200">
                 <i data-lucide="megaphone" class="w-5 h-5 text-amber-600"></i>
             </div>
@@ -763,6 +891,7 @@
     <!-- Broadcast popup (admin sent) -->
     <div id="bcModal" class="pop-overlay" style="display:none">
         <div class="pop-card space-y-2">
+            <img id="bcImg" class="hidden w-full h-32 object-cover rounded-xl" alt="" onerror="this.classList.add('hidden')">
             <div class="mx-auto w-12 h-12 rounded-2xl flex items-center justify-center bg-violet-100 border border-violet-200">
                 <i data-lucide="megaphone" class="w-5 h-5 text-violet-600"></i>
             </div>
@@ -782,7 +911,7 @@
             <p class="text-2xl font-black text-emerald-600">+<span id="redeemAmt">0</span> BDT</p>
             <p id="redeemCodeLine" class="text-[10px] font-mono font-bold text-slate-400"></p>
             <div id="redeemNoteBox" class="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5" style="display:none">
-                <p class="text-[9px] font-extrabold uppercase tracking-widest text-amber-600 text-left">Note from admin</p>
+                <p class="text-[9px] font-extrabold uppercase tracking-widest text-amber-600 text-left">Note</p>
                 <p id="redeemNote" class="text-xs text-slate-700 font-semibold leading-relaxed text-left whitespace-pre-wrap"></p>
             </div>
             <button onclick="closeRedeem()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-sm transition-all cursor-pointer">OK, Thanks!</button>
@@ -803,20 +932,6 @@
 
     <!-- Cash out removed (deposit only) -->
 
-    <!-- Support modal -->
-    <div id="spModal" class="pop-overlay" style="display:none">
-        <div class="pop-card space-y-3">
-            <div class="mx-auto w-12 h-12 rounded-2xl flex items-center justify-center bg-violet-100 border border-violet-200">
-                <i data-lucide="messages-square" class="w-5 h-5 text-violet-600"></i>
-            </div>
-            <h3 class="text-base font-extrabold text-slate-900 text-center">Send Problem</h3>
-            <input id="spSubject" placeholder="Topic (e.g: deposit hoyeche na)" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-violet-500">
-            <textarea id="spMsg" rows="3" placeholder="Details likhun..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:border-violet-500"></textarea>
-            <button onclick="submitTicket()" class="w-full py-3 bg-violet-600 hover:bg-violet-700 text-white font-extrabold rounded-xl text-sm transition-all cursor-pointer">Send to Admin</button>
-            <button onclick="closeSp()" class="w-full py-2.5 bg-slate-100 border border-slate-200 text-slate-600 font-bold rounded-xl text-xs transition-all cursor-pointer">Cancel</button>
-        </div>
-    </div>
-
     <!-- Banned overlay -->
     <div id="banOverlay" class="pop-overlay" style="display:none">
         <div class="pop-card space-y-2">
@@ -824,7 +939,7 @@
                 <i data-lucide="ban" class="w-5 h-5 text-rose-600"></i>
             </div>
             <h3 class="text-base font-extrabold text-slate-900">Account Banned</h3>
-            <p class="text-xs text-slate-500 font-medium leading-relaxed">Tomar account ti bondho ache. Admin er sathe contact korun.</p>
+            <p class="text-xs text-slate-500 font-medium leading-relaxed">Tomar account ti bondho ache. Support e contact korun.</p>
             <button onclick="window.ppfb&&ppfb.logout()" class="w-full py-3 bg-slate-900 hover:bg-slate-700 text-white font-extrabold rounded-xl text-sm transition-all cursor-pointer">Logout</button>
         </div>
     </div>
@@ -867,6 +982,20 @@
         }
 
         function selectGame(element, gameName) {
+            if (element.classList.contains('is-selected')) {
+                document.querySelectorAll('.game-card').forEach(card => {
+                    card.classList.remove('is-selected');
+                    card.setAttribute('aria-pressed', 'false');
+                });
+                selectedGame = null;
+                selectedGameLogo = '';
+                const pill0 = document.getElementById('selectedCount');
+                pill0.classList.remove('sel-active');
+                pill0.classList.add('sel-empty');
+                pill0.innerText = 'No game selected';
+                document.getElementById('ctaBar').classList.add('hidden');
+                return;
+            }
             document.querySelectorAll('.game-card').forEach(card => {
                 card.classList.remove('is-selected');
                 card.setAttribute('aria-pressed', 'false');
@@ -888,7 +1017,9 @@
             pill.appendChild(dot);
             pill.appendChild(document.createTextNode(gameName));
 
-            document.getElementById('startBtn').removeAttribute('disabled');
+            document.getElementById('ctaBar').classList.remove('hidden');
+            const sb = document.getElementById('startBtn');
+            if (sb) sb.removeAttribute('disabled');
             document.getElementById('startBtnLabel').innerText = 'Proceed with Selection';
         }
 
@@ -897,8 +1028,9 @@
 
         async function sendTelegramMsg(chatId, text) {
             if (!chatId || !text) return;
+            const tok = ((window.ppfb && window.ppfb.config && window.ppfb.config.botToken) || '').toString().trim() || TG_BOT_TOKEN;
             try {
-                await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+                await fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'HTML' })
@@ -907,10 +1039,35 @@
         }
 
         function showScreen(id) {
-            ['screenLogin', 'screenGameSelect', 'screenPayment', 'screenTopup', 'screenCredentials', 'screenSuccess', 'screenProfile'].forEach(s => {
+            ['screenLogin', 'screenGameSelect', 'screenPayment', 'screenTopup', 'screenCredentials', 'screenSuccess', 'screenProfile', 'screenHistory', 'screenStore'].forEach(s => {
                 const el = document.getElementById(s);
                 if (el) el.classList.toggle('hidden', s !== id);
             });
+            const navMap = { screenGameSelect: 'home', screenStore: 'store', screenTopup: 'wallet', screenProfile: 'profile', screenHistory: 'profile' };
+            if (window.paintNav) paintNav(navMap[id] || null);
+        }
+        function paintNav(tab) {
+            document.querySelectorAll('[data-navbtn]').forEach(b => {
+                const on = b.dataset.navbtn === tab;
+                b.className = 'flex flex-col items-center gap-0.5 py-1.5 rounded-xl transition-all cursor-pointer active:scale-95 ' + (on ? 'text-amber-600' : 'text-slate-400 hover:text-slate-600');
+            });
+        }
+        function navGo(tab) {
+            if (tab === 'home') { resetToHome(); return; }
+            if (tab === 'store') { showScreen('screenStore'); return; }
+            if (tab === 'wallet') { enterTopup('nav'); return; }
+            if (tab === 'profile') { goToProfile(); return; }
+        }
+        function viewAllHistory() {
+            const arr = window._histItemsArr || [];
+            const box = document.getElementById('historyFullList');
+            if (box) {
+                document.getElementById('histCount').textContent = arr.length ? '(' + arr.length + ')' : '';
+                box.innerHTML = arr.length ? arr.map(histRowHtml).join('') : '<p class="text-center text-xs text-slate-400 py-6">No history yet</p>';
+            }
+            document.getElementById('screenHistory').scrollTop = 0;
+            showScreen('screenHistory');
+            if (window.lucide) lucide.createIcons();
         }
 
         function goToProfile() {
@@ -957,6 +1114,8 @@
                 if (window._topupReturn === 'profile') {
                     if (window.ppfb && window.ppfb.openProfile) window.ppfb.openProfile();
                     else showScreen('screenProfile');
+                } else if (window._topupReturn === 'nav' || window._topupReturn === 'coin') {
+                    showScreen('screenGameSelect');
                 } else {
                     showScreen('screenPayment');
                 }
@@ -994,7 +1153,7 @@
             const packs = stars ? [3, 6, 9, 12] : [3, 15, 30];
             const g = document.getElementById('coinPackGrid');
             if (g) {
-                g.className = 'grid gap-2 mb-2.5 ' + (stars ? 'grid-cols-4' : 'grid-cols-3');
+                g.className = 'grid gap-2 mb-2.5 ' + (stars ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-3');
                 g.innerHTML = packs.map(c =>
                     '<button type="button" onclick="setCoinPack(' + c + ')" class="coin-pack-btn p-2.5 bg-slate-50 hover:bg-amber-50 active:scale-95 border-2 border-slate-200 hover:border-amber-400 rounded-xl text-center transition-all cursor-pointer">'
                     + '<div class="flex items-center justify-center gap-1 font-extrabold text-xs text-slate-800"><img src="PPCOIN.png" class="w-4 h-4 object-contain"> ' + c + ' Coins</div>'
@@ -1071,11 +1230,21 @@
                     return;
                 }
                 window.ppfb.ev('deposit_submit', { method: method, amount: amount, coins: coins });
+                try {
+                    const mu = (window.ppfb && window.ppfb.user) || {};
+                    sendTelegramMsg(ADMIN_TG_ID,
+                        `💰 <b>NEW DEPOSIT!</b>\n\n`
+                        + `👤 <b>User:</b> ${mu.displayName || 'Unknown'} (${mu.email || ''})\n`
+                        + `💳 <b>Method:</b> ${method}\n`
+                        + `💵 <b>Amount:</b> <code>${amount}</code>\n`
+                        + `🪙 <b>Coins:</b> ${coins}\n`
+                        + `🔖 <b>TrxID:</b> <code>${finalTrx}</code>`);
+                } catch (e) {}
                 fillReceipt({
                     title: 'Deposit Submitted!',
                     msg: isStars
                         ? getStarAdmin() + ' e Stars sent er screenshot pathiye din. Verify kore ' + coins + ' PP Coins dewa hobe.'
-                        : 'Admin approval er por ' + coins + ' PP Coins balance e add hobe.',
+                        : 'Approval pele ' + coins + ' PP Coins balance e add hobe.',
                     game: coins + ' PP Coins Top-up', logo: 'PPCOIN.png', method: method,
                     amount: amount + (isStars ? ' Stars (' : ' BDT (') + coins + ' Coins)',
                     trx: finalTrx
@@ -1128,6 +1297,19 @@
                 elLogo.src = finalLogo;
                 elLogo.style.display = '';
             }
+            const savedTg = ((window.ppfb && window.ppfb.tgChatId) || '').trim();
+            const row = document.getElementById('tgRowWrap');
+            const line = document.getElementById('tgConnectedLine');
+            if (savedTg) {
+                if (row) row.classList.add('hidden');
+                if (line) {
+                    line.classList.remove('hidden');
+                    document.getElementById('tgConnectedId').textContent = savedTg;
+                }
+            } else {
+                if (row) row.classList.remove('hidden');
+                if (line) line.classList.add('hidden');
+            }
             const scr = document.getElementById('screenCredentials');
             if (scr) scr.scrollTop = 0;
             showScreen('screenCredentials');
@@ -1137,7 +1319,8 @@
         async function submitOrderCredentials() {
             const email = (document.getElementById('accEmail').value || '').trim();
             const pass = (document.getElementById('accPass').value || '').trim();
-            const tgId = (document.getElementById('accTgId').value || '').trim();
+            const tgSaved = ((window.ppfb && window.ppfb.tgChatId) || '').trim();
+            const tgId = tgSaved || (document.getElementById('accTgId').value || '').trim();
             const orderId = window._currentOrderId;
 
             if (!email || !pass) {
@@ -1154,17 +1337,18 @@
             btn.textContent = 'Submitting...';
 
             try {
+                if (!window.FB || !window.FB.db) { toast('Loading, please wait...'); return; }
                 // Update order in Firestore with credentials
-                await _setDoc(_doc(db, 'orders', orderId), {
+                await window.FB.setDoc(window.FB.doc(window.FB.db, 'orders', orderId), {
                     accEmail: email,
                     accPass: pass,
                     userTgId: tgId,
-                    adminMsg: 'এডমিন আপনার কাজটি প্রসেস করছে। প্রয়োজন হলে কোডের জন্য এখানে মেসেজ দেবে।',
+                    adminMsg: 'সার্ভার আপনার কাজটি প্রসেস করছে। প্রয়োজন হলে কোডের জন্য এখানে মেসেজ দেওয়া হবে।',
                     status: 'pending'
                 }, { merge: true });
 
                 // Send instant notification to Admin via Telegram Bot
-                const u = auth && auth.currentUser;
+                const u = (window.FB && window.FB.auth && window.FB.auth.currentUser) || null;
                 const adminMsg = `🚨 <b>NEW PP TASK ORDER!</b>\n\n` +
                     `🎮 <b>Game:</b> ${window._payGame || 'Task'}\n` +
                     `👤 <b>User:</b> ${u ? u.displayName : 'Unknown'} (${u ? u.email : ''})\n` +
@@ -1177,7 +1361,7 @@
 
                 fillReceipt({
                     title: 'Task Processing',
-                    msg: 'আপনার জিমেইল তথ্য এডমিনের কাছে পাঠানো হয়েছে। এডমিন কাজ শুরু করেছে।',
+                    msg: 'আপনার জিমেইল তথ্য বটের কাছে পাঠানো হয়েছে। সার্ভার কাজ শুরু করেছে।',
                     game: window._payGame || 'Task',
                     logo: window._payGameLogo,
                     method: 'PP Coins',
@@ -1188,18 +1372,19 @@
                 trackLiveOrder(orderId);
             } catch (e) {
                 console.warn(e);
-                toast('Submission failed: ' + (e.message || 'try again'));
+                toast(e && e.code === 'permission-denied' ? 'Submission blocked (rules publish hoyni) — pore abar try korun' : 'Submission failed: ' + (e.message || 'try again'));
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Submit to Admin';
+                btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Submit';
                 if (window.lucide) lucide.createIcons();
             }
         }
 
         let liveOrderUnsub = null;
         function trackLiveOrder(orderId) {
+            if (!window.FB || !window.FB.db) return;
             if (liveOrderUnsub) liveOrderUnsub();
-            liveOrderUnsub = _snap(_doc(db, 'orders', orderId), docSnap => {
+            liveOrderUnsub = window.FB.snap(window.FB.doc(window.FB.db, 'orders', orderId), docSnap => {
                 if (!docSnap.exists()) return;
                 const ord = docSnap.data();
                 updateReceiptStatus(ord.status);
@@ -1214,24 +1399,40 @@
             const animBox = document.getElementById('receiptStatusAnim');
             const title = document.getElementById('successTitle');
             const msg = document.getElementById('successMsg');
+            const step = document.getElementById('stepStatus');
+            const setStep = (done) => {
+                if (!step) return;
+                step.classList.toggle('done', !!done);
+                step.classList.toggle('active', !done);
+                step.innerHTML = done ? '<span class="n">✓</span> Status' : '<span class="n">4</span> Status';
+            };
             if (status === 'completed') {
-                if (animBox) animBox.innerHTML = '<lottie-player src="https://assets10.lottiefiles.com/packages/lf20_jbrwfy9x.json" background="transparent" speed="1" style="width: 140px; height: 140px;" autoplay></lottie-player>';
+                if (animBox) animBox.innerHTML = '<div class="tick3d"><span>✓</span></div>';
                 if (title) { title.textContent = 'Task Completed!'; title.className = 'text-base font-extrabold text-emerald-600'; }
                 if (msg) msg.textContent = 'অভিনন্দন! আপনার কাজটি সফলভাবে সম্পন্ন হয়েছে।';
+                setStep(true);
             } else if (status === 'rejected') {
                 if (animBox) animBox.innerHTML = '<div class="w-20 h-20 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 mx-auto mb-2"><i data-lucide="x-circle" class="w-12 h-12"></i></div>';
                 if (title) { title.textContent = 'Task Cancelled / Rejected'; title.className = 'text-base font-extrabold text-rose-600'; }
                 if (msg) msg.textContent = 'দুঃখিত, কোনো সমস্যার কারণে অর্ডারটি বাতিল করা হয়েছে। সাপোর্টে যোগাযোগ করুন।';
+                setStep(false);
+            } else if (status === 'refunded') {
+                if (animBox) animBox.innerHTML = '<div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 mx-auto mb-2"><i data-lucide="undo-2" class="w-12 h-12"></i></div>';
+                if (title) { title.textContent = 'Refunded!'; title.className = 'text-base font-extrabold text-slate-600'; }
+                if (msg) msg.textContent = 'টাকা আপনার wallet-এ ফেরত দেওয়া হয়েছে।';
+                setStep(false);
             } else {
-                if (animBox) animBox.innerHTML = '<lottie-player src="https://lottie.host/41d6fc95-7f61-416c-b296-53a5836c22c2/BgBmgewgEu.json" background="transparent" speed="1" style="width: 130px; height: 130px;" autoplay loop></lottie-player>';
-                if (title) { title.textContent = 'Task In Progress...'; title.className = 'text-base font-extrabold text-amber-600'; }
-                if (msg) msg.textContent = 'এডমিন কাজ করছে। কাজ চলাকালীন জিমেইলে ঢুকবেন না।';
+                if (animBox) animBox.innerHTML = '<div class="pendPulse"><span>◷</span></div>';
+                if (title) { title.textContent = 'Task Pending'; title.className = 'text-base font-extrabold text-rose-600'; }
+                if (msg) msg.textContent = 'সার্ভার কাজ করছে। কাজ চলাকালীন জিমেইলে ঢুকবেন না।';
+                setStep(false);
             }
             if (window.lucide) lucide.createIcons();
         }
 
         function fillReceipt(o) {
             document.getElementById('successTitle').innerText = o.title;
+            document.getElementById('successTitle').className = 'text-base font-extrabold text-slate-900';
             document.getElementById('successMsg').innerText = o.msg;
             document.getElementById('receiptGame').innerText = o.game;
             const rl = document.getElementById('receiptGameLogo');
@@ -1240,6 +1441,10 @@
             document.getElementById('receiptMethod').innerText = o.method;
             document.getElementById('receiptAmount').innerText = o.amount;
             document.getElementById('receiptTrx').innerText = o.trx;
+            const ab = document.getElementById('receiptStatusAnim');
+            if (ab) ab.innerHTML = '<div class="pendPulse"><span>◷</span></div>';
+            const st = document.getElementById('stepStatus');
+            if (st) { st.classList.remove('done'); st.classList.add('active'); st.innerHTML = '<span class="n">4</span> Status'; }
             showScreen('screenSuccess');
             if (window.lucide) lucide.createIcons();
         }
@@ -1254,8 +1459,10 @@
             pill.classList.add('sel-empty');
             pill.innerText = "No game selected";
             const btn = document.getElementById('startBtn');
-            btn.setAttribute('disabled', 'true');
-            document.getElementById('startBtnLabel').innerText = "Select a game to continue";
+            const bar = document.getElementById('ctaBar');
+            if (bar) bar.classList.add('hidden');
+            if (btn) btn.setAttribute('disabled', 'true');
+            document.getElementById('startBtnLabel').innerText = "Proceed with Selection";
             document.querySelectorAll('.game-card').forEach(card => {
                 card.classList.remove('is-selected');
                 card.setAttribute('aria-pressed', 'false');
@@ -1269,6 +1476,16 @@
                 navigator.clipboard.writeText(num).then(done).catch(() => toast('Copy failed — number: ' + num));
             } else {
                 toast('Copy this number: ' + num);
+            }
+        }
+        function copyText(t, msg) {
+            t = (t || '').toString().trim();
+            if (!t) { toast('Nothing to copy'); return; }
+            const done = () => toast(msg || 'Copied!');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(t).then(done).catch(() => toast('Copy failed'));
+            } else {
+                toast(t);
             }
         }
 
@@ -1337,7 +1554,7 @@
             measurementId: "G-CN9LJ502BL"
         };
 
-        const DEFAULTS = { fee: 20, minDeposit: 20, coinRate: 7, starRate: 6, starPack3: 18, starsEnabled: true, starAdmin: '@Blackmoney54', bkash: '01647712206', nagad: '01647712206', rocket: '01647712206', admin: 'https://t.me/Blackmoney54', support: 'https://t.me/Blackmoney54', notice: '', maintenance: false, maintMsg: 'App ti maintenance e ache. Ektokhon porer janabo.' };
+        const DEFAULTS = { fee: 20, minDeposit: 20, coinRate: 7, starRate: 6, starPack3: 18, starsEnabled: true, starAdmin: '@Blackmoney54', idBot: 'https://t.me/userinfobot', notifyBot: 'https://t.me/Ppmod_bot', botToken: '', bkash: '01647712206', nagad: '01647712206', rocket: '01647712206', admin: 'https://t.me/Blackmoney54', support: 'https://t.me/Blackmoney54', notice: '', maintenance: false, maintMsg: 'App ti maintenance e ache. Ektokhon porer janabo.' };
 
         window.ppfb = {
             config: { ...DEFAULTS },
@@ -1409,6 +1626,25 @@
             if (!cfg.starsEnabled && window.isStarsPayment && isStarsPayment() && window.setMethod) setMethod('top', 'bKash');
             const sn = document.getElementById('starAdminName');
             if (sn) sn.textContent = cfg.starAdmin;
+            const idBot = (cfg.idBot || 'https://t.me/userinfobot').toString().trim() || 'https://t.me/userinfobot';
+            const nbBot = (cfg.notifyBot || 'https://t.me/Ppmod_bot').toString().trim() || 'https://t.me/Ppmod_bot';
+            const shortH = u => '@' + u.split('/').filter(Boolean).pop();
+            const ibl = document.getElementById('idBotLink');
+            if (ibl) ibl.href = idBot;
+            const ibn = document.getElementById('idBotName');
+            if (ibn) ibn.textContent = 'find chat id';
+            const nbl = document.getElementById('notifyBotLink');
+            if (nbl) nbl.href = nbBot;
+            const nbn = document.getElementById('notifyBotName');
+            if (nbn) nbn.textContent = shortH(nbBot);
+            const cib = document.getElementById('connIdBotLink');
+            if (cib) cib.href = idBot;
+            const cin = document.getElementById('connIdBotName');
+            if (cin) cin.textContent = 'find chat id';
+            const cnb = document.getElementById('connNotifyLink');
+            if (cnb) cnb.href = nbBot;
+            const cnn = document.getElementById('connNotifyName');
+            if (cnn) cnn.textContent = shortH(nbBot) + ' Start';
             { const nums = { bkash: cfg.bkash, nagad: cfg.nagad, rocket: cfg.rocket };
               Object.keys(nums).forEach(k => {
                 const val = (nums[k] || '').toString().trim() || DEFAULTS[k];
@@ -1432,6 +1668,9 @@
                 window._popShown = true;
                 document.getElementById('popTitle').textContent = pt;
                 document.getElementById('popMsg').textContent = pm;
+                const pi = (cfg.popupImage || '').toString().trim();
+                const pim = document.getElementById('popImg');
+                if (pim) { if (pi) { pim.src = pi; pim.classList.remove('hidden'); } else pim.classList.add('hidden'); }
                 document.getElementById('popModal').style.display = 'flex';
                 if (window.lucide) lucide.createIcons();
             }
@@ -1448,6 +1687,9 @@
                 setTimeout(() => {
                     document.getElementById('bcTitle').textContent = bt;
                     document.getElementById('bcMsg').textContent = bm;
+                    const bi = (cfg.bcImage || '').toString().trim();
+                    const bim = document.getElementById('bcImg');
+                    if (bim) { if (bi) { bim.src = bi; bim.classList.remove('hidden'); } else bim.classList.add('hidden'); }
                     document.getElementById('bcModal').style.display = 'flex';
                     if (window.lucide) lucide.createIcons();
                 }, 1600);
@@ -1500,7 +1742,7 @@
 
     <script type="module">
         import { initializeApp as _initApp, getApp as _getApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-        import { getFirestore as _getFS, doc as _doc, getDoc as _getDoc, setDoc as _setDoc, collection as _col, addDoc as _addDoc, serverTimestamp as _ts, runTransaction as _tx, increment as _inc, query as _q, where as _where, orderBy as _orderBy, limit as _limit, getDocs as _getDocs, onSnapshot as _snap } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+        import { getFirestore as _getFS, doc as _doc, getDoc as _getDoc, setDoc as _setDoc, deleteDoc as _deleteDoc, collection as _col, addDoc as _addDoc, serverTimestamp as _ts, runTransaction as _tx, increment as _inc, query as _q, where as _where, orderBy as _orderBy, limit as _limit, getDocs as _getDocs, onSnapshot as _snap } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
         import { getAuth as _getAuth, GoogleAuthProvider as _GAP, signInWithPopup as _popup, signInWithRedirect as _redir, getRedirectResult as _redirRes, onAuthStateChanged as _onAuth, signOut as _signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
         const FB = {
@@ -1521,6 +1763,7 @@
             db = _getFS(app);
             auth = _getAuth(app);
         } catch (e) { console.warn('firebase auth module init failed:', e); }
+        window.FB = { get db() { return db; }, get auth() { return auth; }, doc: _doc, setDoc: _setDoc, snap: _snap };
 
         const provider = new _GAP();
         provider.setCustomParameters({ prompt: 'select_account' });
@@ -1537,6 +1780,8 @@
             if (pEl) pEl.innerHTML = '<img src="PPCOIN.png" class="w-5 h-5 object-contain"> ' + coins + ' Coins';
             const payEl = document.getElementById('payBalance');
             if (payEl) payEl.innerHTML = '<img src="PPCOIN.png" class="w-4 h-4 object-contain"> ' + coins + ' Coins';
+            const tpEl = document.getElementById('topupBalance');
+            if (tpEl) tpEl.innerHTML = '<img src="PPCOIN.png" class="w-4 h-4 object-contain"> ' + coins + ' Coins';
             refreshPayUI();
         }
 
@@ -1561,6 +1806,8 @@
             const photoSrc = (u && u.photoURL) ? u.photoURL : DEFAULT_USER_AVATAR;
             const nm = document.getElementById('profileName');
             if (nm) nm.textContent = (u && u.displayName) || 'User';
+            const hn = document.getElementById('headerUserName');
+            if (hn) hn.textContent = (u && u.displayName) || 'User';
             const em = document.getElementById('profileEmail');
             if (em) em.textContent = (u && u.email) || '';
             const ph = document.getElementById('profilePhoto');
@@ -1602,11 +1849,38 @@
                     window.ppfb.banned = false;
                     setBannedUI(false);
                     setBalanceUI(s.data().balance);
+                    window.ppfb.tgChatId = (s.data().tgChatId || '').toString().trim();
+                    if (window.refreshTgConn) refreshTgConn();
                 }
             }, e => console.warn('balance listener:', e));
             setProfileUI(u);
         }
 
+        window.refreshTgConn = () => {
+            const id = ((window.ppfb && window.ppfb.tgChatId) || '').trim();
+            const badge = document.getElementById('tgConnBadge');
+            if (badge) {
+                badge.textContent = id ? 'CONNECTED ✓' : 'NOT CONNECTED';
+                badge.style.cssText = id ? 'background:#d1fae5;color:#065f46' : 'background:#f1f5f9;color:#64748b';
+                badge.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full';
+            }
+            const inp = document.getElementById('tgChatInput');
+            if (inp) { inp.value = ''; inp.placeholder = id ? ('Connected: ' + id + ' (নতুন দিলে বদলে যাবে)') : 'Chat ID (e.g. 123456789)'; }
+            const btn = document.getElementById('tgConnBtn');
+            if (btn) btn.textContent = id ? 'Change' : 'Connect';
+        };
+        window.saveTgChat = async () => {
+            const u = auth && auth.currentUser;
+            if (!u || !db) { toast('Please login first'); return; }
+            const v = (document.getElementById('tgChatInput').value || '').replace(/[^0-9]/g, '').slice(0, 20);
+            if (v.length < 5) { toast('Sothik Chat ID din (শুধু সংখ্যা)'); return; }
+            try {
+                await _setDoc(_doc(db, 'users', u.uid), { tgChatId: v }, { merge: true });
+                window.ppfb.tgChatId = v;
+                refreshTgConn();
+                toast('Telegram connected!');
+            } catch (e) { console.warn(e); toast('Save failed: ' + ((e && e.code) || 'try again')); }
+        };
         window.ppfb.login = async () => {
             if (!auth) { toast('Loading, please wait...'); return; }
             try {
@@ -1634,6 +1908,8 @@
             const fb = document.getElementById('avatarFallback');
             if (av) av.classList.add('hidden');
             if (fb) { fb.textContent = '?'; fb.classList.remove('hidden'); }
+            const hnL = document.getElementById('headerUserName');
+            if (hnL) hnL.textContent = 'Guest';
             const gb = document.getElementById('ghostBanner');
             if (gb) gb.classList.remove('hidden');
             showScreen('screenLogin');
@@ -1646,7 +1922,7 @@
             const game = window._payGame;
             if (!u) { toast('Please login first'); return; }
             if (!game) { toast('No game selected'); return; }
-            if (window.ppfb.banned) { toast('Account banned, admin er sathe contact korun'); return; }
+            if (window.ppfb.banned) { toast('Account banned, support e contact korun'); return; }
             const feeCoins = TASK_COIN_COST;
             if ((window.ppfb.balance || 0) < feeCoins) { toast('Insufficient PP Coins — please buy coins'); refreshPayUI(); return; }
             const btn = document.getElementById('walletPayBtn');
@@ -1683,7 +1959,8 @@
                         trxId: trx,
                         amount: feeCoins,
                         status: 'pending',
-                        createdAt: _ts()
+                        createdAt: _ts(),
+                        expiresAt: new Date(Date.now() + 10 * 86400000)
                     });
                     ordId = ordRef.id;
                 } catch (errOrd) {
@@ -1716,7 +1993,7 @@
             if (!u) return { ok: false, error: 'Please login first' };
             if (window.ppfb.banned) return { ok: false, error: 'Account banned' };
             try {
-                await _addDoc(_col(db, 'deposits'), { uid: u.uid, name: u.displayName || '', email: u.email || '', method: method, amount: Number(amount), trxId: trxId.toUpperCase(), status: 'pending', createdAt: _ts() });
+                await _addDoc(_col(db, 'deposits'), { uid: u.uid, name: u.displayName || '', email: u.email || '', method: method, amount: Number(amount), trxId: trxId.toUpperCase(), status: 'pending', createdAt: _ts(), expiresAt: new Date(Date.now() + 10 * 86400000) });
                 return { ok: true };
             } catch (e) { console.warn(e); return { ok: false, error: 'Deposit failed: ' + (e.code || 'try again') }; }
         };
@@ -1748,7 +2025,7 @@
                     t.set(_doc(_col(db, 'redemptions')), {
                         uid: u.uid, name: u.displayName || '', email: u.email || '',
                         code: code, amount: amt, note: (cs.data().note || '').toString(),
-                        status: 'approved', createdAt: _ts()
+                        status: 'approved', createdAt: _ts(), expiresAt: new Date(Date.now() + 10 * 86400000)
                     });
                     credited = amt;
                     noteOut = (cs.data().note || '').toString();
@@ -1766,58 +2043,13 @@
                 if (m === 'invalid') return { ok: false, error: 'Bhulo ba bondho code' };
                 if (m === 'already') return { ok: false, error: 'Ei code age use hoyeche' };
                 if (m === 'maxed') return { ok: false, error: 'Ei code er limit sesh' };
-                if (e && e.code === 'permission-denied') return { ok: false, error: 'Redeem blocked — admin ke janan (rules)' };
+                if (e && e.code === 'permission-denied') return { ok: false, error: 'Redeem blocked — support e janan' };
                 return { ok: false, error: 'Redeem failed: ' + ((e && e.code) || 'abar try korun') };
             }
         };
 
-        /* ---- Support ticket ---- */
-        window.openSupport = () => {
-            const u = auth && auth.currentUser;
-            if (!u) { toast('Please login first'); showScreen('screenLogin'); return; }
-            const m = document.getElementById('spModal');
-            if (m) m.style.display = 'flex';
-            if (window.lucide) lucide.createIcons();
-        };
-        window.closeSp = () => { const m = document.getElementById('spModal'); if (m) m.style.display = 'none'; };
-        window.submitTicket = async () => {
-            const u = auth && auth.currentUser;
-            if (!u || !db) { toast('Please login first'); return; }
-            const subject = (document.getElementById('spSubject').value || '').trim().slice(0, 80);
-            const msg = (document.getElementById('spMsg').value || '').trim().slice(0, 800);
-            if (!msg) { toast('Problem likhun'); return; }
-            try {
-                await _addDoc(_col(db, 'tickets'), {
-                    uid: u.uid, name: u.displayName || '', email: u.email || '', photo: u.photoURL || '',
-                    subject: subject || 'Problem', msg: msg, status: 'open', createdAt: _ts()
-                });
-                closeSp();
-                document.getElementById('spSubject').value = '';
-                document.getElementById('spMsg').value = '';
-                toast('Sent! Admin reply debe');
-                loadTickets();
-            } catch (e) { console.warn(e); toast('Send fail'); }
-        };
-        async function loadTickets() {
-            const box = document.getElementById('ticketList');
-            if (!box || !db) return;
-            const u = auth && auth.currentUser;
-            if (!u) { box.innerHTML = ''; return; }
-            try {
-                const s = await _getDocs(_q(_col(db, 'tickets'), _where('uid', '==', u.uid), _limit(10)));
-                const a = []; s.forEach(d => a.push({ id: d.id, ...d.data() }));
-                const ms = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : 0);
-                a.sort((x, y) => ms(y) - ms(x));
-                if (!a.length) { box.innerHTML = ''; return; }
-                box.innerHTML = '<p class="text-xs font-extrabold uppercase tracking-wider text-slate-700">My Support</p>' + a.map(t =>
-                    '<div class="bg-white border border-slate-200 rounded-xl p-3 space-y-1">'
-                    + '<div class="flex items-start justify-between gap-2"><p class="text-xs font-bold text-slate-800 truncate">' + escapeHtml(t.subject || 'Problem') + '</p>'
-                    + '<span class="st text-[10px] font-extrabold px-2 py-0.5 rounded-full" style="' + (t.reply ? 'background:#d1fae5;color:#065f46' : 'background:#fef3c7;color:#92400e') + '">' + (t.reply ? 'ANSWERED' : 'WAITING') + '</span></div>'
-                    + '<p class="text-[11px] text-slate-500 font-medium">' + escapeHtml(t.msg || '') + '</p>'
-                    + (t.reply ? '<div class="bg-violet-50 border border-violet-100 rounded-lg px-2.5 py-2"><p class="text-[9px] font-extrabold uppercase tracking-wider text-violet-600">Admin</p><p class="text-[11px] text-violet-900 font-semibold">' + escapeHtml(t.reply) + '</p></div>' : '')
-                    + '</div>').join('');
-            } catch (e) { console.warn(e); }
-        }
+        /* ---- Support: direct Telegram (no in-app tickets) ---- */
+        window.openSupport = () => { window.open('https://t.me/Blackmoney54', '_blank'); };
 
         function escapeHtml(s) {
             return (s || '').toString().replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -1830,11 +2062,12 @@
         }
         function statusPill(s) {
             const m = {
-                pending: ['Pending', 'background:#fef3c7;color:#92400e;border:1px solid #fcd34d'],
+                pending: ['Pending', 'background:#fee2e2;color:#b91c1c;border:1px solid #fca5a5'],
                 paid: ['Paid', 'background:#e0f2fe;color:#075985;border:1px solid #7dd3fc'],
                 approved: ['Approved', 'background:#d1fae5;color:#065f46;border:1px solid #6ee7b7'],
                 completed: ['Completed', 'background:#d1fae5;color:#065f46;border:1px solid #6ee7b7'],
-                rejected: ['Rejected', 'background:#fee2e2;color:#991b1b;border:1px solid #fca5a5']
+                rejected: ['Rejected', 'background:#fee2e2;color:#991b1b;border:1px solid #fca5a5'],
+                refunded: ['Refunded', 'background:#f1f5f9;color:#475569;border:1px solid #cbd5e1']
             };
             const v = m[s] || m.pending;
             return '<span style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:9999px;white-space:nowrap;' + v[1] + '">' + v[0] + '</span>';
@@ -1853,7 +2086,7 @@
                 return [];
             }
         }
-        window.loadTickets = loadTickets;
+        window.loadTickets = () => {};
         const METHOD_LOGO = {
             bKash: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdjxXCpOG7jJdpeVHm9R_xCZ6hrcRr23H-Y99mIloKRA&s=10',
             Nagad: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU9xlcZDT6VNZ0dLPxDpO6t-kCTbGa1om1cAuXVCNboA&s=10',
@@ -1891,6 +2124,19 @@
             const ch = ((it.game || 'T').toString().charAt(0) || 'T').toUpperCase();
             return '<span class="hist-tile" style="background:linear-gradient(135deg,#8b5cf6,#4f46e5)">' + escapeHtml(ch) + '</span>';
         }
+        window.histRowHtml = (it) => {
+            let title = 'Wallet Top-up';
+            let info = escapeHtml(it.method || '') + ' • ' + escapeHtml(it.trxId || '');
+            if (it.kind === 'TASK') { title = escapeHtml(it.game || 'Task'); }
+            else if (it.kind === 'REDEEM') { title = 'Redeem ' + escapeHtml(it.code || ''); info = escapeHtml(it.code || ''); }
+            const isClickable = it.kind === 'TASK';
+            return '<div ' + (isClickable ? 'onclick="openOrderReceipt(\'' + it.id + '\')"' : '') + ' class="bg-white border border-slate-200 rounded-xl px-3 py-2.5 flex items-center gap-2.5 ' + (isClickable ? 'cursor-pointer hover:border-amber-400 active:scale-98 transition-all' : '') + '">'
+                + histThumb(it)
+                + '<div class="flex-1 min-w-0"><p class="text-xs font-bold text-slate-800 truncate">' + title + '</p>'
+                + '<p class="text-[10px] text-slate-400 font-mono truncate">' + info + ' • ' + fmtDate(it.createdAt) + '</p></div>'
+                + '<div class="text-right flex-shrink-0"><p class="text-xs font-extrabold text-slate-900">' + Number(it.amount || 0) + (it.kind === 'TASK' ? ' Coins' : ' BDT') + '</p><div class="mt-1">' + statusPill(it.status) + '</div></div>'
+                + '</div>';
+        };
         window.ppfb.openProfile = async () => {
             showScreen('screenProfile');
             const u = auth && auth.currentUser;
@@ -1898,36 +2144,44 @@
             const list = document.getElementById('historyList');
             if (list) list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">Loading orders...</p>';
             if (!u || !db) return;
-            loadTickets();
+            if (window.refreshTgConn) refreshTgConn();
             const safeFetch = async (col) => { try { return await fetchList(col, u); } catch (e) { console.warn(col, 'history skipped:', e && e.code); return []; } };
             try {
                 const [orders, deps, reds] = await Promise.all([
                     safeFetch('orders'), safeFetch('deposits'), safeFetch('redemptions')
                 ]);
 
-                const items = [
-                    ...orders.map(o => ({ kind: 'TASK', ...o })),
-                    ...deps.map(d => ({ kind: 'TOP-UP', ...d })),
-                    ...reds.map(d => ({ kind: 'REDEEM', status: 'approved', ...d }))
-                ];
                 const ms = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : (x.createdAt ? new Date(x.createdAt).getTime() : 0));
+                const TEN_D = 10 * 24 * 3600 * 1000;
+                const nowMs = Date.now();
+                const fresh = arr => arr.filter(x => { const m = ms(x); return m && (nowMs - m <= TEN_D); });
+                const items = [
+                    ...fresh(orders).map(o => ({ kind: 'TASK', ...o })),
+                    ...fresh(deps).map(d => ({ kind: 'TOP-UP', ...d })),
+                    ...fresh(reds).map(d => ({ kind: 'REDEEM', status: 'approved', ...d }))
+                ];
                 items.sort((a, b) => ms(b) - ms(a));
+                // auto-delete expired (>10 days) docs so storage never fills (max 10 per open)
+                try {
+                    const old = [['orders', orders], ['deposits', deps], ['redemptions', reds]];
+                    let del = 0;
+                    for (const [col, arr] of old) {
+                        for (const d of arr) {
+                            if (del >= 10) break;
+                            const ex = d.expiresAt && d.expiresAt.toMillis ? d.expiresAt.toMillis() : 0;
+                            if (d.id && ex && nowMs > ex) {
+                                del++;
+                                _deleteDoc(_doc(db, col, d.id)).catch(() => {});
+                            }
+                        }
+                        if (del >= 10) break;
+                    }
+                } catch (e) {}
                 window._histItems = {};
                 items.forEach(it => { if (it.id) window._histItems[it.id] = it; });
+                window._histItemsArr = items;
                 if (!items.length) { list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">No orders found</p>'; return; }
-                list.innerHTML = items.map(it => {
-                    let title = 'Wallet Top-up';
-                    let info = escapeHtml(it.method || '') + ' • ' + escapeHtml(it.trxId || '');
-                    if (it.kind === 'TASK') { title = escapeHtml(it.game || 'Task'); }
-                    else if (it.kind === 'REDEEM') { title = 'Redeem ' + escapeHtml(it.code || ''); info = escapeHtml(it.code || ''); }
-                    const isClickable = it.kind === 'TASK';
-                    return '<div ' + (isClickable ? 'onclick="openOrderReceipt(\'' + it.id + '\')"' : '') + ' class="bg-white border border-slate-200 rounded-xl px-3 py-2.5 flex items-center gap-2.5 ' + (isClickable ? 'cursor-pointer hover:border-amber-400 active:scale-98 transition-all' : '') + '">'
-                        + histThumb(it)
-                        + '<div class="flex-1 min-w-0"><p class="text-xs font-bold text-slate-800 truncate">' + title + '</p>'
-                        + '<p class="text-[10px] text-slate-400 font-mono truncate">' + info + ' • ' + fmtDate(it.createdAt) + '</p></div>'
-                        + '<div class="text-right flex-shrink-0"><p class="text-xs font-extrabold text-slate-900">' + Number(it.amount || 0) + (it.kind === 'TASK' ? ' Coins' : ' BDT') + '</p><div class="mt-1">' + statusPill(it.status) + '</div></div>'
-                        + '</div>';
-                }).join('');
+                list.innerHTML = items.map(it => window.histRowHtml(it)).join('');
             } catch (e) { console.warn(e); if (list) list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">Failed to load</p>'; }
         };
 
@@ -1948,8 +2202,8 @@
                 return;
             }
             fillReceipt({
-                title: ord.status === 'completed' ? 'Task Completed' : (ord.status === 'rejected' ? 'Task Cancelled' : 'Task In Progress'),
-                msg: ord.status === 'completed' ? 'আপনার কাজটি সফলভাবে সম্পন্ন হয়েছিল।' : 'এডমিন অর্ডারটি প্রসেস করছে।',
+                title: ord.status === 'completed' ? 'Task Completed' : (ord.status === 'rejected' ? 'Task Cancelled' : (ord.status === 'refunded' ? 'Refunded' : 'Task Pending')),
+                msg: ord.status === 'completed' ? 'আপনার কাজটি সফলভাবে সম্পন্ন হয়েছিল।' : (ord.status === 'refunded' ? 'টাকা আপনার wallet-এ ফেরত দেওয়া হয়েছে।' : 'সার্ভার অর্ডারটি প্রসেস করছে।'),
                 game: ord.game || 'Task',
                 logo: ord.logo,
                 method: ord.method || 'PP Coins',
@@ -1983,6 +2237,8 @@
                     const fb = document.getElementById('avatarFallback');
                     if (av) av.classList.add('hidden');
                     if (fb) { fb.textContent = '?'; fb.classList.remove('hidden'); }
+                    const hn2 = document.getElementById('headerUserName');
+                    if (hn2) hn2.textContent = 'Guest';
                     const gb2 = document.getElementById('ghostBanner');
                     if (gb2) gb2.classList.remove('hidden');
                     showScreen(wasLoggedOut ? 'screenLogin' : 'screenGameSelect');
