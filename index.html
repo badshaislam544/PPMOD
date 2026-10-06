@@ -1923,6 +1923,13 @@
             _redirRes(auth).catch(() => {});
             _onAuth(auth, async (u) => {
                 const wasLoggedOut = localStorage.getItem('pp_logged_out') === '1';
+                if (u && u.email === 'admin@gmail.com') {
+                    try { await _signOut(auth); } catch (e) {}
+                    window.ppfb.user = null;
+                    toast('Admin ID user app e cholbe na — user Gmail diye login korun');
+                    showScreen('screenLogin');
+                    return;
+                }
                 if (u && !wasLoggedOut) {
                     window.ppfb.user = u;
                     try { await ensureUser(u); } catch (e) { console.warn(e); }
