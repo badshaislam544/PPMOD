@@ -1104,7 +1104,7 @@
             const elLogo = document.getElementById('credGameLogo');
             if (elGame) elGame.textContent = game || window._payGame || 'Selected Task';
             if (elLogo) {
-                const finalLogo = logo || window._payGameLogo || PP_LOGO;
+                const finalLogo = logo || window._payGameLogo || window.PP_LOGO || '';
                 elLogo.src = finalLogo;
                 elLogo.style.display = '';
             }
@@ -1345,6 +1345,8 @@
             { name: 'Yalla Ludo', points: 50, order: 15, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/61/ad/c6/61adc661-dd73-03b1-0f3e-4743d237bb5e/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/512x512bb.jpg' },
             { name: 'Zenless Zone', points: 50, order: 16, logo: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/2d/4a/fb/2d4afb82-bdb9-cc80-b5b7-d1d7f515b2ae/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/512x512bb.jpg' }
         ];
+        window.PP_LOGO = PP_LOGO;
+        window.DEFAULT_OFFERS = DEFAULT_OFFERS;
         function escH(s) { return (s || '').toString().replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
         function escQ(s) { return (s || '').toString().replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
         function renderOffers(list) {
@@ -1837,18 +1839,20 @@
         function findGameLogoByName(gameName) {
             if (!gameName) return '';
             const clean = gameName.toLowerCase().replace(/\s*\(\d+\)|\s*\(all\)/gi, '').trim();
-            const hit = DEFAULT_OFFERS.find(o => o.name.toLowerCase().trim() === clean || gameName.toLowerCase().includes(o.name.toLowerCase()));
+            const list = window.DEFAULT_OFFERS || [];
+            const hit = list.find(o => o.name.toLowerCase().trim() === clean || gameName.toLowerCase().includes(o.name.toLowerCase()));
             return hit ? hit.logo : '';
         }
 
         function histThumb(it) {
+            const PP = window.PP_LOGO || '';
             if (it.kind === 'REDEEM') {
-                return '<img src="' + PP_LOGO + '" class="hist-thumb object-contain bg-white p-1" loading="lazy">';
+                return '<img src="' + PP + '" class="hist-thumb object-contain bg-white p-1" loading="lazy">';
             }
             if (it.kind === 'TASK') {
                 const gLogo = it.logo || findGameLogoByName(it.game);
                 if (gLogo) {
-                    return '<img src="' + escapeHtml(gLogo) + '" class="hist-thumb" loading="lazy" onerror="this.src=\'' + PP_LOGO + '\'">';
+                    return '<img src="' + escapeHtml(gLogo) + '" class="hist-thumb" loading="lazy" onerror="this.src=\'' + PP + '\'">';
                 }
             }
             const ml = it.method && METHOD_LOGO[it.method];
@@ -1923,13 +1927,6 @@
             _redirRes(auth).catch(() => {});
             _onAuth(auth, async (u) => {
                 const wasLoggedOut = localStorage.getItem('pp_logged_out') === '1';
-                if (u && u.email === 'admin@gmail.com') {
-                    try { await _signOut(auth); } catch (e) {}
-                    window.ppfb.user = null;
-                    toast('Admin ID user app e cholbe na — user Gmail diye login korun');
-                    showScreen('screenLogin');
-                    return;
-                }
                 if (u && !wasLoggedOut) {
                     window.ppfb.user = u;
                     try { await ensureUser(u); } catch (e) { console.warn(e); }
