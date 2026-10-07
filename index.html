@@ -303,7 +303,12 @@
                 <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Automation Server</p>
                 <h2 class="hero-title2 mt-0.5">Pick a game & <span class="hero-accent">start your task</span></h2>
                 <span class="status-pill"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Active & Ready</span>
-                <div class="hero-icon float"><i data-lucide="gamepad-2" class="w-6 h-6"></i></div>
+                <a id="adminHeroLink" href="https://t.me/Blackmoney54" target="_blank" title="Admin Telegram" class="hero-icon" style="text-decoration:none;">
+                    <span class="relative w-6 h-6 flex flex-shrink-0">
+                        <i data-lucide="send" class="w-6 h-6"></i>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="TG" class="absolute inset-0 w-full h-full object-contain" onerror="this.remove()">
+                    </span>
+                </a>
             </section>
 
             <div id="noticeBar" style="display:none" class="items-start gap-2 bg-amber-50 border border-amber-200 rounded-2xl px-3.5 py-2.5">
@@ -916,7 +921,7 @@
                 <i data-lucide="badge-check" class="w-7 h-7 text-emerald-600"></i>
             </div>
             <h3 class="text-base font-extrabold text-slate-900">Redeem Successful!</h3>
-            <p class="text-2xl font-black text-emerald-600">+<span id="redeemAmt">0</span> BDT</p>
+            <p class="text-2xl font-black text-emerald-600">+<span id="redeemAmt">0</span> Coins</p>
             <p id="redeemCodeLine" class="text-[10px] font-mono font-bold text-slate-400"></p>
             <div id="redeemNoteBox" class="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5" style="display:none">
                 <p class="text-[9px] font-extrabold uppercase tracking-widest text-amber-600 text-left">Note</p>
@@ -1063,6 +1068,7 @@
                 const el = document.getElementById(s);
                 if (el) el.classList.toggle('hidden', s !== id);
             });
+            if ((id !== 'screenProfile' && id !== 'screenHistory') && window._stopHistLive) { try { window._stopHistLive(); } catch (e) {} }
             const navMap = { screenGameSelect: 'home', screenStore: 'store', screenTopup: 'wallet', screenProfile: 'profile', screenHistory: 'profile' };
             if (window.paintNav) paintNav(navMap[id] || null);
         }
@@ -1612,7 +1618,7 @@
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-        import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp, query, where, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+        import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp, query, where, limit, getDocs, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyAQmiWD9fP0nFpl7ShPjE51udtyFWo6jpA",
@@ -1696,6 +1702,8 @@
             if (!cfg.starsEnabled && window.isStarsPayment && isStarsPayment() && window.setMethod) setMethod('top', 'bKash');
             const sn = document.getElementById('starAdminName');
             if (sn) sn.textContent = cfg.starAdmin;
+            const heroTg = document.getElementById('adminHeroLink');
+            if (heroTg && (cfg.admin || '').toString().trim()) heroTg.href = cfg.admin;
             const idBot = (cfg.idBot || 'https://t.me/userinfobot').toString().trim() || 'https://t.me/userinfobot';
             const nbBot = (cfg.notifyBot || 'https://t.me/Ppmod_bot').toString().trim() || 'https://t.me/Ppmod_bot';
             const shortH = u => '@' + u.split('/').filter(Boolean).pop();
@@ -1725,9 +1733,11 @@
               }); }
             const bar = document.getElementById('noticeBar');
             const barTxt = document.getElementById('noticeText');
-            if (bar && barTxt && (cfg.notice || '').toString().trim()) {
-                barTxt.textContent = cfg.notice;
-                bar.style.display = 'flex';
+            if (bar && barTxt) {
+                if ((cfg.notice || '').toString().trim()) {
+                    barTxt.textContent = cfg.notice;
+                    bar.style.display = 'flex';
+                } else { bar.style.display = 'none'; }
             }
             const pt = (cfg.popupTitle || '').toString().trim();
             const pm = (cfg.popupMsg || '').toString().trim();
@@ -1791,15 +1801,17 @@
                 } catch (e) { console.warn('order save failed:', e); return false; }
             };
             try {
-                const snap = await getDoc(doc(db, 'config', 'app'));
-                applyConfig(snap.exists() ? snap.data() : {});
+                onSnapshot(doc(db, 'config', 'app'), (snap) => {
+                    try { applyConfig(snap.exists() ? snap.data() : {}); } catch (e) { console.warn(e); }
+                }, () => applyConfig({}));
             } catch (e) { applyConfig({}); }
             try {
-                const qs = await getDocs(query(collection(db, 'offers'), where('active', '==', true), limit(60)));
-                const list = [];
-                qs.forEach(d => list.push({ id: d.id, ...d.data() }));
-                list.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
-                renderOffers(list.length ? list : DEFAULT_OFFERS);
+                onSnapshot(query(collection(db, 'offers'), where('active', '==', true), limit(60)), (qs) => {
+                    const list = [];
+                    qs.forEach(d => list.push({ id: d.id, ...d.data() }));
+                    list.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+                    renderOffers(list.length ? list : DEFAULT_OFFERS);
+                }, () => renderOffers(DEFAULT_OFFERS));
             } catch (e) { renderOffers(DEFAULT_OFFERS); }
             window.ppfb.ev('app_open');
         } catch (e) {
@@ -2273,9 +2285,39 @@
                 + histThumb(it)
                 + '<div class="flex-1 min-w-0"><p class="text-xs font-bold text-slate-800 truncate">' + title + '</p>'
                 + '<p class="text-[10px] text-slate-400 font-mono truncate">' + info + ' • ' + fmtDate(it.createdAt) + '</p></div>'
-                + '<div class="text-right flex-shrink-0"><p class="text-xs font-extrabold text-slate-900">' + Number(it.amount || 0) + (it.kind === 'TASK' ? ' Coins' : ' BDT') + '</p><div class="mt-1">' + statusPill(it.status) + '</div></div>'
+                + '<div class="text-right flex-shrink-0"><p class="text-xs font-extrabold text-slate-900">' + Number(it.amount || 0) + (it.kind === 'TOP-UP' ? ' BDT' : ' Coins') + '</p><div class="mt-1">' + statusPill(it.status) + '</div></div>'
                 + '</div>';
         };
+        const histMs = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : (x.createdAt ? new Date(x.createdAt).getTime() : 0));
+        let histOrders = [], histDeps = [], histReds = [];
+        window._stopHistLive = () => {
+            (window._histUnsubs || []).forEach(u => { try { u(); } catch (e) {} });
+            window._histUnsubs = null;
+        };
+        function rebuildHist() {
+            const TEN_D = 10 * 24 * 3600 * 1000;
+            const nowMs = Date.now();
+            const fresh = arr => arr.filter(x => { const m = histMs(x); return m && (nowMs - m <= TEN_D); });
+            const items = [
+                ...fresh(histOrders).map(o => ({ kind: 'TASK', ...o })),
+                ...fresh(histDeps).map(d => ({ kind: 'TOP-UP', ...d })),
+                ...fresh(histReds).map(d => ({ kind: 'REDEEM', status: 'approved', ...d }))
+            ];
+            items.sort((a, b) => histMs(b) - histMs(a));
+            window._histItems = {};
+            items.forEach(it => { if (it.id) window._histItems[it.id] = it; });
+            window._histItemsArr = items;
+            const list = document.getElementById('historyList');
+            if (list) list.innerHTML = items.length ? items.map(it => window.histRowHtml(it)).join('') : '<p class="text-center text-xs text-slate-400 py-4">No orders found</p>';
+            const scr = document.getElementById('screenHistory');
+            if (scr && !scr.classList.contains('hidden')) {
+                const full = document.getElementById('historyFullList');
+                const hc = document.getElementById('histCount');
+                if (full) full.innerHTML = items.length ? items.map(it => window.histRowHtml(it)).join('') : '<p class="text-center text-xs text-slate-400 py-6">No history yet</p>';
+                if (hc) hc.textContent = items.length ? '(' + items.length + ')' : '';
+            }
+            if (window.lucide) lucide.createIcons();
+        }
         window.ppfb.openProfile = async () => {
             showScreen('screenProfile');
             const u = auth && auth.currentUser;
@@ -2284,31 +2326,23 @@
             if (list) list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">Loading orders...</p>';
             if (!u || !db) return;
             if (window.refreshTgConn) refreshTgConn();
+            window._stopHistLive();
             const safeFetch = async (col) => { try { return await fetchList(col, u); } catch (e) { console.warn(col, 'history skipped:', e && e.code); return []; } };
             try {
                 const [orders, deps, reds] = await Promise.all([
                     safeFetch('orders'), safeFetch('deposits'), safeFetch('redemptions')
                 ]);
-
-                const ms = x => (x.createdAt && x.createdAt.toMillis ? x.createdAt.toMillis() : (x.createdAt ? new Date(x.createdAt).getTime() : 0));
-                const TEN_D = 10 * 24 * 3600 * 1000;
-                const nowMs = Date.now();
-                const fresh = arr => arr.filter(x => { const m = ms(x); return m && (nowMs - m <= TEN_D); });
-                const items = [
-                    ...fresh(orders).map(o => ({ kind: 'TASK', ...o })),
-                    ...fresh(deps).map(d => ({ kind: 'TOP-UP', ...d })),
-                    ...fresh(reds).map(d => ({ kind: 'REDEEM', status: 'approved', ...d }))
-                ];
-                items.sort((a, b) => ms(b) - ms(a));
+                histOrders = orders; histDeps = deps; histReds = reds;
                 // auto-delete expired (>10 days) docs so storage never fills (max 10 per open)
                 try {
                     const old = [['orders', orders], ['deposits', deps], ['redemptions', reds]];
                     let del = 0;
+                    const nowMs2 = Date.now();
                     for (const [col, arr] of old) {
                         for (const d of arr) {
                             if (del >= 10) break;
                             const ex = d.expiresAt && d.expiresAt.toMillis ? d.expiresAt.toMillis() : 0;
-                            if (d.id && ex && nowMs > ex) {
+                            if (d.id && ex && nowMs2 > ex) {
                                 del++;
                                 _deleteDoc(_doc(db, col, d.id)).catch(() => {});
                             }
@@ -2316,11 +2350,21 @@
                         if (del >= 10) break;
                     }
                 } catch (e) {}
-                window._histItems = {};
-                items.forEach(it => { if (it.id) window._histItems[it.id] = it; });
-                window._histItemsArr = items;
-                if (!items.length) { list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">No orders found</p>'; return; }
-                list.innerHTML = items.map(it => window.histRowHtml(it)).join('');
+                rebuildHist();
+                // live updates while profile/history is open (no refresh needed)
+                try {
+                    const subs = [];
+                    const cols = [['orders', a => { histOrders = a; }], ['deposits', a => { histDeps = a; }], ['redemptions', a => { histReds = a; }]];
+                    cols.forEach(([col, set]) => {
+                        subs.push(_snap(_q(_col(db, col), _where('uid', '==', u.uid), _limit(40)), (s) => {
+                            const a = [];
+                            s.forEach(d => a.push({ id: d.id, ...d.data() }));
+                            set(a);
+                            rebuildHist();
+                        }, (e) => console.warn(col, 'live skipped:', e && e.code)));
+                    });
+                    window._histUnsubs = subs;
+                } catch (e) { console.warn(e); }
             } catch (e) { console.warn(e); if (list) list.innerHTML = '<p class="text-center text-xs text-slate-400 py-4">Failed to load</p>'; }
         };
 
