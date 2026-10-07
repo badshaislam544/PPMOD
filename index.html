@@ -2124,8 +2124,6 @@
                     if (!us.exists()) throw new Error('nouser');
                     const ud = us.data() || {};
                     if (ud.lastRedeem === code || (ud.redeemed && ud.redeemed[code])) throw new Error('already');
-                    const ud = us.data() || {};
-                    if (ud.lastRedeem === code || (ud.redeemed && ud.redeemed[code])) throw new Error('already');
                     t.update(uref, { balance: (Number(ud.balance) || 0) + amt, lastRedeem: code });
                     t.set(_doc(_col(db, 'redemptions')), {
                         uid: u.uid, name: u.displayName || 'User', email: u.email || '',
