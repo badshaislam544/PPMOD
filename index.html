@@ -938,6 +938,18 @@
         </div>
     </div>
 
+    <!-- Game service off popup (main site ON, game service OFF) -->
+    <div id="serviceModal" class="pop-overlay" style="display:none">
+        <div class="pop-card space-y-2">
+            <div class="mx-auto w-14 h-14 rounded-2xl flex items-center justify-center bg-indigo-100 border border-indigo-200">
+                <i data-lucide="gamepad-2" class="w-7 h-7 text-indigo-600"></i>
+            </div>
+            <h3 class="text-base font-extrabold text-slate-900">Service Off</h3>
+            <p id="serviceMsg" class="text-xs text-slate-500 font-medium leading-relaxed"></p>
+            <button onclick="closeService()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl text-sm transition-all cursor-pointer">Back to Games</button>
+        </div>
+    </div>
+
     <!-- Cash out removed (deposit only) -->
 
     <!-- Banned overlay -->
@@ -1093,10 +1105,18 @@
         }
 
         function closePopup() { document.getElementById('popModal').style.display = 'none'; }
+        function closeService() { document.getElementById('serviceModal').style.display = 'none'; }
 
         function goToPaymentScreen() {
             if (!selectedGame) return;
             if (!(window.ppfb && window.ppfb.user)) { toast('Please login first'); showScreen('screenLogin'); return; }
+            if (window.ppfb && window.ppfb.config && window.ppfb.config.serviceOff === true) {
+                const sm = document.getElementById('serviceMsg');
+                if (sm) sm.textContent = (window.ppfb.config.serviceMsg || '').trim() || 'Game service ekhon bondho ache. Pore abar try korun.';
+                document.getElementById('serviceModal').style.display = 'flex';
+                if (window.lucide) lucide.createIcons();
+                return;
+            }
             if (window.ppfb) window.ppfb.ev('begin_checkout', { game: selectedGame });
             window._payGame = selectedGame;
             const card = document.querySelector('.game-card.is-selected img.g-logo');
@@ -1604,7 +1624,7 @@
             measurementId: "G-CN9LJ502BL"
         };
 
-        const DEFAULTS = { fee: 20, minDeposit: 20, coinRate: 7, starRate: 6, starPack3: 18, starsEnabled: true, starAdmin: '@Blackmoney54', idBot: 'https://t.me/userinfobot', notifyBot: 'https://t.me/Ppmod_bot', botToken: '', bkash: '01647712206', nagad: '01647712206', rocket: '01647712206', admin: 'https://t.me/Blackmoney54', support: 'https://t.me/Blackmoney54', notice: '', maintenance: false, maintMsg: 'App ti maintenance e ache. Ektokhon porer janabo.' };
+        const DEFAULTS = { fee: 20, minDeposit: 20, coinRate: 7, starRate: 6, starPack3: 18, starsEnabled: true, starAdmin: '@Blackmoney54', idBot: 'https://t.me/userinfobot', notifyBot: 'https://t.me/Ppmod_bot', botToken: '', bkash: '01647712206', nagad: '01647712206', rocket: '01647712206', admin: 'https://t.me/Blackmoney54', support: 'https://t.me/Blackmoney54', notice: '', maintenance: false, maintMsg: 'App ti maintenance e ache. Ektokhon porer janabo.', serviceOff: false, serviceMsg: 'Game service ekhon bondho ache. Pore abar try korun.' };
 
         window.ppfb = {
             config: { ...DEFAULTS },
@@ -1703,8 +1723,6 @@
                 const btn = document.querySelector('[data-copy="' + k + '"]');
                 if (btn) btn.setAttribute('onclick', "copyNumber('" + val + "')");
               }); }
-            const admin = document.getElementById('adminLink');
-            if (admin && (cfg.admin || '').toString().trim()) admin.href = cfg.admin;
             const bar = document.getElementById('noticeBar');
             const barTxt = document.getElementById('noticeText');
             if (bar && barTxt && (cfg.notice || '').toString().trim()) {
@@ -2070,6 +2088,9 @@
             const u = auth && auth.currentUser;
             if (!u) return { ok: false, error: 'Please login first' };
             if (window.ppfb.banned) return { ok: false, error: 'Account banned' };
+            const clean = (trxId || '').toString().trim().toUpperCase().slice(0, 64);
+            if (!clean) return { ok: false, error: 'TrxID din' };
+            const isStars = (method === 'Telegram Stars');
             try {
                 // Ensure user doc exists in Firestore so admin sees the user immediately
                 const uref = _doc(db, 'users', u.uid);
@@ -2085,20 +2106,35 @@
                     }, { merge: true }).catch(() => {});
                 }
                 const coinAmount = Number(coins) || Math.floor(Number(amount) / 7) || 3;
-                await _addDoc(_col(db, 'deposits'), {
+                const body = {
                     uid: u.uid,
                     name: u.displayName || 'User',
                     email: u.email || '',
                     method: method,
                     amount: Number(amount),
                     coins: coinAmount,
-                    trxId: trxId.toUpperCase(),
+                    trxId: clean,
                     status: 'pending',
                     createdAt: _ts(),
                     expiresAt: new Date(Date.now() + 10 * 86400000)
+                };
+                if (isStars) {
+                    await _addDoc(_col(db, 'deposits'), body);
+                    return { ok: true };
+                }
+                const key = clean.replace(/[^A-Z0-9-]/g, '').slice(0, 64) || ('D' + Date.now());
+                await _tx(db, async (t) => {
+                    const dref = _doc(db, 'deposits', key);
+                    const ds = await t.get(dref);
+                    if (ds.exists()) throw new Error('duplicate');
+                    t.set(dref, body);
                 });
                 return { ok: true };
-            } catch (e) { console.warn(e); return { ok: false, error: 'Deposit failed: ' + (e.code || 'try again') }; }
+            } catch (e) {
+                console.warn(e);
+                if (e && e.message === 'duplicate') return { ok: false, error: 'Ei TrxID diye age request geche' };
+                return { ok: false, error: 'Deposit failed: ' + (e.code || 'try again') };
+            }
         };
 
         window.ppfb.redeem = async (raw) => {
@@ -2133,11 +2169,11 @@
                     credited = amt;
                     noteOut = (cs.data().note || '').toString();
                 });
-                try { await _setDoc(_doc(db, 'codes', code), { used: _inc(1) }, { merge: true }); } catch (ign) {}
+                try { _setDoc(_doc(db, 'codes', code), { used: _inc(1) }, { merge: true }).catch(() => {}); } catch (ign) {}
                 try {
                     const rk = {};
                     rk[`redeemed.${code}`] = _ts();
-                    await _setDoc(_doc(db, 'users', u.uid), rk, { merge: true });
+                    _setDoc(_doc(db, 'users', u.uid), rk, { merge: true }).catch(() => {});
                 } catch (ign) {}
                 return { ok: true, amount: credited, note: noteOut };
             } catch (e) {
@@ -2289,14 +2325,16 @@
         };
 
         window.openOrderReceipt = async (orderId) => {
-            let ord = (window._histItems && window._histItems[orderId]) || null;
-            if (!ord) {
-                try {
-                    const s = await _getDoc(_doc(db, 'orders', orderId));
-                    if (!s.exists()) { toast('Order not found'); return; }
+            let ord = null;
+            try {
+                const s = await _getDoc(_doc(db, 'orders', orderId));
+                if (s.exists()) {
                     ord = { id: orderId, ...s.data() };
-                } catch (e) { toast('Order load failed'); return; }
-            }
+                    try { if (window._histItems) window._histItems[orderId] = ord; } catch (e) {}
+                }
+            } catch (e) { console.warn('fresh order failed, using cache:', e); }
+            if (!ord) ord = (window._histItems && window._histItems[orderId]) || null;
+            if (!ord) { toast('Order load failed'); return; }
             if (!ord.accEmail && (ord.status === 'pending' || ord.status === 'paid')) {
                 window._currentOrderId = orderId;
                 window._payGame = ord.game || window._payGame;
