@@ -1374,9 +1374,9 @@
                         BUY
                     </button>
                 </div>
-                <!-- Boxed & Shadowed My Ads Button with Vibrant Orange Icon -->
+                <!-- Boxed & Shadowed Ads & Orders Button with Vibrant Orange Icon -->
                 <button id="p2pTabMyDeals" onclick="setP2PTab('my_deals')" class="px-3.5 py-1.5 rounded-xl text-xs font-black bg-white hover:bg-amber-50/60 active:scale-95 text-slate-800 shadow-xs border border-slate-300 transition-all cursor-pointer flex items-center gap-1.5">
-                    <i data-lucide="layers" class="w-4 h-4 text-amber-500"></i> <span>My Ads</span>
+                    <i data-lucide="layers" class="w-4 h-4 text-amber-500"></i> <span>Ads &amp; Orders</span>
                 </button>
             </div>
 
@@ -1408,7 +1408,7 @@
             <!-- TAB 2: MY DEALS (BUYER & ACCEPTED DEALS) -->
             <div id="p2pMyDealsPane" class="space-y-3 hidden">
                 <div class="flex items-center justify-between px-1">
-                    <span class="text-xs font-black uppercase tracking-wider text-slate-700">My Running / Active Deals</span>
+                    <span class="text-xs font-black uppercase tracking-wider text-slate-700">My Deals &amp; Orders</span>
                 </div>
                 <div id="p2pMyDealsFeed" class="space-y-2.5">
                     <p class="text-center text-xs text-slate-400 py-10">আপনার কোনো ডিল নেই</p>
@@ -4973,19 +4973,54 @@
                         myFeed.innerHTML = myDeals.map(d => {
                             const isBuyer = d.buyerUid === myUid;
                             const status = d.status;
-                            const sellerGets = Math.floor(Number(d.coins || 0) * 0.95);
+                            const sellerPoints = calcSellerPoints(d.coins);
+
+                            // Friendly Status Badge Label
+                            let statusBadge = '';
+                            if (status === 'completed') statusBadge = '<span class="text-[9.5px] font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">✓ COMPLETED</span>';
+                            else if (status === 'payment_sent') statusBadge = '<span class="text-[9.5px] font-black px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 animate-pulse">⏳ Awaiting Release</span>';
+                            else if (status === 'processing') statusBadge = '<span class="text-[9.5px] font-black px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300">⚡ In Progress</span>';
+                            else if (status === 'disputed') statusBadge = '<span class="text-[9.5px] font-black px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-300">⚠️ DISPUTED</span>';
+                            else statusBadge = '<span class="text-[9.5px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">● OPEN</span>';
 
                             return `
                             <div class="p-4 bg-white border-2 border-slate-300/90 rounded-2xl shadow-sm space-y-3">
                                 <div class="flex items-center justify-between gap-2">
                                     <h4 class="text-sm font-black text-slate-900 truncate">${escH(d.title)}</h4>
-                                    <span class="text-[9.5px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider ${status === 'completed' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : (status === 'disputed' ? 'bg-rose-100 text-rose-700 border border-rose-300' : (status === 'open' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-100 text-amber-800 border border-amber-300'))}">
-                                        ${status}
-                                    </span>
+                                    ${statusBadge}
                                 </div>
+
+                                <!-- Seller Payment Sent Notice -->
+                                ${!isBuyer && status === 'payment_sent' ? `
+                                    <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl space-y-1 text-left">
+                                        <p class="text-xs font-black text-emerald-800 flex items-center gap-1.5">
+                                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i> পেমেন্ট সফলভাবে জমা দেওয়া হয়েছে!
+                                        </p>
+                                        <p class="text-[10px] text-emerald-950 font-semibold leading-relaxed">
+                                            বায়ারকে নোটিফিকেশন পাঠানো হয়েছে। বায়ার পেমেন্ট ভেরিফাই করে রিলিজ করলেই <b>${sellerPoints} Play Points</b> সরাসরি আপনার লাইভ ওয়ালেটে যোগ হবে।
+                                        </p>
+                                    </div>
+                                ` : ''}
+
+                                <!-- Buyer Notice when Payment Sent -->
+                                ${isBuyer && status === 'payment_sent' ? `
+                                    <div class="p-3 bg-amber-50 border border-amber-300 rounded-xl space-y-1 text-left">
+                                        <p class="text-xs font-black text-amber-900 flex items-center gap-1.5">
+                                            <i data-lucide="bell" class="w-4 h-4 text-amber-600 flex-shrink-0 animate-bounce"></i> সেলার পেমেন্ট সম্পন্ন করেছেন!
+                                        </p>
+                                        <p class="text-[10px] text-amber-950 font-semibold leading-relaxed">
+                                            অনুগ্রহ করে আপনার লিংকে পেমেন্ট চেক করে নিচে <b>Release</b> বাটনে চাপ দিন।
+                                        </p>
+                                    </div>
+                                ` : ''}
+
                                 <div class="flex justify-between items-center text-xs text-slate-600 font-semibold pt-1 border-t border-slate-100">
                                     <span>Role: <b>${isBuyer ? 'Buyer (Posted)' : 'Seller (Worker)'}</b></span>
-                                    <span class="font-black text-amber-600 flex items-center gap-1"><img src="PPCOIN.png" class="w-3.5 h-3.5 object-contain"> ${isBuyer ? (d.escrowCoins || d.coins) + ' Coins (Escrow)' : sellerGets + ' Coins'}</span>
+                                    ${isBuyer ? `
+                                        <span class="font-black text-amber-600 flex items-center gap-1"><img src="PPCOIN.png" class="w-3.5 h-3.5 object-contain"> ${(d.escrowCoins || d.coins)} Coins (Escrow)</span>
+                                    ` : `
+                                        <span class="font-black text-emerald-600 flex items-center gap-1"><img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5 object-contain"> ${sellerPoints} Points</span>
+                                    `}
                                 </div>
 
                                 <!-- Action Buttons based on status & role -->
@@ -5009,6 +5044,12 @@
                                     ${!isBuyer && status === 'processing' ? `
                                         <button onclick="viewP2PDeal('${d.id}')" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl active:scale-95 transition-all shadow-xs cursor-pointer">
                                             Continue Deal / Submit Payment
+                                        </button>
+                                    ` : ''}
+
+                                    ${!isBuyer && status === 'payment_sent' ? `
+                                        <button onclick="disputeP2PDeal('${d.id}')" class="w-full py-2 bg-slate-50 hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 font-bold text-[11px] rounded-xl transition-all cursor-pointer">
+                                            ⚠️ বায়ার রিলিজ না করলে Dispute করুন
                                         </button>
                                     ` : ''}
 
