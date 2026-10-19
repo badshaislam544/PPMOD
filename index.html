@@ -5024,39 +5024,45 @@
                                 </div>
 
                                 <!-- Action Buttons based on status & role -->
-                                <div class="pt-2 border-t border-slate-100 flex gap-2">
-                                    <!-- Delete / Cancel Button for Buyer if still OPEN -->
+                                <div class="pt-2 border-t border-slate-100 space-y-2">
+                                    <!-- Delete / Cancel Button for Buyer ONLY if still OPEN -->
                                     ${isBuyer && status === 'open' ? `
                                         <button onclick="cancelP2PAd('${d.id}')" class="w-full py-2.5 bg-rose-50 hover:bg-rose-100 active:scale-95 text-rose-600 border border-rose-200 font-black text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Delete Ad & Refund ${d.escrowCoins || d.coins} Coins
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Delete Ad & Refund ${(d.escrowCoins || d.coins)} Coins
                                         </button>
                                     ` : ''}
 
-                                    ${isBuyer && (status === 'payment_sent' || status === 'processing') ? `
-                                        <button onclick="releaseP2PDeal('${d.id}')" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl active:scale-95 transition-all shadow-xs cursor-pointer">
-                                            ✅ Release Coins
+                                    <!-- If Seller marked Payment Sent: DEAL IS COMPLETELY LOCKED -->
+                                    ${isBuyer && status === 'payment_sent' ? `
+                                        <button onclick="releaseP2PDeal('${d.id}')" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:brightness-110 text-white font-black text-xs rounded-xl active:scale-95 transition-all shadow-md cursor-pointer flex items-center justify-center gap-2">
+                                            <i data-lucide="check-circle" class="w-4 h-4"></i> Release Play Points to Seller
                                         </button>
-                                        <button onclick="disputeP2PDeal('${d.id}')" class="px-3 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold text-xs rounded-xl active:scale-95 transition-all cursor-pointer">
-                                            Payment Not Received
-                                        </button>
+                                        <a href="https://t.me/Blackmoney54" target="_blank" class="block text-center text-[10px] font-bold text-slate-500 hover:text-indigo-600 pt-1">
+                                            পেমেন্ট না পেয়ে থাকলে ভিডিও সহ অ্যাডমিনের টেলিগ্রামে জানান →
+                                        </a>
                                     ` : ''}
 
                                     ${!isBuyer && status === 'processing' ? `
-                                        <button onclick="viewP2PDeal('${d.id}')" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl active:scale-95 transition-all shadow-xs cursor-pointer">
+                                        <button onclick="viewP2PDeal('${d.id}')" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl active:scale-95 transition-all shadow-xs cursor-pointer">
                                             Continue Deal / Submit Payment
                                         </button>
                                     ` : ''}
 
                                     ${!isBuyer && status === 'payment_sent' ? `
-                                        <button onclick="disputeP2PDeal('${d.id}')" class="w-full py-2 bg-slate-50 hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 font-bold text-[11px] rounded-xl transition-all cursor-pointer">
-                                            ⚠️ বায়ার রিলিজ না করলে Dispute করুন
-                                        </button>
+                                        <div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+                                            <span class="text-[10px] font-bold text-slate-600">ডিল লকড &bull; বায়ার রিলিজ না দিলে:</span>
+                                            <a href="https://t.me/Blackmoney54" target="_blank" class="text-[10px] font-black text-indigo-600 bg-indigo-50 border border-indigo-200 px-2.5 py-1 rounded-lg">
+                                                ভিডিও সহ অ্যাডমিনকে মেসেজ দিন
+                                            </a>
+                                        </div>
                                     ` : ''}
 
-                                    ${status === 'disputed' ? `
-                                        <button onclick="document.getElementById('p2pDisputeModal').style.display='flex'" class="w-full py-2.5 bg-rose-600 text-white font-black text-xs rounded-xl cursor-pointer">
-                                            ⚠️ View Dispute Info
-                                        </button>
+                                    ${status === 'locked_review' ? `
+                                        <div class="p-3 bg-amber-50 border border-amber-300 rounded-xl text-center space-y-1">
+                                            <p class="text-xs font-black text-amber-900">🔒 সময় শেষ — ডিলটি অ্যাডমিন পর্যালোচনায় লক করা হয়েছে!</p>
+                                            <p class="text-[10px] text-amber-800 font-semibold">অ্যাডমিন বিষয়টি খতিয়ে দেখে কয়েন রিলিজ বা রিফান্ড করবেন।</p>
+                                            <a href="https://t.me/Blackmoney54" target="_blank" class="inline-block mt-1 text-[11px] font-black text-indigo-700 underline">অ্যাডমিন সাপোর্ট টেলিগ্রাম</a>
+                                        </div>
                                     ` : ''}
                                 </div>
                             </div>`;
@@ -5233,7 +5239,7 @@
                 }
             };
 
-            // Seller marks payment complete
+            // Seller marks payment complete: DEAL IS FULLY LOCKED & TIMER STOPPED!
             window.submitP2PPaymentSent = async () => {
                 const u = window.ppfb && window.ppfb.user;
                 const deal = _p2pCurActionDeal;
@@ -5241,10 +5247,19 @@
 
                 const btn = document.getElementById('btnPaymentCompleteP2P');
                 btn.disabled = true;
-                btn.innerHTML = `<span class="animate-spin">⏳</span> বায়ারকে জানানো হচ্ছে...`;
+                btn.innerHTML = `<span class="animate-spin">⏳</span> ডিল লক করা হচ্ছে...`;
 
                 try {
-                    const res = await fetch("https://ppm-bot-auto.onrender.com/api/p2p/payment-sent", {
+                    // Update deal to locked state with timer stopped
+                    await updateDoc(doc(db, 'p2p_deals', deal.id), {
+                        status: 'payment_sent',
+                        paymentSentAt: serverTimestamp(),
+                        timerStopped: true,
+                        isLocked: true
+                    });
+
+                    // Trigger Telegram Notification via backend
+                    fetch("https://ppm-bot-auto.onrender.com/api/p2p/payment-sent", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -5252,21 +5267,10 @@
                             sellerUid: u.uid,
                             sellerName: u.displayName || 'Seller'
                         })
-                    });
-                    const data = await res.json();
-                    if (data.ok) {
-                        toast('🎉 বায়ারের কাছে নোটিফিকেশন পাঠানো হয়েছে! বায়ার কয়েন রিলিজ করলেই আপনি পাবেন।');
-                        closeP2PActionModal();
-                    } else {
-                        // Fallback direct doc update
-                        await updateDoc(doc(db, 'p2p_deals', deal.id), {
-                            status: 'payment_sent',
-                            paymentSentAt: serverTimestamp(),
-                            timerStopped: true
-                        });
-                        toast('পেমেন্ট কমপ্লিট সাবমিট হয়েছে!');
-                        closeP2PActionModal();
-                    }
+                    }).catch(() => {});
+
+                    toast('🔒 ডিল সফলভাবে লক হয়েছে! বায়ারকে নোটিফিকেশন পাঠানো হয়েছে।');
+                    closeP2PActionModal();
                 } catch (e) {
                     toast('Error: ' + e.message);
                 } finally {
