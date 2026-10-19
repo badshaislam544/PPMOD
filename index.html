@@ -2209,6 +2209,41 @@
                 </div>
             </div>
 
+            <!-- 3D SLIDE TO CONFIRM MODAL (NO CLICK, SLIDE TO ACTION) -->
+            <div id="p2pSlideModal" class="pop-overlay" style="display:none">
+                <div class="pop-card space-y-4 text-center max-w-sm border border-slate-200 shadow-2xl">
+                    <div id="p2pSlideIconWrap" class="w-16 h-16 mx-auto rounded-3xl flex items-center justify-center text-3xl shadow-md transition-all">
+                        ⚡
+                    </div>
+                    <div>
+                        <h3 id="p2pSlideTitle" class="text-base font-black text-slate-900">কনফার্মেশন স্লাইডার</h3>
+                        <p id="p2pSlideDesc" class="text-xs text-slate-500 font-semibold mt-1 leading-relaxed px-2">
+                            নিশ্চিত করতে নিচের স্লাইডারটি টেনে ডান দিকে নিয়ে যান।
+                        </p>
+                    </div>
+
+                    <!-- 3D Draggable Slide Track -->
+                    <div id="p2pSlideTrack" class="relative w-full h-14 bg-slate-100 border-2 border-slate-300/80 rounded-full select-none overflow-hidden p-1 shadow-inner flex items-center">
+                        <!-- Progress background fill -->
+                        <div id="p2pSlideProgress" class="absolute left-0 top-0 bottom-0 w-0 bg-gradient-to-r from-emerald-500 to-teal-500 opacity-25 rounded-full transition-all duration-75 pointer-events-none"></div>
+
+                        <!-- Shimmering Guide Text -->
+                        <span id="p2pSlideTrackText" class="absolute inset-0 flex items-center justify-center text-xs font-black tracking-wider text-slate-500 pointer-events-none uppercase">
+                            টেনে ডান দিকে নিন &nbsp;&gt;&gt;
+                        </span>
+
+                        <!-- Draggable Thumb / Slider Knob -->
+                        <div id="p2pSlideThumb" class="relative z-10 w-12 h-12 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-lg cursor-grab active:cursor-grabbing transform transition-transform duration-75">
+                            <i data-lucide="chevrons-right" class="w-6 h-6 animate-pulse"></i>
+                        </div>
+                    </div>
+
+                    <button onclick="closeP2PSlideModal()" class="w-full py-2.5 text-xs font-black text-slate-400 hover:text-slate-700 transition-all cursor-pointer">
+                        ✕ Cancel / বাতিল
+                    </button>
+                </div>
+            </div>
+
     <!-- Toast -->
     <div id="toast" class="toast" role="status" aria-live="polite"><span id="toastMsg"></span></div>
 
@@ -5239,70 +5274,187 @@
                 }
             };
 
-            // Seller marks payment complete: DEAL IS FULLY LOCKED & TIMER STOPPED!
-            window.submitP2PPaymentSent = async () => {
+            // ---------------- 3D SLIDE-TO-CONFIRM ENGINE ----------------
+            let _p2pSlideCallback = null;
+            let _slideDragging = false;
+            let _slideStartX = 0;
+            let _slideCurrentX = 0;
+
+            function openP2PSlideModal({ icon, iconBg, title, desc, trackText, thumbGradient, onConfirm }) {
+                const modal = document.getElementById('p2pSlideModal');
+                const iWrap = document.getElementById('p2pSlideIconWrap');
+                const tEl = document.getElementById('p2pSlideTitle');
+                const dEl = document.getElementById('p2pSlideDesc');
+                const ttEl = document.getElementById('p2pSlideTrackText');
+                const thumb = document.getElementById('p2pSlideThumb');
+                const progress = document.getElementById('p2pSlideProgress');
+
+                if (iWrap) {
+                    iWrap.textContent = icon || '⚡';
+                    iWrap.className = `w-16 h-16 mx-auto rounded-3xl flex items-center justify-center text-3xl shadow-md ${iconBg || 'bg-emerald-100 text-emerald-700'}`;
+                }
+                if (tEl) tEl.textContent = title;
+                if (dEl) dEl.innerHTML = desc;
+                if (ttEl) ttEl.innerHTML = trackText || 'টেনে ডান দিকে নিন &nbsp;&gt;&gt;';
+                if (thumb) {
+                    thumb.style.transform = 'translateX(0px)';
+                    thumb.className = `relative z-10 w-12 h-12 rounded-full ${thumbGradient || 'bg-gradient-to-tr from-emerald-600 to-teal-500'} text-white flex items-center justify-center shadow-lg cursor-grab active:cursor-grabbing`;
+                }
+                if (progress) progress.style.width = '0px';
+
+                _p2pSlideCallback = onConfirm;
+                modal.style.display = 'flex';
+                initSlideGestures();
+                if (window.lucide) lucide.createIcons();
+            }
+
+            window.closeP2PSlideModal = () => {
+                const modal = document.getElementById('p2pSlideModal');
+                if (modal) modal.style.display = 'none';
+                _p2pSlideCallback = null;
+                _slideDragging = false;
+            };
+
+            function initSlideGestures() {
+                const track = document.getElementById('p2pSlideTrack');
+                const thumb = document.getElementById('p2pSlideThumb');
+                const progress = document.getElementById('p2pSlideProgress');
+                if (!track || !thumb || thumb._boundGesture) return;
+                thumb._boundGesture = true;
+
+                const getMaxDist = () => track.clientWidth - thumb.clientWidth - 8;
+
+                const onStart = (clientX) => {
+                    _slideDragging = true;
+                    _slideStartX = clientX;
+                    _slideCurrentX = 0;
+                    thumb.style.transition = 'none';
+                    if (progress) progress.style.transition = 'none';
+                };
+
+                const onMove = (clientX) => {
+                    if (!_slideDragging) return;
+                    const max = getMaxDist();
+                    let delta = clientX - _slideStartX;
+                    if (delta < 0) delta = 0;
+                    if (delta > max) delta = max;
+                    _slideCurrentX = delta;
+
+                    thumb.style.transform = `translateX(${delta}px)`;
+                    if (progress) progress.style.width = `${delta + thumb.clientWidth}px`;
+                };
+
+                const onEnd = () => {
+                    if (!_slideDragging) return;
+                    _slideDragging = false;
+                    const max = getMaxDist();
+
+                    // Drag must pass 80% to trigger action
+                    if (_slideCurrentX >= max * 0.8) {
+                        thumb.style.transition = 'transform 0.15s ease';
+                        thumb.style.transform = `translateX(${max}px)`;
+                        if (progress) progress.style.width = `100%`;
+
+                        try { if (navigator.vibrate) navigator.vibrate(50); } catch (e) {}
+
+                        setTimeout(() => {
+                            closeP2PSlideModal();
+                            if (_p2pSlideCallback) _p2pSlideCallback();
+                        }, 200);
+                    } else {
+                        // Snap back smoothly
+                        thumb.style.transition = 'transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                        thumb.style.transform = 'translateX(0px)';
+                        if (progress) {
+                            progress.style.transition = 'width 0.25s ease';
+                            progress.style.width = '0px';
+                        }
+                    }
+                };
+
+                // Touch support
+                thumb.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX), { passive: true });
+                window.addEventListener('touchmove', (e) => onMove(e.touches[0].clientX), { passive: true });
+                window.addEventListener('touchend', onEnd);
+
+                // Mouse support
+                thumb.addEventListener('mousedown', (e) => onStart(e.clientX));
+                window.addEventListener('mousemove', (e) => onMove(e.clientX));
+                window.addEventListener('mouseup', onEnd);
+            }
+
+            // Seller marks payment complete via Slide
+            window.submitP2PPaymentSent = () => {
                 const u = window.ppfb && window.ppfb.user;
                 const deal = _p2pCurActionDeal;
                 if (!u || !deal) return;
 
-                const btn = document.getElementById('btnPaymentCompleteP2P');
-                btn.disabled = true;
-                btn.innerHTML = `<span class="animate-spin">⏳</span> ডিল লক করা হচ্ছে...`;
+                openP2PSlideModal({
+                    icon: '💳',
+                    iconBg: 'bg-indigo-100 text-indigo-700',
+                    title: 'পেমেন্ট সম্পন্ন স্লাইডার',
+                    desc: 'আপনি কি নিশ্চিত যে লিংকে সফলভাবে ডলার পেমেন্ট করেছেন? স্লাইড সম্পন্ন করলেই <b>ডিল পুরোপুরি লক</b> হয়ে যাবে।',
+                    trackText: 'পেমেন্ট নিশ্চিত করতে স্লাইড করুন ➔',
+                    thumbGradient: 'bg-gradient-to-tr from-indigo-600 to-violet-600',
+                    onConfirm: async () => {
+                        try {
+                            await updateDoc(doc(db, 'p2p_deals', deal.id), {
+                                status: 'payment_sent',
+                                paymentSentAt: serverTimestamp(),
+                                timerStopped: true,
+                                isLocked: true
+                            });
 
-                try {
-                    // Update deal to locked state with timer stopped
-                    await updateDoc(doc(db, 'p2p_deals', deal.id), {
-                        status: 'payment_sent',
-                        paymentSentAt: serverTimestamp(),
-                        timerStopped: true,
-                        isLocked: true
-                    });
+                            fetch("https://ppm-bot-auto.onrender.com/api/p2p/payment-sent", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                    dealId: deal.id,
+                                    sellerUid: u.uid,
+                                    sellerName: u.displayName || 'Seller'
+                                })
+                            }).catch(() => {});
 
-                    // Trigger Telegram Notification via backend
-                    fetch("https://ppm-bot-auto.onrender.com/api/p2p/payment-sent", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            dealId: deal.id,
-                            sellerUid: u.uid,
-                            sellerName: u.displayName || 'Seller'
-                        })
-                    }).catch(() => {});
-
-                    toast('🔒 ডিল সফলভাবে লক হয়েছে! বায়ারকে নোটিফিকেশন পাঠানো হয়েছে।');
-                    closeP2PActionModal();
-                } catch (e) {
-                    toast('Error: ' + e.message);
-                } finally {
-                    btn.disabled = false;
-                    btn.innerHTML = `<i data-lucide="zap" class="w-4 h-4"></i> Payment Complete / পেমেন্ট করেছি`;
-                    if (window.lucide) lucide.createIcons();
-                }
+                            toast('🔒 ডিল সফলভাবে লক হয়েছে এবং বায়ারকে জানানো হয়েছে!');
+                            closeP2PActionModal();
+                        } catch (e) {
+                            toast('Lock error: ' + e.message);
+                        }
+                    }
+                });
             };
 
-            // Buyer releases deal: Points go to Seller's Play Points balance!
-            window.releaseP2PDeal = async (dealId) => {
+            // Buyer releases deal via Slide
+            window.releaseP2PDeal = (dealId) => {
                 const deal = _p2pActiveDeals.find(d => d.id === dealId);
                 if (!deal || !deal.sellerUid) return;
 
                 const sellerPoints = calcSellerPoints(deal.coins);
-                if (!confirm(`পেমেন্ট পেয়ে থাকলে ${sellerPoints} Play Points সেলারের একাউন্টে রিলিজ করবেন?`)) return;
 
-                try {
-                    await runTransaction(db, async (t) => {
-                        const dRef = doc(db, 'p2p_deals', dealId);
-                        const sRef = doc(db, 'users', deal.sellerUid);
-                        const sSnap = await t.get(sRef);
-                        const curLivePoints = sSnap.exists() ? Number(sSnap.data().playPoints || 0) : 0;
+                openP2PSlideModal({
+                    icon: '🎁',
+                    iconBg: 'bg-emerald-100 text-emerald-700',
+                    title: 'পয়েন্ট রিলিজ স্লাইডার',
+                    desc: `আপনি কি লিংকে পেমেন্ট পেয়েছেন? স্লাইড সম্পন্ন করলেই <b>${sellerPoints} Play Points</b> সেলারের অ্যাকাউন্টে জমা হয়ে যাবে।`,
+                    trackText: 'পয়েন্ট রিলিজ করতে স্লাইড করুন ➔',
+                    thumbGradient: 'bg-gradient-to-tr from-emerald-600 to-teal-500',
+                    onConfirm: async () => {
+                        try {
+                            await runTransaction(db, async (t) => {
+                                const dRef = doc(db, 'p2p_deals', dealId);
+                                const sRef = doc(db, 'users', deal.sellerUid);
+                                const sSnap = await t.get(sRef);
+                                const curLivePoints = sSnap.exists() ? Number(sSnap.data().playPoints || 0) : 0;
 
-                        // Directly adds to Seller's Live Play Points Balance!
-                        t.update(sRef, { playPoints: curLivePoints + sellerPoints });
-                        t.update(dRef, { status: 'completed', completedAt: serverTimestamp() });
-                    });
-                    toast(`🎉 সফলভাবে ${sellerPoints} Play Points সেলারকে রিলিজ করা হয়েছে!`);
-                } catch (e) {
-                    toast('Release failed: ' + e.message);
-                }
+                                t.update(sRef, { playPoints: curLivePoints + sellerPoints });
+                                t.update(dRef, { status: 'completed', completedAt: serverTimestamp() });
+                            });
+                            toast(`🎉 সফলভাবে ${sellerPoints} Play Points সেলারকে রিলিজ করা হয়েছে!`);
+                        } catch (e) {
+                            toast('Release failed: ' + e.message);
+                        }
+                    }
+                });
             };
 
             // Buyer disputes deal
