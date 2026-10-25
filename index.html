@@ -2194,6 +2194,33 @@
         </div>
     </div>
 
+            <!-- ADELL PEER CONFIRMED CONFLICT DISPUTE MODAL -->
+            <div id="adellDisputeConflictModal" class="pop-overlay" style="display:none; z-index:99999;">
+                <div class="pop-card space-y-3.5 text-center max-w-sm border-2 border-rose-300 shadow-2xl">
+                    <div class="w-16 h-16 mx-auto rounded-3xl bg-rose-100 text-rose-600 flex items-center justify-center text-3xl shadow-sm">
+                        🔒
+                    </div>
+                    <div>
+                        <h3 class="text-base font-black text-rose-600">ডিলটি লক করা হয়েছে!</h3>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Dispute Detected</p>
+                    </div>
+                    <div class="p-3 bg-rose-50 border border-rose-200 rounded-2xl text-left space-y-2">
+                        <p class="text-xs text-rose-950 font-bold leading-relaxed">
+                            ⚠️ অপর পক্ষ ইতিমধ্যে কাজ/পেমেন্ট সম্পন্ন করে <b>কনফার্ম</b> করেছে আর আপনি <b>বাতিল</b> করতে চাচ্ছেন।
+                        </p>
+                        <p class="text-[11px] text-slate-600 font-medium leading-relaxed">
+                            যেহেতু দুই পক্ষের মধ্যে মতবিরোধ হয়েছে, তাই কারও কোনো কয়েন ক্ষতি না হতে ডিলটি <b>লক</b> করা হয়েছে। সমাধানের জন্য অ্যাডমিনের সাথে যোগাযোগ করুন। অ্যাডমিন উভয়পক্ষের প্রমাণ যাচাই করে সঠিক পক্ষের অনুকূলে কয়েন রিলিজ বা রিফান্ড করবেন।
+                        </p>
+                    </div>
+                    <a href="https://t.me/Blackmoney54" target="_blank" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-black rounded-2xl text-xs transition-all cursor-pointer shadow-md flex items-center justify-center gap-2">
+                        <i data-lucide="send" class="w-4 h-4"></i> অ্যাডমিন টেলিগ্রামে যোগাযোগ করুন
+                    </a>
+                    <button onclick="document.getElementById('adellDisputeConflictModal').style.display='none'; exitADellLiveRoom();" class="w-full py-2 text-xs font-black text-slate-400 hover:text-slate-700 cursor-pointer">
+                        রুম থেকে বের হন (Exit Room)
+                    </button>
+                </div>
+            </div>
+
             <!-- ADELL CANCEL WITH SLIDE CONFIRMATION MODAL -->
             <div id="adellCancelConfirmModal" class="pop-overlay" style="display:none; z-index:99999;">
                 <div class="pop-card space-y-3.5 text-center max-w-sm border border-rose-200 shadow-2xl">
@@ -6148,7 +6175,7 @@
                 if (window.setP2PTab) window.setP2PTab('adell');
             };
 
-            // Custom Beautiful Slide Modal for ADELL Cancel
+            // Custom Beautiful Slide Modal for ADELL Cancel (Protected against already confirmed peer)
             let _pendingCancelData = null;
             window.cancelADellWithFee = async () => {
                 if (!_adellCurrentRoom) return;
@@ -6160,6 +6187,24 @@
                 const r = snap.data();
 
                 const isBuyer = u.uid === r.buyerUid;
+                const peerConfirmed = isBuyer ? r.sellerConfirmed : r.buyerConfirmed;
+
+                // অপর পক্ষ ইতিমধ্যে কনফার্ম করে থাকলে ক্যানসেল হবে না -> সরাসরি Dispute Lock হবে!
+                if (peerConfirmed) {
+                    try {
+                        await updateDoc(doc(db, 'adell_rooms', _adellCurrentRoom), {
+                            status: 'disputed',
+                            disputedBy: u.uid,
+                            disputeReason: 'peer_confirmed_cancel_attempt',
+                            disputedAt: serverTimestamp()
+                        });
+                    } catch (e) {}
+
+                    document.getElementById('adellDisputeConflictModal').style.display = 'flex';
+                    if (window.lucide) lucide.createIcons();
+                    return;
+                }
+
                 const totalEscrow = Number(r.escrowCoins || r.coins || 0);
                 const fee5Percent = isBuyer ? Math.round((totalEscrow * 0.05 + Number.EPSILON) * 100) / 100 : 0;
                 const refundCoins = isBuyer ? Math.round((totalEscrow - fee5Percent + Number.EPSILON) * 100) / 100 : totalEscrow;
@@ -6196,6 +6241,20 @@
                 try {
                     await runTransaction(db, async (t) => {
                         const rRef = doc(db, 'adell_rooms', _adellCurrentRoom);
+                        const rSnap = await t.get(rRef);
+                        const curR = rSnap.data();
+                        const peerAlreadyConfirmed = isBuyer ? curR.sellerConfirmed : curR.buyerConfirmed;
+
+                        if (peerAlreadyConfirmed) {
+                            t.update(rRef, {
+                                status: 'disputed',
+                                disputedBy: u.uid,
+                                disputeReason: 'peer_confirmed_cancel_attempt',
+                                disputedAt: serverTimestamp()
+                            });
+                            throw new Error('disputed_peer_confirmed');
+                        }
+
                         const bRef = doc(db, 'users', _pendingCancelData.room.buyerUid);
                         const bSnap = await t.get(bRef);
                         const curBal = bSnap.exists() ? Number(bSnap.data().balance || 0) : 0;
