@@ -1725,32 +1725,54 @@
                 </div>
             </div>
 
-            <!-- Middle Workspace: Telegram Connect Notice & Full Escrow Safety Box -->
-            <div class="flex-1 min-h-0 overflow-y-auto p-4 flex flex-col justify-center items-center text-center space-y-3">
+            <!-- Middle Workspace: Dynamic Telegram & Confirmation Center -->
+            <div id="adellMiddleWorkspace" class="flex-1 min-h-0 overflow-y-auto p-4 flex flex-col justify-center items-center text-center space-y-3">
                 <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-sky-400 to-indigo-600 flex items-center justify-center shadow-md p-3">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" class="w-full h-full object-contain">
                 </div>
-                <div class="space-y-1.5 max-w-xs">
-                    <h4 class="text-sm font-black text-slate-900">টেলিগ্রাম প্রাইভেট গ্রুপে ডিল সম্পন্ন করুন</h4>
-                    <p class="text-xs text-slate-500 font-semibold leading-relaxed">
-                        উপরের <b>Join Group</b> বাটনে চাপ দিয়ে প্রাইভেট টেলিগ্রাম গ্রুপে যুক্ত হোন। সেখানে কাজ সম্পন্ন করে নিচে সোয়াইপ (Slide) করে ডিল সম্পন্ন করুন।
+                <div class="space-y-1 max-w-xs">
+                    <h4 id="adellMiddleTitle" class="text-sm font-black text-slate-900">টেলিগ্রাম প্রাইভেট গ্রুপে ডিল সম্পন্ন করুন</h4>
+                    <p id="adellMiddleSub" class="text-xs text-slate-500 font-semibold leading-relaxed">
+                        নিচের বাটনে চাপ দিয়ে প্রাইভেট টেলিগ্রাম গ্রুপে যুক্ত হোন। কাজ সম্পন্ন হলে নিচে স্লাইড করে কনফার্ম করুন।
                     </p>
+                </div>
+
+                <!-- Prominent Middle Telegram Join Button -->
+                <a id="btnJoinTgGroupMiddle" href="#" target="_blank" class="w-full max-w-xs py-3 px-4 bg-gradient-to-r from-sky-500 to-indigo-600 hover:brightness-110 active:scale-95 text-white font-black text-xs rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    <span>Join Private Telegram Group</span>
+                </a>
+
+                <!-- Dynamic Peer Confirmed Alert Box -->
+                <div id="adellPeerConfirmedAlert" class="hidden w-full max-w-xs p-3 bg-amber-50 border-2 border-amber-300 rounded-2xl text-left space-y-1 animate-pulse">
+                    <p class="text-xs font-black text-amber-900 flex items-center gap-1.5">
+                        <span class="text-base">🔔</span> অপর পক্ষ ডিল কনফার্ম করেছে!
+                    </p>
+                    <p class="text-[10px] text-amber-950 font-semibold leading-relaxed">
+                        আপনার কাজ বা পেমেন্ট সঠিক থাকলে নিচে স্লাইড টেনে ডিলটি সম্পন্ন করুন।
+                    </p>
+                </div>
+
+                <!-- 3D Success Celebration Animation Box -->
+                <div id="adellSuccessCelebration" class="hidden py-4 space-y-2">
+                    <div class="tick3d"><span>✓</span></div>
+                    <p class="text-sm font-black text-emerald-600 pt-2 animate-bounce">🎉 ডিল সফলভাবে সম্পন্ন হয়েছে!</p>
                 </div>
             </div>
 
-            <!-- Bottom Slide & Action Bar -->
+            <!-- Bottom Action Area -->
             <div class="p-3 bg-white border-t border-slate-200 space-y-2 flex-shrink-0">
-                <!-- Cancel Bar (Always Accessible with Rule Checking) -->
-                <div>
+                <!-- If still inviting, single abort button -->
+                <div id="adellInvitingCancelRow" class="hidden">
                     <button onclick="cancelADellWithFee()" class="w-full py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-300 text-xs font-black active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5">
-                        <i data-lucide="x-circle" class="w-4 h-4"></i> ডিল বাতিল / Cancel Deal
+                        <i data-lucide="x-circle" class="w-4 h-4"></i> ইনভাইট বাতিল / Abort Room
                     </button>
                 </div>
 
-                <!-- 3D Slide Confirmation inside Room (Active when Peer is Joined) -->
-                <div id="adellActiveActionRow" class="flex gap-2 hidden">
-                    <button id="btnRejectADell" onclick="triggerADellReject()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-black active:scale-95 transition-all cursor-pointer flex-shrink-0">
-                        Dispute
+                <!-- When Deal is Active: 2 Options Only (Cancel Deal + Slide to Confirm) -->
+                <div id="adellActiveActionRow" class="flex items-center gap-2 hidden">
+                    <button onclick="cancelADellWithFee()" class="px-3.5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-300 text-xs font-black active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1 flex-shrink-0">
+                        <i data-lucide="x" class="w-3.5 h-3.5"></i> Cancel
                     </button>
                     <div id="adellRoomSlideTrack" style="touch-action: none;" class="relative flex-1 h-11 bg-slate-100 border-2 border-emerald-400 rounded-full select-none overflow-hidden p-1 flex items-center">
                         <div id="adellRoomSlideProg" class="absolute left-0 top-0 bottom-0 w-0 bg-emerald-500 opacity-20 pointer-events-none"></div>
@@ -1761,6 +1783,18 @@
                             <i data-lucide="chevrons-right" class="w-5 h-5"></i>
                         </div>
                     </div>
+                </div>
+
+                <!-- After My Confirmation: Morphs into 3D Waiting Card -->
+                <div id="adellMyConfirmedCard" class="hidden w-full p-2.5 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-400 rounded-2xl flex items-center justify-between gap-2 shadow-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-black text-xs flex-shrink-0">✓</span>
+                        <div class="text-left">
+                            <p class="text-xs font-black text-emerald-950">আপনি কনফার্ম করেছেন!</p>
+                            <p class="text-[9.5px] font-bold text-emerald-700 animate-pulse">⏳ অপর পক্ষ কনফার্ম করার জন্য অপেক্ষা করা হচ্ছে...</p>
+                        </div>
+                    </div>
+                    <span class="text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-900 flex-shrink-0">DONE</span>
                 </div>
             </div>
         </main>
@@ -6279,31 +6313,48 @@
 
                     const myBadge = document.getElementById('adellMyConfirmStatus');
                     const peerBadge = document.getElementById('adellPeerConfirmStatus');
+                    const myConfirmedCard = document.getElementById('adellMyConfirmedCard');
+                    const invitingCancelRow = document.getElementById('adellInvitingCancelRow');
+                    const peerAlert = document.getElementById('adellPeerConfirmedAlert');
+
+                    if (invitingCancelRow) invitingCancelRow.classList.toggle('hidden', !isInviting);
 
                     if (myConfirmed) {
                         myBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 animate-pulse';
                         myBadge.textContent = 'You: Confirmed ✓';
+                        if (activeRow) activeRow.classList.add('hidden');
+                        if (myConfirmedCard) myConfirmedCard.classList.remove('hidden');
                     } else {
                         myBadge.className = 'text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600';
                         myBadge.textContent = 'You: Waiting';
+                        if (isDealActive && activeRow) activeRow.classList.remove('hidden');
+                        if (myConfirmedCard) myConfirmedCard.classList.add('hidden');
                     }
 
                     if (peerConfirmed) {
                         peerBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 animate-pulse';
                         peerBadge.textContent = 'Peer: Confirmed ✓';
+                        // অপোনেন্ট কনফার্ম করলে মাঝখানে অ্যানিমেটেড এলার্ট শো করা (যদি আমি এখনও না করে থাকি)
+                        if (peerAlert) peerAlert.classList.toggle('hidden', myConfirmed);
                     } else {
                         peerBadge.className = 'text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600';
                         peerBadge.textContent = 'Peer: Waiting';
+                        if (peerAlert) peerAlert.classList.add('hidden');
                     }
 
-                    // Check if Telegram Group is Ready
+                    // Check if Telegram Group is Ready (Top banner + Middle workspace button)
                     const tgBanner = document.getElementById('adellTgGroupBanner');
                     const tgBtn = document.getElementById('btnJoinTgGroup');
-                    if (r.tgGroupLink) {
-                        tgBtn.href = r.tgGroupLink;
-                        tgBanner.classList.remove('hidden');
+                    const tgBtnMiddle = document.getElementById('btnJoinTgGroupMiddle');
+                    const hasValidTg = r.tgGroupLink && !r.tgGroupLink.includes('Ppmod_bot');
+
+                    if (hasValidTg) {
+                        if (tgBtn) tgBtn.href = r.tgGroupLink;
+                        if (tgBtnMiddle) { tgBtnMiddle.href = r.tgGroupLink; tgBtnMiddle.classList.remove('hidden'); }
+                        if (tgBanner) tgBanner.classList.remove('hidden');
                     } else {
-                        tgBanner.classList.add('hidden');
+                        if (tgBanner) tgBanner.classList.add('hidden');
+                        if (tgBtnMiddle) tgBtnMiddle.classList.add('hidden');
                     }
 
                     // Room Timer (6 Hours)
@@ -6323,10 +6374,25 @@
                     tickTimer();
                     _adellRoomCountdown = setInterval(tickTimer, 1000);
 
-                    // Check if both confirmed -> Deal Complete
+                    // Check if both confirmed -> 3D Animation & Clean Exit
                     if (r.status === 'completed') {
+                        const cel = document.getElementById('adellSuccessCelebration');
+                        const midContent = document.getElementById('adellMiddleTitle');
+                        const midSub = document.getElementById('adellMiddleSub');
+                        const tgMid = document.getElementById('btnJoinTgGroupMiddle');
+                        const pAlert = document.getElementById('adellPeerConfirmedAlert');
+
+                        if (cel) cel.classList.remove('hidden');
+                        if (pAlert) pAlert.classList.add('hidden');
+                        if (tgMid) tgMid.classList.add('hidden');
+                        if (midContent) midContent.textContent = 'ট্রেড সফল হয়েছে!';
+                        if (midSub) midSub.textContent = 'কয়েন সফলভাবে সেলারের অ্যাকাউন্টে ট্রান্সফার করা হয়েছে।';
+                        
+                        try { if (navigator.vibrate) navigator.vibrate([100, 50, 100]); } catch (e) {}
                         toast('🎉 ADELL ডিল সফলভাবে সম্পন্ন হয়েছে!');
-                        setTimeout(() => showScreen('screenGameSelect'), 2500);
+                        setTimeout(() => {
+                            exitADellLiveRoom();
+                        }, 2600);
                     }
                 });
 
