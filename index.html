@@ -6200,8 +6200,9 @@
                 const isBuyer = u.uid === r.buyerUid;
                 const peerConfirmed = isBuyer ? r.sellerConfirmed : r.buyerConfirmed;
                 const totalEscrow = Number(r.escrowCoins || r.coins || 0);
-                const fee5Percent = isBuyer ? Math.round((totalEscrow * 0.05 + Number.EPSILON) * 100) / 100 : 0;
-                const refundCoins = isBuyer ? Math.round((totalEscrow - fee5Percent + Number.EPSILON) * 100) / 100 : totalEscrow;
+                // সবসময় হোল্ড কয়েনের নিখুঁত ৫% ফি হিসাব হবে
+                const fee5Percent = Math.round((totalEscrow * 0.05 + Number.EPSILON) * 100) / 100;
+                const refundCoins = Math.round((totalEscrow - fee5Percent + Number.EPSILON) * 100) / 100;
 
                 _pendingCancelData = { isBuyer, peerConfirmed, totalEscrow, fee5Percent, refundCoins, room: r };
 
@@ -6238,8 +6239,9 @@
                 }
 
                 document.getElementById('adellCancelHoldCoins').textContent = `${totalEscrow} Coins`;
-                document.getElementById('adellCancelFeeCoins').textContent = (isBuyer && !peerConfirmed) ? `-${fee5Percent} Coins` : `0 Coins`;
-                document.getElementById('adellCancelRefundCoins').textContent = peerConfirmed ? `লক থাকবে (অ্যাডমিন সমাধান করবেন)` : (isBuyer ? `+${refundCoins} Coins` : `+${totalEscrow} Coins (Buyer-কে)`);
+                document.getElementById('adellCancelFeeCoins').textContent = `-${fee5Percent} Coins`;
+                document.getElementById('adellCancelRefundCoins').textContent = peerConfirmed ? `লক থাকবে (সমাধানের পর +${refundCoins} Coins)` : `+${refundCoins} Coins (ওয়ালেটে)`;
+                document.getElementById('adellCancelModalTitle').textContent = isBuyer ? 'ডিল বাতিল ও ফি কর্তন' : 'ডিল বাতিল নিশ্চিতকরণ';
 
                 // Reset slide state
                 const thumb = document.getElementById('adellCancelSlideThumb');
