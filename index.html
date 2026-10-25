@@ -2248,9 +2248,10 @@
                         </div>
                     </div>
 
-                    <p class="text-[10.5px] text-amber-900 font-bold bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-left leading-relaxed">
+                    <!-- Dynamic Warning Notice Box -->
+                    <div id="adellCancelWarnBox" class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-left text-[10.5px] font-bold text-amber-900 leading-relaxed">
                         ⚠️ নিশ্চিত করতে নিচের স্লাইডারটি টেনে ডান দিকে নিয়ে যান। বাতিল সম্পন্ন হলে কয়েন সাথে সাথে আপনার ওয়ালেটে ফেরত আসবে।
-                    </p>
+                    </div>
 
                     <!-- Slide to Cancel Track -->
                     <div id="adellCancelSlideTrack" style="touch-action: none;" class="relative w-full h-12 bg-slate-100 border-2 border-rose-300 rounded-full select-none overflow-hidden p-1 flex items-center">
@@ -5332,6 +5333,7 @@
             let _p2pCurActionDeal = null;
             let _p2pTimerInterval = null;
 
+            window._lastP2PSection = window._lastP2PSection || 'posts';
             window.setP2PTab = (tab) => {
                 const bPosts = document.getElementById('p2pTabPosts');
                 const bADell = document.getElementById('p2pTabADell');
@@ -5341,12 +5343,21 @@
                 const pADell = document.getElementById('p2pADellPane');
                 const pMy = document.getElementById('p2pMyDealsPane');
 
-                const activeBtnCls = 'px-3.5 py-1.5 rounded-lg text-xs font-black bg-white text-slate-900 shadow-xs transition-all cursor-pointer';
+                if (tab === 'posts' || tab === 'adell') {
+                    window._lastP2PSection = tab;
+                }
+
+                const isMyDeals = tab === 'my_deals';
+                const activeSection = isMyDeals ? window._lastP2PSection : tab;
+
+                // Active Tab Style: Green/Emerald highlighted
+                const greenActiveCls = 'px-3.5 py-1.5 rounded-lg text-xs font-black bg-emerald-600 text-white shadow-xs transition-all cursor-pointer';
+                const defaultActiveCls = 'px-3.5 py-1.5 rounded-lg text-xs font-black bg-white text-slate-900 shadow-xs transition-all cursor-pointer';
                 const inactiveBtnCls = 'px-3.5 py-1.5 rounded-lg text-xs font-extrabold text-slate-600 hover:text-slate-900 transition-all cursor-pointer';
 
-                if (bPosts) bPosts.className = tab === 'posts' ? activeBtnCls : inactiveBtnCls;
-                if (bADell) bADell.className = tab === 'adell' ? activeBtnCls : inactiveBtnCls;
-                if (bMy) bMy.className = tab === 'my_deals' ? 'px-3 py-1.5 rounded-xl text-xs font-black bg-amber-50 text-amber-900 shadow-xs border-2 border-amber-400 transition-all cursor-pointer flex items-center gap-1.5' : 'px-3 py-1.5 rounded-xl text-xs font-black bg-white hover:bg-amber-50/50 text-slate-800 shadow-xs border border-slate-300 transition-all cursor-pointer flex items-center gap-1.5';
+                if (bPosts) bPosts.className = activeSection === 'posts' ? (isMyDeals ? greenActiveCls : defaultActiveCls) : inactiveBtnCls;
+                if (bADell) bADell.className = activeSection === 'adell' ? (isMyDeals ? greenActiveCls : defaultActiveCls) : inactiveBtnCls;
+                if (bMy) bMy.className = isMyDeals ? 'px-3 py-1.5 rounded-xl text-xs font-black bg-amber-500 text-white shadow-xs border border-amber-600 transition-all cursor-pointer flex items-center gap-1.5' : 'px-3 py-1.5 rounded-xl text-xs font-black bg-white hover:bg-amber-50/50 text-slate-800 shadow-xs border border-slate-300 transition-all cursor-pointer flex items-center gap-1.5';
 
                 if (pMarket) pMarket.classList.toggle('hidden', tab !== 'posts');
                 if (pADell) pADell.classList.toggle('hidden', tab !== 'adell');
@@ -6175,7 +6186,7 @@
                 if (window.setP2PTab) window.setP2PTab('adell');
             };
 
-            // Custom Beautiful Slide Modal for ADELL Cancel (Protected against already confirmed peer)
+            // Custom Beautiful Slide Modal for ADELL Cancel
             let _pendingCancelData = null;
             window.cancelADellWithFee = async () => {
                 if (!_adellCurrentRoom) return;
@@ -6188,33 +6199,47 @@
 
                 const isBuyer = u.uid === r.buyerUid;
                 const peerConfirmed = isBuyer ? r.sellerConfirmed : r.buyerConfirmed;
-
-                // অপর পক্ষ ইতিমধ্যে কনফার্ম করে থাকলে ক্যানসেল হবে না -> সরাসরি Dispute Lock হবে!
-                if (peerConfirmed) {
-                    try {
-                        await updateDoc(doc(db, 'adell_rooms', _adellCurrentRoom), {
-                            status: 'disputed',
-                            disputedBy: u.uid,
-                            disputeReason: 'peer_confirmed_cancel_attempt',
-                            disputedAt: serverTimestamp()
-                        });
-                    } catch (e) {}
-
-                    document.getElementById('adellDisputeConflictModal').style.display = 'flex';
-                    if (window.lucide) lucide.createIcons();
-                    return;
-                }
-
                 const totalEscrow = Number(r.escrowCoins || r.coins || 0);
                 const fee5Percent = isBuyer ? Math.round((totalEscrow * 0.05 + Number.EPSILON) * 100) / 100 : 0;
                 const refundCoins = isBuyer ? Math.round((totalEscrow - fee5Percent + Number.EPSILON) * 100) / 100 : totalEscrow;
 
-                _pendingCancelData = { isBuyer, totalEscrow, fee5Percent, refundCoins, room: r };
+                _pendingCancelData = { isBuyer, peerConfirmed, totalEscrow, fee5Percent, refundCoins, room: r };
+
+                const modalTitle = document.getElementById('adellCancelModalTitle');
+                const modalSub = document.getElementById('adellCancelModalSub');
+                const trackText = document.getElementById('adellCancelSlideText');
+                const warnBox = document.getElementById('adellCancelWarnBox');
+
+                if (peerConfirmed) {
+                    // অপর পক্ষ কনফার্ম করে থাকলে স্লাইডারে বিরোধের নোটিশ দেখানো
+                    if (modalTitle) modalTitle.textContent = 'ডিল ডিসপিউট ও লক নিশ্চিতকরণ';
+                    if (modalSub) modalSub.textContent = 'অপর পক্ষ ইতিমধ্যে কনফার্ম করেছে';
+                    if (trackText) trackText.textContent = 'লক করতে স্লাইড করুন >>';
+                    if (warnBox) {
+                        warnBox.className = 'p-3 bg-rose-50 border-2 border-rose-300 rounded-2xl text-left space-y-1.5';
+                        warnBox.innerHTML = `
+                            <p class="text-xs font-black text-rose-800 flex items-center gap-1.5">
+                                <span class="text-base">⚠️</span> অপর পক্ষ ইতিমধ্যে কনফার্ম করেছে!
+                            </p>
+                            <p class="text-[10.5px] text-rose-950 font-semibold leading-relaxed">
+                                যেহেতু অপর পক্ষ কাজ সম্পন্ন করে কনফার্ম করেছে আর আপনি বাতিল করতে চাচ্ছেন, তাই স্লাইড করলে ডিলটি সরাসরি বাতিল হবে না—কয়েন সুরক্ষিত রাখতে <b>ডিলটি ডিসপিউট লক হয়ে যাবে</b> এবং অ্যাডমিনের কাছে চলে যাবে।
+                            </p>`;
+                    }
+                } else {
+                    if (modalTitle) modalTitle.textContent = isBuyer ? 'ডিল বাতিল ও ফি কর্তন' : 'ডিল বাতিল নিশ্চিতকরণ';
+                    if (modalSub) modalSub.textContent = 'নিচের শর্তাবলী দেখে স্লাইড করে নিশ্চিত করুন';
+                    if (trackText) trackText.textContent = 'বাতিল করতে স্লাইড করুন >>';
+                    if (warnBox) {
+                        warnBox.className = 'p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-left text-[10.5px] font-bold text-amber-900 leading-relaxed';
+                        warnBox.innerHTML = isBuyer
+                            ? '⚠️ নিশ্চিত করতে নিচের স্লাইডারটি টেনে ডান দিকে নিয়ে যান। ৫% ফি কর্তন বাদে কয়েন আপনার ওয়ালেটে ফেরত আসবে।'
+                            : '⚠️ সেলার হিসেবে বাতিল করলে আপনার প্রোফাইলে Cancel রেকর্ড যুক্ত হবে। নিশ্চিত করতে স্লাইড করুন।';
+                    }
+                }
 
                 document.getElementById('adellCancelHoldCoins').textContent = `${totalEscrow} Coins`;
-                document.getElementById('adellCancelFeeCoins').textContent = isBuyer ? `-${fee5Percent} Coins` : `0 Coins`;
-                document.getElementById('adellCancelRefundCoins').textContent = isBuyer ? `+${refundCoins} Coins` : `+${totalEscrow} Coins (Buyer gets refund)`;
-                document.getElementById('adellCancelModalTitle').textContent = isBuyer ? 'ডিল বাতিল ও ফি কর্তন' : 'ডিল বাতিল নিশ্চিতকরণ';
+                document.getElementById('adellCancelFeeCoins').textContent = (isBuyer && !peerConfirmed) ? `-${fee5Percent} Coins` : `0 Coins`;
+                document.getElementById('adellCancelRefundCoins').textContent = peerConfirmed ? `লক থাকবে (অ্যাডমিন সমাধান করবেন)` : (isBuyer ? `+${refundCoins} Coins` : `+${totalEscrow} Coins (Buyer-কে)`);
 
                 // Reset slide state
                 const thumb = document.getElementById('adellCancelSlideThumb');
@@ -6235,8 +6260,26 @@
 
             async function executeADellCancel() {
                 if (!_pendingCancelData || !_adellCurrentRoom) return;
-                const { isBuyer, fee5Percent, refundCoins } = _pendingCancelData;
+                const { isBuyer, peerConfirmed, fee5Percent, refundCoins } = _pendingCancelData;
                 const u = window.ppfb && window.ppfb.user;
+
+                // যদি অপর পক্ষ কনফার্ম করে থাকে -> স্লাইড টানার পর ডিসপিউট লক হবে
+                if (peerConfirmed) {
+                    try {
+                        await updateDoc(doc(db, 'adell_rooms', _adellCurrentRoom), {
+                            status: 'disputed',
+                            disputedBy: u.uid,
+                            disputedAt: serverTimestamp(),
+                            disputeReason: 'peer_confirmed_cancel_attempt'
+                        });
+                        closeADellCancelModal();
+                        toast('🔒 বিরোধের কারণে ডিলটি লক করা হয়েছে!');
+                    } catch (e) {
+                        closeADellCancelModal();
+                        toast('Lock failed: ' + e.message);
+                    }
+                    return;
+                }
 
                 try {
                     await runTransaction(db, async (t) => {
@@ -6288,7 +6331,11 @@
                     exitADellLiveRoom();
                 } catch (e) {
                     closeADellCancelModal();
-                    toast('Cancel failed: ' + e.message);
+                    if (e && e.message === 'disputed_peer_confirmed') {
+                        toast('🔒 অপর পক্ষ কনফার্ম করায় ডিলটি লক হয়েছে!');
+                    } else {
+                        toast('Cancel failed: ' + e.message);
+                    }
                 }
             }
 
@@ -6432,6 +6479,15 @@
                     };
                     tickTimer();
                     _adellRoomCountdown = setInterval(tickTimer, 1000);
+
+                    // Check if room is disputed -> Show popup to both parties
+                    if (r.status === 'disputed') {
+                        const dispModal = document.getElementById('adellDisputeConflictModal');
+                        if (dispModal && dispModal.style.display !== 'flex') {
+                            dispModal.style.display = 'flex';
+                            if (window.lucide) lucide.createIcons();
+                        }
+                    }
 
                     // Check if both confirmed -> 3D Animation & Clean Exit
                     if (r.status === 'completed') {
