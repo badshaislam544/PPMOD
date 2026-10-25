@@ -87,7 +87,7 @@
         .step-line { flex: 1; height: 2px; border-radius: 2px; background: #e2e8f0; }
 
         /* Toast */
-        .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); z-index: 60;
+        .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px); z-index: 99999;
             background: #0f172a; color: #fff; font-size: 12px; font-weight: 700; padding: 10px 18px;
             border-radius: 9999px; box-shadow: 0 12px 30px -8px rgba(2,6,23,.5); opacity: 0; pointer-events: none;
             transition: all .3s ease; max-width: 88vw; text-align: center; }
@@ -101,7 +101,7 @@
             .app-body { align-items: center; justify-content: center; padding: 20px 0;
                 background: radial-gradient(120% 100% at 50% 0%, #e2e8f0 0%, #f1f5f9 45%, #e6ebf1 100%); }
             .app-shell { height: min(880px, calc(100dvh - 40px)); border-radius: 26px; border: 1px solid #e2e8f0;
-                background: #f1f5f9; box-shadow: 0 30px 60px -25px rgba(15,23,42,.35); }
+                background: #f1f5f9; box-shadow: 0 30px 60px -25px rgba(15,23,42,.35); padding: .8rem .8rem .7rem; }
         }
         .fit-home { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: .65rem; }
         .fit-scroll { flex: 1; min-height: 0; overflow-y: auto; padding-bottom: .25rem; }
@@ -156,9 +156,11 @@
         .brand-text { background: linear-gradient(92deg, #4285F4 5%, #EA4335 38%, #F59E0B 68%, #34A853 95%);
             -webkit-background-clip: text; background-clip: text; color: transparent; }
 
-        /* Header */
-        .app-header { position: sticky; top: 0; z-index: 20; flex-shrink: 0; border-radius: 1.6rem !important;
-            box-shadow: 0 12px 25px -10px rgba(15,23,42,0.12), 0 4px 6px -2px rgba(15,23,42,0.04) !important; }
+        /* Header: Crisp Balanced Executive Bar */
+        .app-header { position: sticky; top: 0; z-index: 20; flex-shrink: 0;
+            border-radius: 1.4rem !important;
+            border: 1px solid rgba(226, 232, 240, 0.8) !important;
+            box-shadow: 0 10px 24px -10px rgba(15,23,42,0.08) !important; }
         .logo-tile { position: relative; width: 42px; height: 42px; border-radius: 14px; display: flex;
             align-items: center; justify-content: center; background: linear-gradient(135deg, #fffbeb, #fef3c7);
             border: 1px solid #fde68a; box-shadow: 0 6px 14px -8px rgba(245,158,11,.8), inset 0 0 0 1px #fff; flex-shrink: 0; }
@@ -415,12 +417,12 @@
         @keyframes sellerIn { 0% { opacity: 0; transform: scale(.82) translateY(16px); } 55% { opacity: 1; } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         .seller-panel { animation: sellerPanelIn .3s cubic-bezier(.22,.9,.3,1) both; }
         @keyframes sellerPanelIn { from { opacity: 0; transform: scale(.97) translateY(-6px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        /* Store: Sell (emerald) vs Buy (violet) — ekdom alada look */
-        .store-card { position: relative; overflow: hidden; }
-        .store-card.sell { border: 1.5px solid #a7f3d0 !important; background: linear-gradient(180deg, #ecfdf5 0%, #ffffff 38%) !important; }
-        .store-card.sell::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7); }
-        .store-card.buy { border: 1.5px solid #c7d2fe !important; background: linear-gradient(180deg, #eef2ff 0%, #ffffff 38%) !important; }
-        .store-card.buy::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #6366f1, #8b5cf6, #a78bfa); }
+        /* Store: Compact, crisp border, no top stripe */
+        .store-card { position: relative; overflow: hidden; border: 1.5px solid #cbd5e1 !important; }
+        .store-card.sell { background: #ffffff !important; border-color: #6ee7b7 !important; }
+        .store-card.sell::before { display: none; }
+        .store-card.buy { background: #ffffff !important; border-color: #a5b4fc !important; }
+        .store-card.buy::before { display: none; }
         .store-tab-on-all { background: #0f172a !important; color: #fff !important; border-color: #0f172a !important; }
         .store-tab-on-sell { background: #059669 !important; color: #fff !important; border-color: #059669 !important; }
         .store-tab-on-buy { background: #4f46e5 !important; color: #fff !important; border-color: #4f46e5 !important; }
@@ -520,7 +522,7 @@
     <div class="app-shell">
         
         <!-- Header (sticky on top) -->
-        <header id="appHeader" class="app-header flex items-center justify-between gap-2 bg-white/95 backdrop-blur px-3.5 py-3 rounded-[1.4rem] border border-slate-200/80 shadow-[0_14px_28px_-14px_rgba(15,23,42,.35)]">
+        <header id="appHeader" class="app-header flex items-center justify-between gap-2 bg-white/95 backdrop-blur px-3.5 py-2.5 rounded-[1.4rem] border border-slate-200/80 shadow-sm">
             <div class="flex items-center gap-2 min-w-0 flex-1">
                 <div class="logo-tile">
                     <img src="https://i.logos-download.com/101056/33083-s2560-a061b8868652552e6d7a5ad796ea5ac9.png/Google_Play_Points_Logo_2019-s2560.png" class="w-6 h-6 object-contain" alt="PP MOD" onerror="this.onerror=null;this.src='https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png'">
@@ -631,19 +633,25 @@
         <!-- SCREEN 1: GAME SELECTION -->
         <main id="screenGameSelect" class="screen fit-home">
             
-            <!-- Hero / Server Status -->
-            <section class="hero hero-v2">
-                <div class="pr-14 min-w-0">
-                    <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Automation Server</p>
-                    <h2 class="hero-title2 mt-0.5 leading-snug">Pick a game & <span class="hero-accent block sm:inline">auto quest in 3 sec</span></h2>
-                    <span class="status-pill"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Active & Ready</span>
+            <!-- Dynamic Home Banner Slider -->
+            <section id="homeBannerSection" class="relative overflow-hidden rounded-[1.75rem] border border-slate-200/80 shadow-sm bg-slate-950 aspect-[21/9] sm:aspect-[24/9] max-h-48 flex-shrink-0">
+                <!-- Slides Track -->
+                <div id="homeBannerTrack" class="w-full h-full flex transition-transform duration-500 ease-out select-none">
+                    <div class="w-full h-full flex-shrink-0 relative overflow-hidden bg-slate-950">
+                        <img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791346466943_file_00000000702c82118797af8f3a1c57e0.png" referrerpolicy="no-referrer" class="w-full h-full object-fill select-none" loading="eager" alt="Banner">
+                    </div>
                 </div>
-                <a id="adminHeroLink" href="https://t.me/Blackmoney54" target="_blank" title="Admin Telegram" class="hero-icon float" style="text-decoration:none;background:none;border:none;box-shadow:none;">
-                    <span class="relative w-10 h-10 flex flex-shrink-0">
-                        <i data-lucide="send" class="w-10 h-10 text-sky-300"></i>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="TG" class="absolute inset-0 w-full h-full object-contain" onload="this.previousElementSibling.style.display='none'" onerror="this.remove()">
-                    </span>
-                </a>
+
+                <!-- Navigation Dots -->
+                <div id="homeBannerDots" class="absolute bottom-2.5 left-0 right-0 flex justify-center items-center gap-1.5 z-20 pointer-events-none"></div>
+
+                <!-- Slide Buttons -->
+                <button type="button" onclick="slideHomeBanner(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity z-20 cursor-pointer">
+                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                </button>
+                <button type="button" onclick="slideHomeBanner(1)" class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity z-20 cursor-pointer">
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                </button>
             </section>
 
             <div id="noticeBar" style="display:none" class="items-start gap-2 bg-amber-50 border border-amber-200 rounded-2xl px-3.5 py-2.5">
@@ -664,9 +672,6 @@
                     <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700" id="totalGamesLabel">Available Games</span>
                     <span id="selectedCount" class="sel-pill sel-empty">No game selected</span>
                 </div>
-
-                <!-- Offer Slider -->
-                <div id="offerSlider" class="flex gap-2 overflow-x-auto pb-2 px-1 mb-1" style="scroll-snap-type:x mandatory;"></div>
 
                 <div class="fit-grid !p-0.5" id="gameGrid">
                 
@@ -1004,9 +1009,14 @@
                             <input id="wdPoints" type="number" min="1" placeholder="100" oninput="wdCalc()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-slate-900 focus:outline-none focus:border-emerald-500">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-extrabold text-slate-500 uppercase mb-1">You Get (BDT)</label>
-                            <input id="wdBdt" readonly placeholder="0" class="w-full p-2.5 bg-emerald-50/50 border border-emerald-200 text-emerald-700 font-black text-xs rounded-xl focus:outline-none">
+                            <label class="block text-[10px] font-extrabold text-slate-500 uppercase mb-1">You Get (90% BDT)</label>
+                            <input id="wdBdt" readonly placeholder="0 BDT" class="w-full p-2.5 bg-emerald-50/50 border border-emerald-200 text-emerald-700 font-black text-xs rounded-xl focus:outline-none">
                         </div>
+                    </div>
+                    <!-- 10% Fee Breakdown -->
+                    <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-bold text-slate-600 flex justify-between items-center">
+                        <span>প্ল্যাটফর্ম উইথড্র ফি (10%):</span>
+                        <span id="wdFeeLabel" class="font-mono text-rose-600">0 BDT</span>
                     </div>
                     <p id="wdMinLine" class="text-[10px] font-bold text-slate-400"></p>
                     <button id="btnWithdraw" onclick="submitWithdraw()" class="w-full py-3.5 text-white font-extrabold rounded-xl text-sm transition-all cursor-pointer flex items-center justify-center gap-2">
@@ -1269,6 +1279,7 @@
                     </div>
                     <button id="langToggleBtn" onclick="toggleLang()" class="mt-4 px-2.5 py-1 text-[10px] font-black rounded-full border border-violet-200 bg-violet-50 text-violet-700 cursor-pointer flex-shrink-0 shadow-2xs">🌐 EN</button>
                 </div>
+
                 <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-3 mt-2.5 shadow-md space-y-2">
                     <div class="flex items-center justify-between">
                         <span class="text-[11px] font-extrabold text-slate-300 flex items-center gap-1.5"><img src="PPCOIN.png" class="w-4 h-4 object-contain flex-shrink-0"> PP Coins</span>
@@ -1360,58 +1371,63 @@
             <section class="relative overflow-hidden rounded-2xl p-4 text-white border border-indigo-700/40 shadow-sm" style="background: radial-gradient(130% 170% at 85% -20%, #1e1b4b 0%, #312e81 55%, #0f172a 100%);">
                 <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-300 relative z-10">PEER-TO-PEER MARKETPLACE</p>
                 <div class="flex items-center justify-between gap-2 relative z-10 mt-0.5">
-                    <div>
+                    <div class="min-w-0 flex-1">
                         <h2 class="text-base sm:text-lg font-black tracking-tight leading-snug">P2P TRUSTED DEAL</h2>
-                        <p class="text-[11px] text-indigo-200 font-medium">সরাসরি লিংক দিয়ে ডিল তৈরি ও গ্রহণ করুন</p>
+                        <p class="text-[11px] text-indigo-200 font-medium">নিরাপদ ডিল ও ট্রাস্টেড এসক্রো ট্রেড</p>
                     </div>
-                    <button onclick="openP2PCreateModal()" class="px-3.5 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold text-xs rounded-xl shadow-md active:scale-95 transition-all flex items-center gap-1 cursor-pointer flex-shrink-0">
-                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Post Ad
-                    </button>
+                    <!-- Right Stack: Slim Rules on top, Dynamic Action Button directly under it -->
+                    <div class="flex flex-col items-end gap-1.5 flex-shrink-0">
+                        <button onclick="openADellRuleModal()" title="ADELL নিয়মাবলী" class="h-6 px-2.5 rounded-full bg-amber-400/20 hover:bg-amber-400/30 active:scale-90 text-amber-300 border border-amber-300/40 shadow-[0_0_10px_rgba(251,191,36,0.2)] flex items-center gap-1 cursor-pointer transition-all">
+                            <i data-lucide="shield-alert" class="w-3 h-3 text-amber-300"></i>
+                            <span class="text-[9px] font-black uppercase tracking-widest text-amber-200">Rules</span>
+                        </button>
+                        <button id="btnP2PTopAction" onclick="handleP2PTopActionClick()" class="px-3.5 py-1.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-black text-xs rounded-xl shadow-md active:scale-95 transition-all flex items-center gap-1 cursor-pointer">
+                            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> <span id="p2pTopActionText">+ Post</span>
+                        </button>
+                    </div>
                 </div>
             </section>
 
-            <!-- P2P Sleek Bar: SELL / BUY on Left, My Ads with Orange Icon on Right -->
+            <!-- P2P Sleek Bar: POSTS (Market) ➔ A DELL (Private 1-on-1) ➔ MY TRADES -->
             <div class="flex items-center justify-between gap-2 p-1.5 bg-slate-200/70 rounded-2xl border border-slate-300">
                 <div class="flex items-center gap-1 bg-slate-300/60 p-0.5 rounded-xl">
-                    <button id="p2pTabSell" onclick="setP2PTab('sell')" class="px-4 py-1.5 rounded-lg text-xs font-black bg-white text-slate-900 shadow-xs transition-all cursor-pointer">
-                        SELL
+                    <button id="p2pTabPosts" onclick="setP2PTab('posts')" class="px-3.5 py-1.5 rounded-lg text-xs font-black bg-white text-slate-900 shadow-xs transition-all cursor-pointer">
+                        POSTS
                     </button>
-                    <button id="p2pTabBuy" onclick="setP2PTab('buy')" class="px-4 py-1.5 rounded-lg text-xs font-extrabold text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
-                        BUY
+                    <button id="p2pTabADell" onclick="setP2PTab('adell')" class="px-3.5 py-1.5 rounded-lg text-xs font-extrabold text-slate-600 hover:text-slate-900 transition-all cursor-pointer">
+                        A DELL
                     </button>
                 </div>
-                <!-- Boxed & Shadowed Ads & Orders Button with Vibrant Orange Icon -->
-                <button id="p2pTabMyDeals" onclick="setP2PTab('my_deals')" class="px-3.5 py-1.5 rounded-xl text-xs font-black bg-white hover:bg-amber-50/60 active:scale-95 text-slate-800 shadow-xs border border-slate-300 transition-all cursor-pointer flex items-center gap-1.5">
-                    <i data-lucide="layers" class="w-4 h-4 text-amber-500"></i> <span>Ads &amp; Orders</span>
+                <button id="p2pTabMyDeals" onclick="setP2PTab('my_deals')" class="px-3 py-1.5 rounded-xl text-xs font-black bg-white hover:bg-amber-50/60 active:scale-95 text-slate-800 shadow-xs border border-slate-300 transition-all cursor-pointer flex items-center gap-1.5">
+                    <i data-lucide="layers" class="w-4 h-4 text-amber-500"></i> <span>My Trades</span>
                 </button>
             </div>
 
-            <!-- TAB: BUY COMING SOON -->
-            <div id="p2pBuyPane" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-200 p-6 space-y-3 shadow-2xs">
-                <div class="w-16 h-16 mx-auto rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-3xl shadow-xs">
-                    🚀
-                </div>
-                <h4 class="text-sm font-black text-slate-900">Buy Feature Coming Soon!</h4>
-                <p class="text-xs text-slate-500 font-semibold max-w-xs mx-auto leading-relaxed">
-                    খুব শীঘ্রই সরাসরি PP Coins দিয়ে ইনস্ট্যান্ট ডলার বাই করার ফিচার চালু হবে। বর্তমানে SELL অপশন থেকে ডিল নিন।
-                </p>
-                <button onclick="setP2PTab('sell')" class="px-5 py-2 bg-slate-900 text-white font-extrabold text-xs rounded-xl cursor-pointer active:scale-95 transition-all">
-                    ← Back to SELL Deals
-                </button>
-            </div>
-
-            <!-- TAB 1: BROWSE DEALS (FOR SELLERS) -->
+            <!-- TAB 1: POSTS (PUBLIC MARKETPLACE FEED) -->
             <div id="p2pMarketPane" class="space-y-3">
                 <div class="flex items-center justify-between px-1">
                     <span class="text-xs font-black uppercase tracking-wider text-slate-700">Available Deals</span>
                     <span id="p2pDealsCountLabel" class="text-[10px] font-extrabold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">0 Live</span>
                 </div>
                 <div id="p2pDealsFeed" class="space-y-2.5">
-                    <p class="text-center text-xs text-slate-400 py-10">ডিল লোড হচ্ছে...</p>
+                    <p class="text-center text-xs text-slate-400 py-10">পোস্ট লোড হচ্ছে...</p>
                 </div>
             </div>
 
-            <!-- TAB 2: MY DEALS (BUYER & ACCEPTED DEALS) -->
+            <!-- TAB 2: A DELL PRIVATE ESCROW ROOM PANE (ONLY FOR THE 2 TRADERS) -->
+            <div id="p2pADellPane" class="space-y-3 hidden">
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-xs font-black uppercase tracking-wider text-slate-700">My Ongoing A DELL Rooms</span>
+                    <span id="adellActiveRoomsCount" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">0 Active</span>
+                </div>
+
+                <!-- Private Rooms Container (Only contains rooms user created or was invited to) -->
+                <div id="adellPrivateRoomsList" class="space-y-2.5">
+                    <p class="text-center text-xs text-slate-400 py-8 font-semibold">আপনার কোনো সক্রিয় A DELL প্রাইভেট রুম নেই</p>
+                </div>
+            </div>
+
+            <!-- TAB 3: MY DEALS & ORDERS -->
             <div id="p2pMyDealsPane" class="space-y-3 hidden">
                 <div class="flex items-center justify-between px-1">
                     <span class="text-xs font-black uppercase tracking-wider text-slate-700">My Deals &amp; Orders</span>
@@ -1502,31 +1518,34 @@
             <div id="historyFullList" class="space-y-2"></div>
         </main>
 
-        <!-- SCREEN: STORE (Original Luxury Green Theme + Shimmer Skeleton Loader) -->
-        <main id="screenStore" class="screen space-y-3.5 hidden fit-scroll pb-10">
-            <!-- Original Luxury Green Hero Banner -->
-            <section id="storeGreenHero" class="relative overflow-hidden rounded-2xl p-4 text-white border border-emerald-700/40 shadow-sm" style="background: radial-gradient(130% 170% at 85% -20%, #065f46 0%, #064e3b 55%, #022c22 100%);">
-                <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-300 relative z-10">CASH OUT & SERVICES</p>
-                <div class="flex items-center justify-between gap-2 relative z-10 mt-0.5">
-                    <div>
-                        <h2 class="text-base sm:text-lg font-black tracking-tight leading-snug">Google Play Points Store</h2>
-                        <p class="text-[11px] text-emerald-200 font-medium">প্লে পয়েন্ট সেল করুন অথবা রেডি অ্যাকাউন্ট কিনুন</p>
+        <!-- SCREEN: STORE (Fixed Banner & Filter Tabs, Only Items Scroll) -->
+        <main id="screenStore" class="screen hidden fit-home flex-col h-full overflow-hidden space-y-2.5">
+            <!-- Fixed Top Section (Banner + Tabs never scroll) -->
+            <div class="flex-shrink-0 space-y-2.5">
+                <!-- Original Luxury Green Hero Banner -->
+                <section id="storeGreenHero" class="relative overflow-hidden rounded-2xl p-3.5 text-white border border-emerald-700/40 shadow-sm" style="background: radial-gradient(130% 170% at 85% -20%, #065f46 0%, #064e3b 55%, #022c22 100%);">
+                    <p class="text-[9px] font-bold uppercase tracking-[0.18em] text-emerald-300 relative z-10">CASH OUT & SERVICES</p>
+                    <div class="flex items-center justify-between gap-2 relative z-10 mt-0.5">
+                        <div>
+                            <h2 class="text-sm sm:text-base font-black tracking-tight leading-snug">Google Play Points Store</h2>
+                            <p class="text-[10px] text-emerald-200 font-medium">প্লে পয়েন্ট সেল করুন অথবা রেডি অ্যাকাউন্ট কিনুন</p>
+                        </div>
+                        <div class="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
+                            <img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-5 h-5 object-contain">
+                        </div>
                     </div>
-                    <div class="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0">
-                        <img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-6 h-6 object-contain">
-                    </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Store category tabs (All + Sell + Buy, admin থেকে নাম/ON-OFF) -->
-            <div id="storeTabBar" class="flex gap-2 overflow-x-auto pb-1 scrollbar-none" style="scrollbar-width:none">
-                <button id="storeTabAll" onclick="setStoreTab('all')" class="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-black bg-slate-900 text-white border border-slate-900 shadow-sm transition-all cursor-pointer">All</button>
-                <button id="storeTabSell" onclick="setStoreTab('sell')" class="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-black bg-white text-emerald-700 border border-emerald-200 shadow-2xs transition-all cursor-pointer">Sell</button>
-                <button id="storeTabBuy" onclick="setStoreTab('buy')" class="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-black bg-white text-indigo-700 border border-indigo-200 shadow-2xs transition-all cursor-pointer">Buy</button>
+                <!-- Store category tabs (All + Sell + Buy, admin থেকে নাম/ON-OFF) -->
+                <div id="storeTabBar" class="flex gap-2 overflow-x-auto pb-0.5 scrollbar-none" style="scrollbar-width:none">
+                    <button id="storeTabAll" onclick="setStoreTab('all')" class="flex-shrink-0 px-4 py-1.5 rounded-xl text-xs font-black bg-slate-900 text-white border border-slate-900 shadow-sm transition-all cursor-pointer">All</button>
+                    <button id="storeTabSell" onclick="setStoreTab('sell')" class="flex-shrink-0 px-4 py-1.5 rounded-xl text-xs font-black bg-white text-emerald-700 border border-emerald-200 shadow-2xs transition-all cursor-pointer">Sell</button>
+                    <button id="storeTabBuy" onclick="setStoreTab('buy')" class="flex-shrink-0 px-4 py-1.5 rounded-xl text-xs font-black bg-white text-indigo-700 border border-indigo-200 shadow-2xs transition-all cursor-pointer">Buy</button>
+                </div>
             </div>
 
-            <!-- Unified Items Container — animated card skeletons (sell green + buy violet) -->
-            <div id="storeUnifiedContainer" class="space-y-2.5">
+            <!-- Only Items Container Scrolls -->
+            <div id="storeUnifiedContainer" class="flex-1 min-h-0 overflow-y-auto space-y-2.5 pb-6">
                 <div class="bg-white border border-emerald-100 rounded-2xl p-3.5 pt-4 space-y-2.5 shadow-2xs" style="border-top:4px solid #10b981">
                     <div class="flex items-center justify-between gap-2">
                         <div class="h-4 w-24 rounded-full hskel"></div>
@@ -1645,58 +1664,103 @@
                 }, 4000);
             </script>
 
-            <!-- Sell Submission Modal -->
-            <div id="storeSellModal" class="pop-overlay" style="display:none">
-                <div class="pop-card space-y-3 text-left max-h-[90vh] overflow-y-auto">
-                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-                        <div class="flex items-center gap-2">
-                            <img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-5 h-5 object-contain">
-                            <h3 id="sellModalTitle" class="text-sm font-extrabold text-slate-900">Sell Play Points</h3>
-                        </div>
-                        <button onclick="closeStoreSellModal()" class="text-slate-400 hover:text-slate-700 font-black cursor-pointer">✕</button>
-                    </div>
+            </main>
 
-                    <!-- Package Summary -->
-                    <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-xs font-bold">
-                        <span id="sellModalPoints" class="text-emerald-950">100 Points</span>
-                        <span class="text-slate-400">➔</span>
-                        <span id="sellModalPrice" class="text-emerald-700 font-black">You Receive: 60 BDT</span>
-                    </div>
-
-                    <!-- Crucial Warning Card: Payment Profile Active & Pending Maturation Requirement -->
-                    <div class="p-3 bg-amber-50 border-2 border-amber-300 rounded-2xl text-left space-y-2">
-                        <p class="text-[11px] font-black text-amber-900 flex items-center gap-1.5">
-                            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600 flex-shrink-0"></i> বিক্রির জরুরি শর্ত ও পেন্ডিং পলিসি:
-                        </p>
-                        <p class="text-[10px] text-amber-950 font-semibold leading-relaxed">
-                            ⏳ <b>পেন্ডিং সময়কাল:</b> অ্যাডমিন পয়েন্ট নেওয়ার পর এটি <span id="sellModalPendingDays" class="font-black text-amber-900">৩ দিন</span> আপনার ওয়ালেটে <b>Pending</b> হিসেবে থাকবে। সময় শেষ হলে স্বয়ংক্রিয়ভাবে <b>Live ব্যালেন্স</b> হয়ে যাবে এবং সাথে সাথে <b>bKash / Nagad / Rocket</b> এ টাকা তুলতে পারবেন।
-                        </p>
-                        <p class="text-[10px] text-amber-950 font-semibold leading-relaxed pt-1 border-t border-amber-200/80">
-                            👉 জিমেইলে অবশ্যই <span class="text-rose-600 font-black">Payment Profile Active</span> থাকতে হবে।<br>
-                            👉 দ্রুত ভেরিফিকেশনের জন্য কাজ শেষ না হওয়া পর্যন্ত <span class="font-bold text-amber-900">2FA অফ রাখুন</span>।
-                        </p>
-                    </div>
-
-                    <!-- Input Fields (Payment method removed) -->
-                    <div class="space-y-2.5">
-                        <div>
-                            <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-1">Play Store Gmail Address *</label>
-                            <input id="sellGmail" type="email" placeholder="yourplaystore@gmail.com" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-emerald-600">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-1">Gmail Password *</label>
-                            <input id="sellPassword" type="password" placeholder="Gmail Password" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-emerald-600">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-700 mb-1">Telegram Username (@username) * <span class="text-rose-500 font-black">(বাধ্যতামূলক)</span></label>
-                            <input id="sellTg" placeholder="@your_telegram_id" required class="w-full p-2.5 bg-slate-50 border-2 border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-emerald-600 font-mono">
-                            <p class="text-[9.5px] text-slate-400 font-semibold mt-1">পয়েন্ট নেওয়ার সময় অ্যাডমিন আপনার এই টেলিগ্রামে যোগাযোগ করবে।</p>
-                        </div>
-                    </div>
-
-                    <button id="btnSubmitSell" onclick="submitPointSellRequest()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-                        <i data-lucide="send" class="w-4 h-4"></i> Submit Sell Request
+        <!-- SCREEN: ADELL FULL-SCREEN LIVE ROOM (NO HEADER, 6H TIMER, PERSISTENT TRADE) -->
+        <main id="screenADellRoom" class="screen hidden fit-home flex-col h-full bg-slate-100">
+            <!-- Room Top Bar with Back Button -->
+            <div class="flex items-center justify-between gap-2 p-2.5 bg-white border-b border-slate-200/90 shadow-2xs flex-shrink-0">
+                <div class="flex items-center gap-2 min-w-0 flex-1">
+                    <button onclick="exitADellLiveRoom()" title="Leave Room" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center cursor-pointer active:scale-95 transition-all flex-shrink-0">
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i>
                     </button>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-1.5">
+                            <span id="adellRoleBadge" class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200">BUYER</span>
+                            <h3 id="adellRoomHeaderTitle" class="text-xs sm:text-sm font-black text-slate-900 truncate">Trade Room</h3>
+                        </div>
+                        <p id="adellPeerInfo" class="text-[10px] text-slate-500 font-semibold truncate">Trading with: —</p>
+                    </div>
+                </div>
+                <!-- 6H Countdown Timer -->
+                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 flex-shrink-0">
+                    <i data-lucide="clock" class="w-3 h-3 animate-spin"></i>
+                    <span id="adellRoomTimer" class="font-mono font-black text-xs">06:00:00</span>
+                </div>
+            </div>
+
+            <!-- Waiting / Locked Banner (Shown while Peer has not accepted yet) -->
+            <div id="adellPeerWaitingBanner" class="hidden p-2.5 mx-3 mt-2 bg-amber-50 border border-amber-200 rounded-xl text-center space-y-0.5 flex-shrink-0">
+                <p class="text-xs font-black text-amber-900 flex items-center justify-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span> ⏳ অপর পক্ষ জয়েন করার জন্য অপেক্ষা করা হচ্ছে...
+                </p>
+                <p class="text-[9.5px] text-amber-800 font-medium">অপর পক্ষ ইনভাইট গ্রহণ করার পর টেলিগ্রাম প্রাইভেট গ্রুপ ও ট্রেড চালু হবে।</p>
+            </div>
+
+            <!-- Auto Generated Telegram Private Group Banner -->
+            <div id="adellTgGroupBanner" class="hidden p-3 mx-3 mt-2 bg-gradient-to-r from-sky-50 to-indigo-50 border-2 border-sky-300 rounded-2xl flex items-center justify-between gap-2 flex-shrink-0 shadow-xs">
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <h4 class="text-xs font-black text-sky-950 uppercase tracking-wide">Telegram Secret Group Ready!</h4>
+                    </div>
+                    <p class="text-[10px] text-sky-800 font-semibold truncate mt-0.5">গ্রুপে জয়েন করে কাজ সম্পন্ন করুন, তারপর এখানে কনফার্ম করুন।</p>
+                </div>
+                <a id="btnJoinTgGroup" href="#" target="_blank" class="px-3.5 py-2 bg-gradient-to-r from-sky-500 to-indigo-600 hover:brightness-110 active:scale-95 text-white font-black text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 flex-shrink-0">
+                    <i data-lucide="send" class="w-3.5 h-3.5"></i> <span>Join Group</span>
+                </a>
+            </div>
+
+            <!-- Trade Deal Summary Card -->
+            <div class="p-3 mx-3 mt-2 bg-white rounded-2xl border border-slate-200 shadow-2xs flex items-center justify-between gap-2 flex-shrink-0">
+                <div class="min-w-0">
+                    <p class="text-[9px] font-black uppercase tracking-wider text-slate-400">Locked In Escrow</p>
+                    <p id="adellRoomCoinsLabel" class="text-sm font-black text-amber-600 flex items-center gap-1 mt-0.5">
+                        <img src="PPCOIN.png" class="w-3.5 h-3.5 object-contain"> 0 Coins <span id="adellRoomBdtLabel" class="text-slate-400 text-xs font-bold">(0 BDT)</span>
+                    </p>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span id="adellMyConfirmStatus" class="text-[9px] font-extrabold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">You: Waiting</span>
+                    <span id="adellPeerConfirmStatus" class="text-[9px] font-extrabold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">Peer: Waiting</span>
+                </div>
+            </div>
+
+            <!-- Middle Workspace: Telegram Connect Notice & Full Escrow Safety Box -->
+            <div class="flex-1 min-h-0 overflow-y-auto p-4 flex flex-col justify-center items-center text-center space-y-3">
+                <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-sky-400 to-indigo-600 flex items-center justify-center shadow-md p-3">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" class="w-full h-full object-contain">
+                </div>
+                <div class="space-y-1.5 max-w-xs">
+                    <h4 class="text-sm font-black text-slate-900">টেলিগ্রাম প্রাইভেট গ্রুপে ডিল সম্পন্ন করুন</h4>
+                    <p class="text-xs text-slate-500 font-semibold leading-relaxed">
+                        উপরের <b>Join Group</b> বাটনে চাপ দিয়ে প্রাইভেট টেলিগ্রাম গ্রুপে যুক্ত হোন। সেখানে কাজ সম্পন্ন করে নিচে সোয়াইপ (Slide) করে ডিল সম্পন্ন করুন।
+                    </p>
+                </div>
+            </div>
+
+            <!-- Bottom Slide & Action Bar -->
+            <div class="p-3 bg-white border-t border-slate-200 space-y-2 flex-shrink-0">
+                <!-- Cancel Bar (Always Accessible with Rule Checking) -->
+                <div>
+                    <button onclick="cancelADellWithFee()" class="w-full py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-300 text-xs font-black active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5">
+                        <i data-lucide="x-circle" class="w-4 h-4"></i> ডিল বাতিল / Cancel Deal
+                    </button>
+                </div>
+
+                <!-- 3D Slide Confirmation inside Room (Active when Peer is Joined) -->
+                <div id="adellActiveActionRow" class="flex gap-2 hidden">
+                    <button id="btnRejectADell" onclick="triggerADellReject()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs font-black active:scale-95 transition-all cursor-pointer flex-shrink-0">
+                        Dispute
+                    </button>
+                    <div id="adellRoomSlideTrack" style="touch-action: none;" class="relative flex-1 h-11 bg-slate-100 border-2 border-emerald-400 rounded-full select-none overflow-hidden p-1 flex items-center">
+                        <div id="adellRoomSlideProg" class="absolute left-0 top-0 bottom-0 w-0 bg-emerald-500 opacity-20 pointer-events-none"></div>
+                        <span id="adellRoomSlideText" class="absolute inset-0 flex items-center justify-center text-[10px] font-black text-slate-600 tracking-wider pointer-events-none uppercase">
+                            টেনে কনফার্ম করুন &gt;&gt;
+                        </span>
+                        <div id="adellRoomSlideThumb" style="touch-action: none;" class="relative z-10 w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-md cursor-grab active:cursor-grabbing">
+                            <i data-lucide="chevrons-right" class="w-5 h-5"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -1710,8 +1774,29 @@
                 </button>
                 <div class="min-w-0 flex-1">
                     <h2 class="text-base font-extrabold text-slate-900 leading-tight">Rewards &amp; Redeem</h2>
-                    <p class="text-[10px] text-slate-400 font-semibold">প্রোমো কোড দিয়ে ফ্রি কয়েন ক্লেইম করুন</p>
+                    <p class="text-[10px] text-slate-400 font-semibold">প্রোমো কোড ও লয়্যালটি রিওয়ার্ডস</p>
                 </div>
+            </div>
+
+            <!-- 10-Star Loyalty Progress Box (9 done -> 10th Task FREE!) -->
+            <div id="loyaltyStarBox" class="p-4 rounded-3xl bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 shadow-sm space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">⭐</span>
+                        <div>
+                            <span class="text-xs font-black text-amber-950 uppercase tracking-tight block">10-Star Quest Reward</span>
+                            <span class="text-[10px] text-amber-800 font-semibold">প্রতি সফল টাস্কে ১টি স্টার পূর্ণ হবে</span>
+                        </div>
+                    </div>
+                    <span id="loyaltyStarBadge" class="text-[10px] font-black px-2.5 py-1 rounded-full bg-amber-400 text-slate-950 shadow-2xs">0 / 10 Stars</span>
+                </div>
+
+                <!-- 10 Stars Row (Auto Populated) -->
+                <div id="loyaltyStarRow" class="grid grid-cols-10 gap-1 text-center py-1.5 bg-white/90 p-2 rounded-2xl border border-amber-200 shadow-2xs"></div>
+
+                <p id="loyaltyStarDesc" class="text-[11px] font-bold text-amber-900 leading-snug">
+                    ৯টি টাস্ক সফল হলে ১০ নম্বর টাস্কটি পাবেন <b class="text-emerald-700 font-black">১০০% সম্পূর্ণ ফ্রি (০ কয়েন)</b>!
+                </p>
             </div>
 
             <!-- Top: Promo Code Box -->
@@ -1973,13 +2058,19 @@
 
     <!-- Game service off popup (main site ON, game service OFF) -->
     <div id="serviceModal" class="pop-overlay" style="display:none">
-        <div class="pop-card space-y-2">
-            <div class="mx-auto w-14 h-14 rounded-2xl flex items-center justify-center bg-indigo-100 border border-indigo-200">
+        <div class="pop-card space-y-3.5 text-center max-w-sm max-h-[85vh] overflow-y-auto">
+            <div class="mx-auto w-14 h-14 rounded-2xl flex items-center justify-center bg-indigo-100 border border-indigo-200 flex-shrink-0">
                 <i data-lucide="gamepad-2" class="w-7 h-7 text-indigo-600"></i>
             </div>
-            <h3 class="text-base font-extrabold text-slate-900">Service Off</h3>
-            <p id="serviceMsg" class="text-xs text-slate-500 font-medium leading-relaxed"></p>
-            <button onclick="closeService()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl text-sm transition-all cursor-pointer">Back to Games</button>
+            <div>
+                <h3 class="text-base font-black text-slate-900">Service Off</h3>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Service Announcement</p>
+            </div>
+            <!-- Preserves exact line-breaks, spacing and formatting from Admin Panel -->
+            <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-left max-h-[50vh] overflow-y-auto shadow-inner">
+                <p id="serviceMsg" class="text-xs text-slate-700 font-semibold leading-relaxed whitespace-pre-wrap break-words select-text"></p>
+            </div>
+            <button onclick="closeService()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-extrabold rounded-xl text-sm transition-all cursor-pointer shadow-md">Back to Games</button>
         </div>
     </div>
 
@@ -2069,6 +2160,222 @@
         </div>
     </div>
 
+            <!-- ADELL CANCEL WITH SLIDE CONFIRMATION MODAL -->
+            <div id="adellCancelConfirmModal" class="pop-overlay" style="display:none; z-index:99999;">
+                <div class="pop-card space-y-3.5 text-center max-w-sm border border-rose-200 shadow-2xl">
+                    <div class="w-14 h-14 mx-auto rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
+                        <i data-lucide="alert-triangle" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <h3 id="adellCancelModalTitle" class="text-base font-black text-slate-900">ডিল বাতিল ও ফি কর্তন</h3>
+                        <p id="adellCancelModalSub" class="text-xs text-slate-500 font-semibold mt-0.5">নিচের শর্তাবলী দেখে স্লাইড করে নিশ্চিত করুন</p>
+                    </div>
+
+                    <!-- Breakdown Details Card -->
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 text-left">
+                        <div class="flex justify-between text-xs font-semibold text-slate-600">
+                            <span>হোল্ড করা মোট কয়েন:</span>
+                            <span id="adellCancelHoldCoins" class="font-black text-slate-900">0 Coins</span>
+                        </div>
+                        <div class="flex justify-between text-xs font-semibold text-rose-600">
+                            <span>ক্যানসেলেশন ফি (৫%):</span>
+                            <span id="adellCancelFeeCoins" class="font-black text-rose-600">-0 Coins</span>
+                        </div>
+                        <div class="flex justify-between text-xs font-black text-emerald-700 border-t border-slate-200 pt-1.5">
+                            <span>ওয়ালেটে ফেরত পাবেন:</span>
+                            <span id="adellCancelRefundCoins" class="font-black text-emerald-700">+0 Coins</span>
+                        </div>
+                    </div>
+
+                    <p class="text-[10.5px] text-amber-900 font-bold bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-left leading-relaxed">
+                        ⚠️ নিশ্চিত করতে নিচের স্লাইডারটি টেনে ডান দিকে নিয়ে যান। বাতিল সম্পন্ন হলে কয়েন সাথে সাথে আপনার ওয়ালেটে ফেরত আসবে।
+                    </p>
+
+                    <!-- Slide to Cancel Track -->
+                    <div id="adellCancelSlideTrack" style="touch-action: none;" class="relative w-full h-12 bg-slate-100 border-2 border-rose-300 rounded-full select-none overflow-hidden p-1 flex items-center">
+                        <div id="adellCancelSlideProg" class="absolute left-0 top-0 bottom-0 w-0 bg-rose-500 opacity-20 pointer-events-none"></div>
+                        <span id="adellCancelSlideText" class="absolute inset-0 flex items-center justify-center text-[10px] font-black text-rose-600 tracking-wider pointer-events-none uppercase">
+                            বাতিল করতে স্লাইড করুন &gt;&gt;
+                        </span>
+                        <div id="adellCancelSlideThumb" style="touch-action: none;" class="relative z-10 w-10 h-10 rounded-full bg-gradient-to-tr from-rose-600 to-red-500 text-white flex items-center justify-center shadow-md cursor-grab active:cursor-grabbing">
+                            <i data-lucide="chevrons-right" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+
+                    <button onclick="closeADellCancelModal()" class="w-full py-2 text-xs font-black text-slate-400 hover:text-slate-700 transition-all cursor-pointer">
+                        ✕ ফিরে যান / Don't Cancel
+                    </button>
+                </div>
+            </div>
+
+            <!-- ADELL: RULES MODAL -->
+            <div id="adellRuleModal" class="pop-overlay" style="display:none">
+                <div class="pop-card space-y-3 text-left max-h-[88vh] overflow-y-auto">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">📜</span>
+                            <h3 class="text-sm font-black text-slate-900">ADELL ডিলের নিয়ম ও শর্তাবলী</h3>
+                        </div>
+                        <button onclick="document.getElementById('adellRuleModal').style.display='none'" class="text-slate-400 font-black cursor-pointer text-sm">✕</button>
+                    </div>
+                    <div class="space-y-2 text-xs text-slate-600 font-semibold leading-relaxed">
+                        <p class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-900">
+                            👉 <b>বায়ার রুম তৈরি করবেন:</b> কারণ ১০% প্ল্যাটফর্ম ফি বায়ারের ওয়ালেট থেকে সরাসরি হোল্ড (Escrow) হবে।
+                        </p>
+                        <p class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+                            👉 <b>৬ ঘণ্টার সময়সীমা:</b> ডিল গ্রহণের পর সর্বোচ্চ ৬ ঘণ্টা সক্রিয় থাকবে। উভয় পক্ষ স্লাইড কনফার্ম করলে ডিল সম্পন্ন হবে।
+                        </p>
+                        <p class="p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-900">
+                            🚫 <b>সোশ্যাল মিডিয়া লিংক সম্পূর্ণ নিষেধ:</b> Telegram, Facebook, YouTube, WhatsApp লিংক দিলে স্বয়ংক্রিয়ভাবে মেসেজ ডিলিট ও ওয়ার্নিং আসবে।
+                        </p>
+                        <p class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-900">
+                            ✅ <b>সেলার পেমেন্ট পাবেন:</b> উভয় পক্ষের স্লাইড কনফার্মেশনের পর সেলারের ওয়ালেটে আসল কয়েনগুলো <b>Play Points হিসেবে এক্সচেঞ্জ হয়ে সরাসরি যুক্ত হয়ে যাবে</b>।
+                        </p>
+                    </div>
+                    <button onclick="document.getElementById('adellRuleModal').style.display='none'" class="w-full py-2.5 bg-slate-900 text-white font-extrabold text-xs rounded-xl cursor-pointer">বুঝেছি (Close)</button>
+                </div>
+            </div>
+
+            <!-- ADELL: 1-TO-1 CREATE ROOM MODAL -->
+            <div id="createADellModal" class="pop-overlay" style="display:none">
+                <div class="pop-card space-y-3.5 text-left max-h-[90vh] overflow-y-auto">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">🤝</span>
+                            <h3 class="text-sm font-black text-slate-900">Create Direct ADELL Room</h3>
+                        </div>
+                        <button onclick="closeCreateADellModal()" class="text-slate-400 font-black cursor-pointer">✕</button>
+                    </div>
+
+                    <!-- Buyer Fee Warning Notice -->
+                    <div class="p-3 bg-amber-50 border-2 border-amber-300 rounded-2xl text-left space-y-1">
+                        <p class="text-xs font-black text-amber-900 flex items-center gap-1.5">
+                            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-600 flex-shrink-0"></i> বায়ার নির্দেশিকা:
+                        </p>
+                        <p class="text-[10px] text-amber-950 font-semibold leading-relaxed">
+                            রুম তৈরিতে <b>কোনো ফি নেই (০% ফি)</b>। তবে ডিল চালু হওয়ার পর বায়ার ডিল বাতিল করলে হোল্ড কয়েন থেকে <b>৫% ক্যানসেলেশন ফি</b> কর্তন করা হবে।
+                        </p>
+                    </div>
+
+                    <div class="space-y-2.5">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-[10px] font-extrabold uppercase tracking-wider text-slate-600">Room Title (Max 25 chars) *</label>
+                                <span id="adellTitleLen" class="text-[9px] font-mono text-slate-400">0/25</span>
+                            </div>
+                            <input id="adellInputTitle" maxlength="25" oninput="document.getElementById('adellTitleLen').textContent=this.value.length+'/25'" placeholder="e.g. 500 Points Trade" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-indigo-600">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600 mb-1">PP Coins Amount *</label>
+                            <input id="adellInputCoins" type="number" min="1" placeholder="e.g. 20" oninput="calcADellBreakdown()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black text-slate-900 focus:outline-none focus:border-indigo-600">
+                        </div>
+
+                        <!-- Realtime Money & 10% Fee Breakdown -->
+                        <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl space-y-1 text-xs">
+                            <div class="flex justify-between text-slate-600 font-semibold">
+                                <span>Coins Equivalent BDT:</span>
+                                <span id="adellCalcBdt">0 BDT</span>
+                            </div>
+                            <div class="flex justify-between text-slate-600 font-semibold">
+                                <span>Buyer Platform Fee (10%):</span>
+                                <span id="adellCalcFee">0 Coins</span>
+                            </div>
+                            <div class="flex justify-between text-indigo-950 font-black border-t border-slate-200 pt-1">
+                                <span>Total Held from Wallet:</span>
+                                <span id="adellCalcTotal" class="text-amber-600">0 Coins</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600 mb-1">Target Seller UID *</label>
+                            <div class="flex gap-2">
+                                <input id="adellInputUid" oninput="onADellUidChange(this.value)" placeholder="Enter peer user UID" class="flex-1 min-w-0 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-indigo-600">
+                                <!-- Morphing Action Button (Search <-> Add Peer) -->
+                                <button type="button" id="btnADellSearchMorph" onclick="handleADellSearchMorphClick()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-xs cursor-pointer flex items-center justify-center gap-1.5 transition-all duration-200 flex-shrink-0">
+                                    <i data-lucide="search" class="w-3.5 h-3.5"></i> <span>Search</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Peer Realtime Profile & Trade Stats Card with Fallback Avatar -->
+                        <div id="adellPeerPreviewCard" class="hidden p-3 bg-indigo-50/70 border border-indigo-200 rounded-xl space-y-2 transition-all">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-10 h-10 rounded-xl relative overflow-hidden bg-white border border-indigo-200 flex items-center justify-center flex-shrink-0">
+                                    <img id="adellPeerAvatar" class="w-full h-full object-cover" src="https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=1744510986335809" onerror="this.onerror=null;this.src='https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=1744510986335809';">
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p id="adellPeerName" class="text-xs font-black text-slate-900 truncate">Peer Name</p>
+                                    <p id="adellPeerEmail" class="text-[10px] text-slate-500 font-semibold truncate">—</p>
+                                </div>
+                                <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Selected
+                                </span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-1 text-center pt-1 border-t border-indigo-100">
+                                <div class="bg-white p-1 rounded-lg"><span class="text-[8px] font-bold text-slate-400 block">Created</span><b id="adellStatCreated" class="text-[10px] font-black text-slate-800">0</b></div>
+                                <div class="bg-white p-1 rounded-lg"><span class="text-[8px] font-bold text-slate-400 block">Joined</span><b id="adellStatJoined" class="text-[10px] font-black text-slate-800">0</b></div>
+                                <div class="bg-white p-1 rounded-lg"><span class="text-[8px] font-bold text-slate-400 block">Done</span><b id="adellStatDone" class="text-[10px] font-black text-emerald-600">0</b></div>
+                                <div class="bg-white p-1 rounded-lg"><span class="text-[8px] font-bold text-slate-400 block">Cancel</span><b id="adellStatCancel" class="text-[10px] font-black text-rose-600">0</b></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="btnSubmitADellRoom" onclick="submitCreateADellRoom()" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:brightness-110 active:scale-98 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                        <i data-lucide="zap" class="w-4 h-4"></i> Create Room & Send Invite
+                    </button>
+                </div>
+            </div>
+
+            <!-- INCOMING ADELL INVITATION PERSISTENT POPUP -->
+            <div id="adellInviteModal" class="pop-overlay" style="display:none; z-index:99998;">
+                <div class="pop-card space-y-3.5 text-left border-2 border-indigo-400 shadow-2xl">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-xl flex-shrink-0">📩</span>
+                        <div class="min-w-0 flex-1">
+                            <span class="text-[9px] font-black px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 uppercase">Incoming ADELL Request</span>
+                            <h3 id="adellInviteTitle" class="text-xs sm:text-sm font-black text-slate-900 truncate mt-0.5">Title</h3>
+                        </div>
+                    </div>
+
+                    <!-- Creator Details & Stats Card -->
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                        <div class="flex items-center gap-2">
+                            <img id="adellInviterAvatar" class="w-8 h-8 rounded-lg object-cover bg-white border border-slate-200" alt="">
+                            <div class="min-w-0 flex-1">
+                                <p id="adellInviterName" class="text-xs font-black text-slate-900 truncate">Buyer Name</p>
+                                <p class="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
+                                    Offered: <img src="PPCOIN.png" class="w-3.5 h-3.5"> <span id="adellInviteCoins">0 Coins</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-4 gap-1 text-center pt-1 border-t border-slate-200">
+                            <div class="bg-white p-1 rounded-lg"><span class="text-[8px] font-bold text-slate-400 block">Created</span><b id="adellInviterStatCreated" class="text-[10px] font-black text-slate-800">0</b></div>
+                            <div class="bg-white p-1 rounded-lg"><span class="text-[8px] font-bold text-slate-400 block">Joined</span><b id="adellInviterStatJoined" class="text-[10px] font-black text-slate-800">0</b></div>
+                            <div class="bg-white p-1 rounded-lg"><span class="text-[8px] font-bold text-slate-400 block">Done</span><b id="adellInviterStatDone" class="text-[10px] font-black text-emerald-600">0</b></div>
+                            <div class="bg-white p-1 rounded-lg"><span class="text-[8px] font-bold text-slate-400 block">Cancel</span><b id="adellInviterStatCancel" class="text-[10px] font-black text-rose-600">0</b></div>
+                        </div>
+                    </div>
+
+                    <!-- Danger Cancel Warning Card (shown when user presses No) -->
+                    <div id="adellCancelWarnCard" class="hidden p-3 bg-rose-50 border-2 border-rose-300 rounded-xl text-left space-y-1">
+                        <p class="text-[11px] font-black text-rose-800">⚠️ সতর্কবার্তা:</p>
+                        <p class="text-[10px] text-rose-950 font-semibold leading-relaxed">
+                            আপনি যদি এই ADELL ডিলটি বাতিল করেন, তবে আপনার প্রোফাইলে Cancel সংখ্যা বৃদ্ধি পাবে। বারবার ডিল বাতিল করলে আপনার অ্যাকাউন্ট ব্যান হতে পারে!
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <button id="btnDeclineADell" onclick="handleADellDeclineClick()" class="py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-black text-xs rounded-xl border border-rose-200 transition-all cursor-pointer">
+                            No / বাতিল
+                        </button>
+                        <button id="btnAcceptADell" onclick="confirmAcceptADellRoom()" class="py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow-md transition-all cursor-pointer">
+                            Yes / গ্রহণ করুন
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- BUYER: CREATE P2P AD MODAL -->
             <div id="p2pCreateModal" class="pop-overlay" style="display:none">
                 <div class="pop-card space-y-3.5 text-left max-h-[90vh] overflow-y-auto">
@@ -2104,6 +2411,10 @@
                         <div>
                             <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600 mb-1">Payment Link (যেখানে সেলার পে করবে) *</label>
                             <input id="p2pAdLink" type="url" placeholder="https://... (পেমেন্ট লিংক)" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-indigo-700 font-mono focus:outline-none focus:border-indigo-600">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600 mb-1">Email Address (পেমেন্টের জন্য দরকারি ইমেইল - Optional)</label>
+                            <input id="p2pAdEmail" type="email" placeholder="example@gmail.com (যদি প্রয়োজন হয়)" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-indigo-700 font-mono focus:outline-none focus:border-indigo-600">
                         </div>
                         <div>
                             <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600 mb-1">Offer PP Coins (সেলারকে কত কয়েন দেবেন) *</label>
@@ -2165,7 +2476,7 @@
                             <p id="p2pActionTimer" class="font-mono font-black text-rose-600 text-sm mt-0.5">23:00:00</p>
                         </div>
                         <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl">
-                            <span class="text-[9px] font-black uppercase text-emerald-600">You Receive (-5%)</span>
+                            <span class="text-[9px] font-black uppercase text-emerald-600">You Receive (-2%)</span>
                             <p id="p2pActionReceive" class="font-black text-emerald-700 text-sm mt-0.5">0 Coins</p>
                         </div>
                     </div>
@@ -2188,6 +2499,15 @@
                                 <button id="btnCopyDealLink" class="px-4 py-2.5 bg-white border border-slate-300 text-slate-700 font-extrabold text-xs rounded-xl shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer">
                                     <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Link
                                 </button>
+                            </div>
+                        </div>
+
+                        <!-- Buyer Provided Target Email Box (Shown to Accepted Seller) -->
+                        <div id="p2pDealEmailBox" class="hidden p-3 bg-indigo-50/70 rounded-xl border border-indigo-200 space-y-1.5 text-left">
+                            <label class="block text-[10px] font-black uppercase tracking-wider text-indigo-900">Email Address (পেমেন্ট এর জন্য দেওয়া ইমেইল):</label>
+                            <div class="flex items-center justify-between gap-2 bg-white px-2.5 py-1.5 rounded-lg border border-indigo-100">
+                                <p id="p2pDealEmailText" class="font-mono text-xs font-bold text-indigo-900 truncate select-all">—</p>
+                                <button type="button" onclick="copyText(document.getElementById('p2pDealEmailText').textContent, 'Email Copied!')" class="px-2.5 py-1 text-[10px] font-black bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-md cursor-pointer flex-shrink-0">Copy</button>
                             </div>
                         </div>
 
@@ -2300,6 +2620,106 @@
         let selectedGameLogo = '';
         let toastTimer;
 
+        /* ===== Home Dynamic Banner Slider Engine ===== */
+        const DEFAULT_HOME_BANNER = "https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791346466943_file_00000000702c82118797af8f3a1c57e0.png";
+        let _homeBanners = [];
+        let _bannerIdx = 0;
+        let _bannerTimer = null;
+        let _bannerIntervalSec = 4;
+
+        window.renderHomeBannerSlider = (banners, intervalSec) => {
+            _homeBanners = Array.isArray(banners) ? banners.filter(b => b && b.active !== false && b.imageUrl && b.imageUrl.trim()) : [];
+            _homeBanners.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+            _bannerIntervalSec = Math.max(2, Number(intervalSec) || 4);
+            _bannerIdx = 0;
+
+            const track = document.getElementById('homeBannerTrack');
+            const dots = document.getElementById('homeBannerDots');
+            if (!track || !dots) return;
+
+            // কোনো ব্যানার না থাকলে ডিফল্ট ইমেজ দেখাবে (কোনো টেক্সট থাকবে না)
+            if (!_homeBanners.length) {
+                track.innerHTML = `
+                    <div class="w-full h-full flex-shrink-0 relative overflow-hidden bg-slate-950">
+                        <img src="${DEFAULT_HOME_BANNER}" referrerpolicy="no-referrer" class="w-full h-full object-fill select-none" alt="Banner">
+                    </div>`;
+                dots.innerHTML = '';
+                return;
+            }
+
+            track.innerHTML = _homeBanners.map((b, i) => {
+                const actionAttr = b.actionType === 'screen'
+                    ? `onclick="showScreen('${b.actionTarget || 'screenStore'}')"`
+                    : (b.actionType === 'url' ? `onclick="window.open('${b.actionTarget || '#'}', '_blank')"` : '');
+                const cursorCls = b.actionType && b.actionType !== 'none' ? 'cursor-pointer active:scale-[0.99]' : '';
+
+                return `
+                <div class="w-full h-full flex-shrink-0 relative overflow-hidden ${cursorCls} transition-transform bg-slate-950" ${actionAttr}>
+                    <img src="${b.imageUrl.trim()}" referrerpolicy="no-referrer" class="w-full h-full object-fill select-none" loading="${i === 0 ? 'eager' : 'lazy'}" alt="Banner ${i+1}" onerror="this.onerror=null;this.src='${DEFAULT_HOME_BANNER}';">
+                </div>`;
+            }).join('');
+
+            dots.innerHTML = _homeBanners.length > 1 ? _homeBanners.map((_, i) => `
+                <button type="button" onclick="goHomeBanner(${i})" class="h-2 rounded-full transition-all cursor-pointer ${i === 0 ? 'bg-white w-4' : 'bg-white/50 w-2'}"></button>
+            `).join('') : '';
+
+            updateBannerSlidePosition();
+            startHomeBannerAutoPlay();
+            initHomeBannerTouch();
+            if (window.lucide) lucide.createIcons();
+        };
+
+        window.goHomeBanner = (idx) => {
+            if (!_homeBanners.length) return;
+            _bannerIdx = (idx + _homeBanners.length) % _homeBanners.length;
+            updateBannerSlidePosition();
+            startHomeBannerAutoPlay();
+        };
+
+        window.slideHomeBanner = (delta) => {
+            goHomeBanner(_bannerIdx + delta);
+        };
+
+        function updateBannerSlidePosition() {
+            const track = document.getElementById('homeBannerTrack');
+            const dots = document.querySelectorAll('#homeBannerDots button');
+            if (track) track.style.transform = `translateX(-${_bannerIdx * 100}%)`;
+            dots.forEach((dot, i) => {
+                dot.className = `h-2 rounded-full transition-all cursor-pointer ${i === _bannerIdx ? 'bg-white w-4' : 'bg-white/50 w-2'}`;
+            });
+        }
+
+        function startHomeBannerAutoPlay() {
+            if (_bannerTimer) clearInterval(_bannerTimer);
+            if (_homeBanners.length <= 1) return;
+            _bannerTimer = setInterval(() => {
+                _bannerIdx = (_bannerIdx + 1) % _homeBanners.length;
+                updateBannerSlidePosition();
+            }, _bannerIntervalSec * 1000);
+        }
+
+        function initHomeBannerTouch() {
+            const container = document.getElementById('homeBannerSection');
+            if (!container || container._touchBound) return;
+            container._touchBound = true;
+
+            let startX = 0, dist = 0;
+            container.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                dist = 0;
+            }, { passive: true });
+
+            container.addEventListener('touchmove', (e) => {
+                dist = e.touches[0].clientX - startX;
+            }, { passive: true });
+
+            container.addEventListener('touchend', () => {
+                if (Math.abs(dist) > 40) {
+                    slideHomeBanner(dist > 0 ? -1 : 1);
+                }
+            });
+        }
+
         function toast(msg) {
             document.getElementById('toastMsg').textContent = msg;
             const t = document.getElementById('toast');
@@ -2366,15 +2786,21 @@
         }
 
         function showScreen(id) {
-            ['screenLogin', 'screenGameSelect', 'screenPayment', 'screenTopup', 'screenCredentials', 'screenSuccess', 'screenProfile', 'screenHistory', 'screenStore', 'screenGen', 'screenRefer', 'screenP2P', 'screenRewards'].forEach(s => {
+            ['screenLogin', 'screenGameSelect', 'screenPayment', 'screenTopup', 'screenCredentials', 'screenSuccess', 'screenProfile', 'screenHistory', 'screenStore', 'screenGen', 'screenRefer', 'screenP2P', 'screenRewards', 'screenADellRoom'].forEach(s => {
                 const el = document.getElementById(s);
                 if (el) el.classList.toggle('hidden', s !== id);
             });
 
-            // Hide Header specifically on Profile screen to provide full vertical space
+            // Home (screenGameSelect) chara baki je kono screen e gele header auto hide hoye jabe
             const header = document.getElementById('appHeader');
             if (header) {
-                header.classList.toggle('hidden', id === 'screenProfile' || id === 'screenLogin');
+                header.classList.toggle('hidden', id !== 'screenGameSelect');
+            }
+
+            // ADELL Room e dhukle nicher bottom navigation bar puro hide hobe
+            const bNav = document.getElementById('bottomNav');
+            if (bNav) {
+                bNav.classList.toggle('hidden', id === 'screenADellRoom');
             }
 
             if ((id !== 'screenProfile' && id !== 'screenHistory') && window._stopHistLive) { try { window._stopHistLive(); } catch (e) {} }
@@ -2484,7 +2910,12 @@
                 return; 
             }
             if (tab === 'gen') { showScreen('screenGen'); if (window.refreshGenUI) window.refreshGenUI(); return; }
-            if (tab === 'p2p') { showScreen('screenP2P'); if (window.startP2PLive) window.startP2PLive(); return; }
+            if (tab === 'p2p') { 
+                showScreen('screenP2P'); 
+                if (window.setP2PTab) window.setP2PTab('posts');
+                if (window.startP2PLive) window.startP2PLive(); 
+                return; 
+            }
             if (tab === 'wallet') { enterTopup('nav'); return; }
             if (tab === 'profile') { goToProfile(); return; }
         };
@@ -2926,6 +3357,7 @@
         window.openRewardsScreen = () => {
             if (!(window.ppfb && window.ppfb.user)) { toast('Please login first'); showScreen('screenLogin'); return; }
             showScreen('screenRewards');
+            if (window.renderLoyaltyStars) window.renderLoyaltyStars();
             renderRewardsHistory();
         };
 
@@ -3296,8 +3728,14 @@
         }
         function wdCalc() {
             const pts = Math.max(0, Math.floor(Number((document.getElementById('wdPoints') || {}).value) || 0));
+            const grossBdt = pts ? ptsToBdt(pts) : 0;
+            const feeBdt = Math.round(grossBdt * 0.10); // 10% fee deducted
+            const netBdt = Math.max(0, grossBdt - feeBdt);
+
             const out = document.getElementById('wdBdt');
-            if (out) out.value = pts ? (ptsToBdt(pts) + ' BDT') : '';
+            const feeLbl = document.getElementById('wdFeeLabel');
+            if (out) out.value = grossBdt ? (netBdt + ' BDT') : '';
+            if (feeLbl) feeLbl.textContent = grossBdt ? `-${feeBdt} BDT (10%)` : '0 BDT';
             refreshWalletPointsUI();
         }
         function refreshWalletPointsUI() {
@@ -3522,12 +3960,47 @@
             }
         }
 
+        function getBulkConfig() {
+            const c = (window.ppfb && window.ppfb.config) || {};
+            const minCoins = Math.max(3, Math.floor(Number(c.bulkMinCoins) || 15));
+            const discPerCoin = Math.max(0, Math.floor(Number(c.bulkDiscount) || 1));
+            return { minCoins, discPerCoin };
+        }
+
         function onCoinInput(val) {
             const coins = snapStars(val);
             const amtEl = document.getElementById('topupAmount');
-            const rate = getCoinRate();
+            const baseRate = getCoinRate();
+
             if (amtEl) {
-                amtEl.value = Math.round(isStarsPayment() ? (coins * getStarRate()) : (coins * rate));
+                if (isStarsPayment()) {
+                    amtEl.value = Math.round(coins * getStarRate());
+                } else {
+                    const { minCoins, discPerCoin } = getBulkConfig();
+                    const hasDiscount = discPerCoin > 0 && coins >= minCoins;
+                    const effectiveRate = hasDiscount ? Math.max(1, baseRate - discPerCoin) : baseRate;
+                    const totalBdt = coins * effectiveRate;
+                    amtEl.value = totalBdt;
+
+                    // লাইভ ডিসকাউন্ট ব্যাজ আপডেট
+                    let discBox = document.getElementById('bulkDiscAlertBox');
+                    if (!discBox) {
+                        const wrap = amtEl.closest('.space-y-3.5') || amtEl.parentElement;
+                        discBox = document.createElement('div');
+                        discBox.id = 'bulkDiscAlertBox';
+                        amtEl.parentElement.insertAdjacentElement('afterend', discBox);
+                    }
+                    if (hasDiscount) {
+                        const saved = coins * discPerCoin;
+                        discBox.className = 'p-2 bg-emerald-50 border border-emerald-300 rounded-xl text-[10.5px] font-black text-emerald-800 flex items-center justify-between mt-1.5';
+                        discBox.innerHTML = `<span>🎉 বাল্ক অফার: ${discPerCoin}৳/কয়েন ছাড় (${effectiveRate}৳/কয়েন)</span><span class="text-emerald-700">মোট সাশ্রয়: ${saved}৳!</span>`;
+                    } else if (discPerCoin > 0) {
+                        discBox.className = 'p-1.5 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-bold text-slate-500 mt-1.5';
+                        discBox.innerHTML = `💡 <b>${minCoins}+ কয়েন</b> কিনলে প্রতি কয়েনে <b>${discPerCoin}৳ ছাড়</b> পাবেন!`;
+                    } else {
+                        discBox.innerHTML = '';
+                    }
+                }
             }
         }
 
@@ -4205,11 +4678,6 @@
             if (menu && wrap && !menu.classList.contains('hidden') && !wrap.contains(e.target)) {
                 menu.classList.add('hidden');
             }
-            const sMenu = document.getElementById('sellMenu');
-            const sWrap = document.getElementById('sellMethodWrap');
-            if (sMenu && sWrap && !sMenu.classList.contains('hidden') && !sWrap.contains(e.target)) {
-                sMenu.classList.add('hidden');
-            }
         });
     </script>
 
@@ -4420,6 +4888,13 @@
             // store tabs refresh (admin নাম/ON-OFF বদলালে সাথে সাথে)
             try { if (window.refreshStoreTabs) refreshStoreTabs(); } catch (e) {}
             try { if (window.renderStoreList && window._storeCache) renderStoreList(window._storeCache); } catch (e) {}
+
+            // Render Dynamic Home Banner Slider
+            try {
+                if (window.renderHomeBannerSlider) {
+                    window.renderHomeBannerSlider(c.homeBanners || [], c.sliderIntervalSec || 4);
+                }
+            } catch (e) {}
 
             // লাইভ অটো-আপডেট চেকার (Cache Buster Trigger) — উপরে TOP-এ চলে গেছে, এখানে ডুপ্লিকেট দরকার নেই
         }
@@ -4712,32 +5187,32 @@
                     })();
 
                     return `
-                    <div class="tx-item store-card ${theme.cardCls} p-3.5 pt-4 bg-white border rounded-2xl shadow-2xs space-y-2.5 transition-all" style="animation-delay:${Math.min(idx * 60, 400)}ms">
-                        <div class="flex items-center justify-between gap-2">
-                            <span class="store-ribbon text-[9px] font-black text-white ${theme.ribbonCls} px-2 py-0.5 rounded-full shadow-sm">${escH(theme.catRibbon)}</span>
-                            <span class="flex items-center gap-1.5 flex-shrink-0">${theme.dealBadge}
-                            <span class="store-stock text-[9.5px] font-extrabold ${inStock ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-rose-600 bg-rose-50 border-rose-200'} px-2 py-0.5 rounded-full border">
-                                ${inStock ? '● In Stock' : '✕ Stock Out'}
-                            </span></span>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr ${theme.iconBg} border flex items-center justify-center flex-shrink-0 shadow-2xs">
+                    <div class="tx-item store-card ${theme.cardCls} p-3.5 bg-white rounded-2xl shadow-xs space-y-2.5 transition-all" style="animation-delay:${Math.min(idx * 60, 400)}ms">
+                        <!-- Top Row: Logo + Full Name (Full Width) -->
+                        <div class="flex items-start gap-2.5 min-w-0">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr ${theme.iconBg} border flex items-center justify-center flex-shrink-0 shadow-2xs mt-0.5">
                                 ${theme.icon}
                             </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="store-title text-xs sm:text-sm text-slate-900 break-words" title="${escH(item.title || 'Special Offer')}">${escH(item.title || 'Special Offer')}</h4>
-                                <div class="flex items-center gap-1.5 flex-wrap mt-1">
-                                    <span class="store-tag text-[9px] font-black ${theme.badgeBg} border px-1.5 py-0.5 rounded-md">${escH(item.tag || theme.typeTag)}</span>
+                            <div class="min-w-0 flex-1 space-y-0.5">
+                                <h4 class="text-xs sm:text-[13px] font-black text-slate-900 leading-snug break-words">${escH(item.title || 'Special Offer')}</h4>
+                                <div class="flex items-center gap-1.5 flex-wrap pt-0.5">
+                                    <span class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md ${theme.badgeBg} border">${escH(item.tag || theme.typeTag)}</span>
+                                    ${theme.dealBadge || ''}
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Bottom Full-Width Action & Cost Row -->
-                        <div class="store-bottom pt-2 border-t border-slate-100">
-                            <div class="store-cost">${theme.costLabel}</div>
+                        <!-- Bottom Row: Attached near bottom border with small gap, right aligned -->
+                        <div class="flex items-center justify-end pt-1">
                             <button onclick="${inStock ? theme.actionFn : `toast('এই আইটেমটি বর্তমানে স্টক আউট!')`}" 
-                                class="store-btn px-5 py-2 font-black text-xs rounded-xl shadow-2xs transition-all flex items-center justify-center cursor-pointer ${theme.btnBg}">
-                                ${inStock ? (isBuyAccount ? 'Buy Now' : 'Sell Now') : 'Stock Out'}
+                                class="store-btn px-4 py-2 font-black text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 ${theme.btnBg}">
+                                ${inStock ? (isBuyAccount ? `
+                                    <img src="PPCOIN.png" class="w-3.5 h-3.5 object-contain flex-shrink-0">
+                                    <span>${Number(item.coins || 10)} Coins &bull; Buy</span>
+                                ` : `
+                                    <img src="https://pub-4c6b2dbf3a0c4862a8964b1546de6283.r2.dev/1791182445338_Google_Play_Points_Logo_2024_s2560__1_.png" class="w-3.5 h-3.5 object-contain flex-shrink-0 bg-white rounded-full p-0.5">
+                                    <span>${Number(item.points || 50)} Points &bull; Sell</span>
+                                `) : 'Stock Out'}
                             </button>
                         </div>
                     </div>`;
@@ -4790,95 +5265,6 @@
             }
             window.renderStoreList = renderStoreList;
 
-            window.setSellMethod = function(v) {
-                var m = document.getElementById('sellMethod'); if (m) m.value = v;
-                var mn = document.getElementById('sellMethodName'); if (mn) mn.innerText = v;
-                var ml = document.getElementById('sellMethodLogo'); if (ml) ml.src = (typeof PAY_LOGOS !== 'undefined' ? PAY_LOGOS[v] : '') || '';
-                document.querySelectorAll('.sell-opt').forEach(o => o.classList.toggle('picked', o.dataset.val === v));
-                var sm = document.getElementById('sellMenu'); if (sm) sm.classList.add('hidden');
-            };
-
-            window.openStoreSellModal = (id, title, pts, price, oldPrice) => {
-                try {
-                if (!(window.ppfb && window.ppfb.user)) { toast('Please login first'); showScreen('screenLogin'); return; }
-                activeSellItem = { id, title, points: pts, price };
-                var t1 = document.getElementById('sellModalTitle'); if (t1) t1.textContent = title;
-                var t2 = document.getElementById('sellModalPoints'); if (t2) t2.textContent = pts + ' Points';
-                var t3 = document.getElementById('sellModalPrice'); if (t3) t3.textContent = 'You Receive: ' + price + ' BDT' + ((Number(oldPrice) || 0) > price ? ' (was ' + oldPrice + ')' : '');
-                var pd = document.getElementById('sellModalPendingDays');
-                var pDays = (window.getPendingDays ? window.getPendingDays() : 3);
-                if (pd) pd.textContent = pDays + ' দিন';
-                var g = document.getElementById('sellGmail'); if (g) g.value = '';
-                var pw = document.getElementById('sellPassword'); if (pw) pw.value = '';
-                var sn = document.getElementById('sellNumber'); if (sn) sn.value = '';
-                var tg = document.getElementById('sellTg'); if (tg) tg.value = '';
-                document.getElementById('storeSellModal').style.display = 'flex';
-                if (window.lucide) lucide.createIcons();
-                } catch (e) { console.warn('openStoreSellModal failed:', e); }
-            };
-
-            window.closeStoreSellModal = () => { document.getElementById('storeSellModal').style.display = 'none'; };
-
-            window.submitPointSellRequest = async () => {
-                const gmail = (document.getElementById('sellGmail').value || '').trim();
-                const pass = (document.getElementById('sellPassword').value || '').trim();
-                const tg = (document.getElementById('sellTg').value || '').trim();
-
-                if (!gmail || !pass) {
-                    toast('Gmail ও Password অবশ্যই পূরণ করুন!');
-                    return;
-                }
-
-                if (!tg || tg.length < 3) {
-                    toast('⚠️ আপনার Telegram Username (@username) অবশ্যই দিতে হবে!');
-                    const tgInp = document.getElementById('sellTg');
-                    if (tgInp) { tgInp.focus(); tgInp.style.borderColor = '#ef4444'; }
-                    return;
-                }
-
-                const u = window.ppfb && window.ppfb.user;
-                const btn = document.getElementById('btnSubmitSell');
-                btn.disabled = true;
-                btn.textContent = 'Submitting...';
-
-                try {
-                    await addDoc(collection(db, 'point_sells'), {
-                        uid: u ? u.uid : 'guest',
-                        userName: u ? u.displayName : 'User',
-                        userEmail: u ? u.email : '',
-                        packageTitle: activeSellItem ? activeSellItem.title : 'Points Pack',
-                        points: Number(activeSellItem ? activeSellItem.points : 100),
-                        payoutAmount: Number(activeSellItem ? activeSellItem.price : ptsToBdt(activeSellItem ? activeSellItem.points : 100)),
-                        gmail,
-                        password: pass,
-                        userTg: tg || 'None',
-                        status: 'pending',
-                        createdAt: serverTimestamp(),
-                        expiresAt: new Date(Date.now() + 10 * 86400000)
-                    });
-
-                    // Notify Admin via Telegram
-                    sendTelegramMsg(ADMIN_TG_ID, 
-                        `💰 <b>USER WANTS TO SELL PLAY POINTS!</b>\n\n` +
-                        `👤 <b>User:</b> ${u ? u.displayName : 'User'} (${u ? u.email : ''})\n` +
-                        `🎁 <b>Package:</b> ${activeSellItem ? activeSellItem.points : 100} Points\n` +
-                        `📧 <b>Gmail:</b> <code>${gmail}</code>\n` +
-                        `🔑 <b>Pass:</b> <code>${pass}</code>\n` +
-                        `✈️ <b>User Telegram:</b> ${tg || 'None'}\n\n` +
-                        `⚠️ <i>পয়েন্ট ট্রান্সফার করে অ্যাডমিন প্যানেল থেকে Approve চাপলে ইউজারের একাউন্টে পয়েন্ট যোগ হবে।</i>`
-                    );
-
-                    toast('✅ সেল রিকোয়েস্ট পাঠানো হয়েছে! এডমিন চেক করে টাকা পাঠাবে।');
-                    closeStoreSellModal();
-                } catch (e) {
-                    toast('Error: ' + e.message);
-                } finally {
-                    btn.disabled = false;
-                    btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Submit Sell Request';
-                    if (window.lucide) lucide.createIcons();
-                }
-            };
-
             /* ---------- P2P MARKETPLACE CLIENT LOGIC ---------- */
             let _p2pUnsub = null;
             let _p2pActiveDeals = [];
@@ -4886,24 +5272,109 @@
             let _p2pTimerInterval = null;
 
             window.setP2PTab = (tab) => {
-                const bS = document.getElementById('p2pTabSell');
-                const bB = document.getElementById('p2pTabBuy');
-                const bY = document.getElementById('p2pTabMyDeals');
+                const bPosts = document.getElementById('p2pTabPosts');
+                const bADell = document.getElementById('p2pTabADell');
+                const bMy = document.getElementById('p2pTabMyDeals');
 
-                const pM = document.getElementById('p2pMarketPane');
-                const pB = document.getElementById('p2pBuyPane');
-                const pY = document.getElementById('p2pMyDealsPane');
+                const pMarket = document.getElementById('p2pMarketPane');
+                const pADell = document.getElementById('p2pADellPane');
+                const pMy = document.getElementById('p2pMyDealsPane');
 
-                if (bS) bS.className = tab === 'sell' ? 'px-4 py-1.5 rounded-lg text-xs font-black bg-white text-slate-900 shadow-xs transition-all cursor-pointer' : 'px-4 py-1.5 rounded-lg text-xs font-extrabold text-slate-500 hover:text-slate-800 transition-all cursor-pointer';
-                if (bB) bB.className = tab === 'buy' ? 'px-4 py-1.5 rounded-lg text-xs font-black bg-white text-slate-900 shadow-xs transition-all cursor-pointer' : 'px-4 py-1.5 rounded-lg text-xs font-extrabold text-slate-500 hover:text-slate-800 transition-all cursor-pointer';
-                if (bY) bY.className = tab === 'my_deals' ? 'px-3.5 py-1.5 rounded-xl text-xs font-black bg-amber-50 text-amber-900 shadow-xs border-2 border-amber-400 transition-all cursor-pointer flex items-center gap-1.5' : 'px-3.5 py-1.5 rounded-xl text-xs font-black bg-white hover:bg-amber-50/50 text-slate-800 shadow-xs border border-slate-300 transition-all cursor-pointer flex items-center gap-1.5';
+                const activeBtnCls = 'px-3.5 py-1.5 rounded-lg text-xs font-black bg-white text-slate-900 shadow-xs transition-all cursor-pointer';
+                const inactiveBtnCls = 'px-3.5 py-1.5 rounded-lg text-xs font-extrabold text-slate-600 hover:text-slate-900 transition-all cursor-pointer';
 
-                if (pM) pM.classList.toggle('hidden', tab !== 'sell');
-                if (pB) pB.classList.toggle('hidden', tab !== 'buy');
-                if (pY) pY.classList.toggle('hidden', tab !== 'my_deals');
+                if (bPosts) bPosts.className = tab === 'posts' ? activeBtnCls : inactiveBtnCls;
+                if (bADell) bADell.className = tab === 'adell' ? activeBtnCls : inactiveBtnCls;
+                if (bMy) bMy.className = tab === 'my_deals' ? 'px-3 py-1.5 rounded-xl text-xs font-black bg-amber-50 text-amber-900 shadow-xs border-2 border-amber-400 transition-all cursor-pointer flex items-center gap-1.5' : 'px-3 py-1.5 rounded-xl text-xs font-black bg-white hover:bg-amber-50/50 text-slate-800 shadow-xs border border-slate-300 transition-all cursor-pointer flex items-center gap-1.5';
 
-                if (tab !== 'buy') renderP2PUI();
+                if (pMarket) pMarket.classList.toggle('hidden', tab !== 'posts');
+                if (pADell) pADell.classList.toggle('hidden', tab !== 'adell');
+                if (pMy) pMy.classList.toggle('hidden', tab !== 'my_deals');
+
+                // Dynamic Top Action Button update based on active Tab
+                const topBtn = document.getElementById('btnP2PTopAction');
+                const topTxt = document.getElementById('p2pTopActionText');
+                if (topBtn && topTxt) {
+                    if (tab === 'posts') {
+                        topTxt.textContent = '+ Post';
+                        topBtn.className = 'px-3.5 py-1.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-black text-xs rounded-xl shadow-md active:scale-95 transition-all flex items-center gap-1 cursor-pointer';
+                    } else {
+                        topTxt.textContent = '+ A DELL';
+                        topBtn.className = 'px-3.5 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black text-xs rounded-xl shadow-md active:scale-95 transition-all flex items-center gap-1 cursor-pointer';
+                    }
+                }
+
+                if (tab === 'posts') renderP2PUI();
+                if (tab === 'adell') renderMyADellRooms();
+                if (tab === 'my_deals') renderP2PUI();
                 if (window.lucide) lucide.createIcons();
+            };
+
+            window.handleP2PTopActionClick = () => {
+                const isPostsTab = !document.getElementById('p2pMarketPane').classList.contains('hidden');
+                if (isPostsTab) {
+                    toast('🚀 খুব শীঘ্রই পোস্ট ফিচার চালু হবে! বর্তমানে সরাসরি A DELL দিয়ে ডিল করুন।');
+                } else {
+                    window.openCreateADellModal();
+                }
+            };
+
+            // Render Only Private Rooms for Current User (Instant & Index-safe)
+            window.renderMyADellRooms = async () => {
+                const u = window.ppfb && window.ppfb.user;
+                const box = document.getElementById('adellPrivateRoomsList');
+                const countBadge = document.getElementById('adellActiveRoomsCount');
+                if (!u || !box) return;
+
+                try {
+                    const [buyerSnap, sellerSnap] = await Promise.all([
+                        getDocs(query(collection(db, 'adell_rooms'), where('buyerUid', '==', u.uid), limit(20))),
+                        getDocs(query(collection(db, 'adell_rooms'), where('sellerUid', '==', u.uid), limit(20)))
+                    ]);
+
+                    const myRooms = [];
+                    const seen = new Set();
+                    [...buyerSnap.docs, ...sellerSnap.docs].forEach(d => {
+                        if (!seen.has(d.id)) {
+                            seen.add(d.id);
+                            myRooms.push({ id: d.id, ...d.data() });
+                        }
+                    });
+
+                    window._myADellRooms = myRooms;
+                    // শুধুমাত্র সক্রিয় ও চলমান রুম A DELL ট্যাবে থাকবে
+                    const activeList = myRooms.filter(r => r.status === 'active' || r.status === 'inviting');
+                    if (countBadge) countBadge.textContent = `${activeList.length} Active`;
+
+                    if (!activeList.length) {
+                        box.innerHTML = `<div class="text-center py-8 text-xs text-slate-400 font-semibold bg-white rounded-2xl border border-slate-200 p-4">কোনো সক্রিয় A DELL প্রাইভেট রুম নেই। (সম্পন্ন বা বাতিল ডিল দেখতে <b>My Trades &gt; History</b>-তে যান)</div>`;
+                        return;
+                    }
+
+                    box.innerHTML = activeList.map(r => {
+                        const isBuyer = r.buyerUid === u.uid;
+                        const peerName = isBuyer ? r.sellerName : r.buyerName;
+                        return `
+                        <div class="p-3.5 bg-white border-2 border-emerald-300 rounded-2xl shadow-xs space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <h4 class="text-xs font-black text-slate-900 truncate">${escH(r.title || 'Private Trade')}</h4>
+                                <span class="text-[9px] font-black px-2 py-0.5 rounded-full ${r.status === 'active' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                                    ${r.status === 'active' ? '● Live' : '⏳ Inviting'}
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
+                                <span class="text-[11px] font-bold text-slate-600">With: <b class="text-indigo-900">${escH(peerName || 'Peer')}</b></span>
+                                <span class="font-black text-amber-600 flex items-center gap-1"><img src="PPCOIN.png" class="w-3.5 h-3.5"> ${r.coins} Coins</span>
+                            </div>
+                            <button onclick="enterADellLiveRoom('${r.id}')" class="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-black text-xs rounded-xl cursor-pointer active:scale-95 transition-all">
+                                Enter Private Room ➔
+                            </button>
+                        </div>`;
+                    }).join('');
+                    if (window.lucide) lucide.createIcons();
+                } catch (e) {
+                    console.warn(e);
+                }
             };
 
             window.startP2PLive = () => {
@@ -4950,11 +5421,10 @@
                 }, 1000);
             }
 
-            // Points Calculation: 1 PP Coin = 10 Play Points
+            // Points Calculation: 1 PP Coin = 10 Play Points (0% fee, 100% payout)
             function calcSellerPoints(coins) {
                 const totalPoints = Math.floor(Number(coins || 0) * 10);
-                const sellerGetsPoints = Math.floor(totalPoints * 0.95); // 5% fee deducted
-                return sellerGetsPoints;
+                return totalPoints; // Full 100% points, no fee deducted
             }
 
             function renderP2PUI() {
@@ -5017,14 +5487,19 @@
                     }
                 }
 
-                // 2. My Deals Feed (Deals I posted OR deals I accepted as seller)
+                // 2. My Deals Feed (Deals I posted OR deals I accepted as seller + ADELL History)
                 const myFeed = document.getElementById('p2pMyDealsFeed');
                 if (myFeed && myUid) {
-                    const closedStatuses = ['completed', 'refunded', 'expired_refunded', 'banned_cancelled'];
+                    const closedStatuses = ['completed', 'refunded', 'expired_refunded', 'banned_cancelled', 'cancelled_by_buyer', 'cancelled_by_seller', 'disputed'];
                     const isHistoryTab = window._p2pMyDealsSubTab === 'history';
 
-                    // Closed/completed/refunded deals shob History tab e thakbe, My Deals e thakbe na
-                    const myDeals = _p2pActiveDeals.filter(d => {
+                    // P2P ডিল এবং A DELL ডিল একত্রিত করা
+                    const combinedTrades = [
+                        ..._p2pActiveDeals.map(d => ({ ...d, _isADell: false })),
+                        ...(window._myADellRooms || []).map(r => ({ ...r, _isADell: true }))
+                    ];
+
+                    const myDeals = combinedTrades.filter(d => {
                         const belongsToMe = d.buyerUid === myUid || d.sellerUid === myUid;
                         if (!belongsToMe) return false;
                         const isClosed = closedStatuses.includes(d.status);
@@ -5059,15 +5534,18 @@
                             // Friendly Status Badge Label
                             let statusBadge = '';
                             if (status === 'completed') statusBadge = '<span class="text-[9.5px] font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">✓ COMPLETED</span>';
+                            else if (status.startsWith('cancelled')) statusBadge = '<span class="text-[9.5px] font-black px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-300">✕ CANCELLED</span>';
                             else if (status === 'payment_sent') statusBadge = '<span class="text-[9.5px] font-black px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 animate-pulse">⏳ Awaiting Release</span>';
                             else if (status === 'processing') statusBadge = '<span class="text-[9.5px] font-black px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300">⚡ In Progress</span>';
                             else if (status === 'disputed') statusBadge = '<span class="text-[9.5px] font-black px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 border border-rose-300">⚠️ DISPUTED</span>';
                             else statusBadge = '<span class="text-[9.5px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">● OPEN</span>';
 
+                            const typePill = d._isADell ? '<span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 mr-1.5">A DELL</span>' : '';
+
                             return `
                             <div class="p-4 bg-white border-2 border-slate-300/90 rounded-2xl shadow-sm space-y-3">
                                 <div class="flex items-center justify-between gap-2">
-                                    <h4 class="text-sm font-black text-slate-900 truncate">${escH(d.title)}</h4>
+                                    <h4 class="text-sm font-black text-slate-900 truncate">${typePill}${escH(d.title)}</h4>
                                     ${statusBadge}
                                 </div>
 
@@ -5170,15 +5648,15 @@
 
             window.calcP2PBuyerTotal = () => {
                 const coins = Math.max(0, Math.floor(Number((document.getElementById('p2pAdCoins') || {}).value) || 0));
-                const fee = Math.ceil(coins * 0.10);
-                const total = coins + fee;
+                const fee = 0; // 0% Creation Fee
+                const total = coins;
 
                 const cBase = document.getElementById('p2pCalcBase');
                 const cFee = document.getElementById('p2pCalcFee');
                 const cTot = document.getElementById('p2pCalcTotal');
 
                 if (cBase) cBase.textContent = `${coins} Coins`;
-                if (cFee) cFee.textContent = `${fee} Coins`;
+                if (cFee) cFee.textContent = `0 Coins (Free)`;
                 if (cTot) cTot.textContent = `${total} Coins`;
                 return { coins, fee, total };
             };
@@ -5189,6 +5667,7 @@
 
                 const title = (document.getElementById('p2pAdTitle').value || '').trim();
                 const link = (document.getElementById('p2pAdLink').value || '').trim();
+                const dealEmail = (document.getElementById('p2pAdEmail') ? document.getElementById('p2pAdEmail').value : '').trim();
                 const tg = (document.getElementById('p2pAdTg').value || '').trim();
                 const { coins, fee, total } = calcP2PBuyerTotal();
 
@@ -5223,6 +5702,7 @@
                         t.set(dealRef, {
                             title,
                             link,
+                            dealEmail: dealEmail || '',
                             coins,
                             feeCoins: fee,
                             escrowCoins: total,
@@ -5243,6 +5723,7 @@
                     closeP2PCreateModal();
                     document.getElementById('p2pAdTitle').value = '';
                     document.getElementById('p2pAdLink').value = '';
+                    if (document.getElementById('p2pAdEmail')) document.getElementById('p2pAdEmail').value = '';
                     document.getElementById('p2pAdCoins').value = '';
                 } catch (e) {
                     toast(e.message === 'insufficient' ? 'কয়েন ব্যালেন্স কম আছে' : 'ডিল তৈরি ব্যর্থ: ' + e.message);
@@ -5273,6 +5754,16 @@
                 if (isAcceptedByMe) {
                     document.getElementById('btnOpenDealLink').onclick = () => window.open(deal.link, '_blank');
                     document.getElementById('btnCopyDealLink').onclick = () => copyText(deal.link, 'Deal Link Copied!');
+                    const eBox = document.getElementById('p2pDealEmailBox');
+                    const eTxt = document.getElementById('p2pDealEmailText');
+                    if (eBox && eTxt) {
+                        if (deal.dealEmail) {
+                            eTxt.textContent = deal.dealEmail;
+                            eBox.classList.remove('hidden');
+                        } else {
+                            eBox.classList.add('hidden');
+                        }
+                    }
                 }
 
                 // Setup timer interval
@@ -5291,6 +5782,632 @@
             window.closeP2PActionModal = () => {
                 if (_p2pTimerInterval) clearInterval(_p2pTimerInterval);
                 document.getElementById('p2pDealActionModal').style.display = 'none';
+            };
+
+            // ---------------- ADELL 1-TO-1 ENGINE ----------------
+            let _adellCurrentRoom = null;
+            let _adellRoomUnsub = null;
+            let _adellChatUnsub = null;
+            let _adellRoomCountdown = null;
+            let _adellFoundPeer = null;
+
+            window.openADellRuleModal = () => {
+                document.getElementById('adellRuleModal').style.display = 'flex';
+                if (window.lucide) lucide.createIcons();
+            };
+
+            window.openCreateADellModal = () => {
+                if (!(window.ppfb && window.ppfb.user)) { toast('Please login first'); showScreen('screenLogin'); return; }
+                document.getElementById('createADellModal').style.display = 'flex';
+                _adellFoundPeer = null;
+                document.getElementById('adellPeerPreviewCard').classList.add('hidden');
+                resetADellMorphBtn();
+                calcADellBreakdown();
+                if (window.lucide) lucide.createIcons();
+            };
+
+            window.closeCreateADellModal = () => {
+                document.getElementById('createADellModal').style.display = 'none';
+            };
+
+            window.resetADellMorphBtn = () => {
+                const btn = document.getElementById('btnADellSearchMorph');
+                if (btn) {
+                    btn.className = 'px-4 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-xs cursor-pointer flex items-center justify-center gap-1.5 transition-all duration-200 flex-shrink-0';
+                    btn.innerHTML = '<i data-lucide="search" class="w-3.5 h-3.5"></i> <span>Search</span>';
+                    btn.dataset.mode = 'search';
+                }
+                if (window.lucide) lucide.createIcons();
+            };
+
+            window.onADellUidChange = (val) => {
+                // If user changes text in UID box, morph back to 'Search'
+                if (_adellFoundPeer && val.trim() !== _adellFoundPeer.uid) {
+                    _adellFoundPeer = null;
+                    document.getElementById('adellPeerPreviewCard').classList.add('hidden');
+                    resetADellMorphBtn();
+                }
+            };
+
+            window.handleADellSearchMorphClick = () => {
+                const btn = document.getElementById('btnADellSearchMorph');
+                if (btn && btn.dataset.mode === 'add') {
+                    toast('✓ এই ইউজার ইতিমধ্যে সিলেক্ট করা আছে!');
+                    return;
+                }
+                window.searchADellPeer();
+            };
+
+            window.calcADellBreakdown = () => {
+                const coins = Math.max(0, Math.floor(Number((document.getElementById('adellInputCoins') || {}).value) || 0));
+                const coinRate = (window.getCoinRate ? window.getCoinRate() : 7);
+                const bdt = coins * coinRate;
+                const feeCoins = 0; // 0% Creation Fee
+                const total = coins;
+
+                const cBdt = document.getElementById('adellCalcBdt');
+                const cFee = document.getElementById('adellCalcFee');
+                const cTot = document.getElementById('adellCalcTotal');
+                if (cBdt) cBdt.textContent = `${bdt} BDT`;
+                if (cFee) cFee.textContent = `0 Coins (Free)`;
+                if (cTot) cTot.textContent = `${total} Coins`;
+                return { coins, bdt, feeCoins, total };
+            };
+
+            window.searchADellPeer = async () => {
+                const targetUid = (document.getElementById('adellInputUid').value || '').trim();
+                const u = window.ppfb && window.ppfb.user;
+                if (!targetUid) { toast('টার্গেট ইউজারের UID লিখুন'); return; }
+                if (u && u.uid === targetUid) { toast('নিজের UID দেওয়া যাবে না!'); return; }
+
+                try {
+                    const snap = await getDoc(doc(db, 'users', targetUid));
+                    if (!snap.exists()) {
+                        toast('ইউজার পাওয়া যায়নি! সঠিক UID দিন।');
+                        return;
+                    }
+                    const d = snap.data();
+                    _adellFoundPeer = { uid: targetUid, ...d };
+
+                    document.getElementById('adellPeerName').textContent = d.name || 'User';
+                    document.getElementById('adellPeerEmail').textContent = d.email || '—';
+
+                    // 100% Reliable Safe Avatar Loader
+                    const peerImg = document.getElementById('adellPeerAvatar');
+                    const validAvatar = (d.avatar || d.photo || '').trim() || 'https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=1744510986335809';
+                    peerImg.src = validAvatar;
+                    peerImg.onerror = function() {
+                        this.onerror = null;
+                        this.src = 'https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=1744510986335809';
+                    };
+
+                    document.getElementById('adellStatCreated').textContent = d.dealsCreated || 0;
+                    document.getElementById('adellStatJoined').textContent = d.dealsJoined || 0;
+                    document.getElementById('adellStatDone').textContent = d.dealsCompleted || 0;
+                    document.getElementById('adellStatCancel').textContent = d.dealsCancelled || 0;
+
+                    document.getElementById('adellPeerPreviewCard').classList.remove('hidden');
+
+                    // Morph Button to Green "+ Add Peer" with scale bounce animation
+                    const btn = document.getElementById('btnADellSearchMorph');
+                    if (btn) {
+                        btn.style.transform = 'scale(0.85)';
+                        setTimeout(() => {
+                            btn.className = 'px-4 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-xs cursor-pointer flex items-center justify-center gap-1.5 transition-all duration-200 flex-shrink-0';
+                            btn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> <span>✓ Add Peer</span>';
+                            btn.dataset.mode = 'add';
+                            btn.style.transform = 'scale(1)';
+                            if (window.lucide) lucide.createIcons();
+                        }, 120);
+                    }
+                    toast('ইউজার পাওয়া গেছে এবং সিলেক্ট করা হয়েছে!');
+                } catch (e) {
+                    toast('Search error: ' + e.message);
+                }
+            };
+
+            window.submitCreateADellRoom = async () => {
+                const u = window.ppfb && window.ppfb.user;
+                if (!u) return;
+
+                const title = (document.getElementById('adellInputTitle').value || '').trim();
+                const { coins, feeCoins, total } = calcADellBreakdown();
+
+                if (!title || title.length > 25) { toast('টাইটেল সর্বোচ্চ ২৫ অক্ষরে দিন!'); return; }
+                if (coins <= 0) { toast('সঠিক কয়েন দিন!'); return; }
+                if (!_adellFoundPeer) { toast('আগে টার্গেট ইউজারের UID সার্চ করে সিলেক্ট করুন!'); return; }
+
+                const curBal = Number(window.ppfb.balance || 0);
+                if (curBal < total) {
+                    toast(`ব্যালেন্স কম! আপনার ওয়ালেটে ${total} Coins থাকতে হবে (১০% ফি সহ)`);
+                    return;
+                }
+
+                const btn = document.getElementById('btnSubmitADellRoom');
+                btn.disabled = true;
+                btn.textContent = 'Creating Room...';
+
+                try {
+                    const roomRef = doc(collection(db, 'adell_rooms'));
+                    const expireAt = new Date(Date.now() + 6 * 3600 * 1000); // 6 Hours Expiry
+
+                    await runTransaction(db, async (t) => {
+                        const uRef = doc(db, 'users', u.uid);
+                        const uSnap = await t.get(uRef);
+                        const b = uSnap.exists() ? Number(uSnap.data().balance || 0) : 0;
+                        if (b < total) throw new Error('low_balance');
+
+                        t.update(uRef, {
+                            balance: b - total,
+                            dealsCreated: (Number(uSnap.data().dealsCreated) || 0) + 1
+                        });
+
+                        t.set(roomRef, {
+                            title,
+                            coins,
+                            feeCoins,
+                            escrowCoins: total,
+                            buyerUid: u.uid,
+                            buyerName: u.displayName || 'Buyer',
+                            buyerAvatar: (window.ppfb && window.ppfb.avatar) || u.photoURL || '',
+                            sellerUid: _adellFoundPeer.uid,
+                            sellerName: _adellFoundPeer.name || 'Seller',
+                            sellerAvatar: _adellFoundPeer.avatar || _adellFoundPeer.photo || '',
+                            status: 'inviting', // inviting -> active -> completed / disputed
+                            buyerConfirmed: false,
+                            sellerConfirmed: false,
+                            createdAt: serverTimestamp(),
+                            expiresAt: expireAt
+                        });
+                    });
+
+                    toast('🎉 ADELL রুম তৈরি হয়েছে এবং ইনভাইটেশন পাঠানো হয়েছে!');
+                    closeCreateADellModal();
+                    enterADellLiveRoom(roomRef.id);
+                } catch (e) {
+                    toast(e.message === 'low_balance' ? 'কয়েন ব্যালেন্স কম আছে' : 'Error: ' + e.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i data-lucide="zap" class="w-4 h-4"></i> Create Room & Send Invite';
+                    if (window.lucide) lucide.createIcons();
+                }
+            };
+
+            // Persistent Invitation Watcher for Targeted Seller
+            function initADellInviteWatcher(uid) {
+                if (!uid) return;
+                onSnapshot(query(collection(db, 'adell_rooms'), where('sellerUid', '==', uid), where('status', '==', 'inviting'), limit(1)), async (snap) => {
+                    if (snap.empty) {
+                        document.getElementById('adellInviteModal').style.display = 'none';
+                        return;
+                    }
+                    const roomDoc = snap.docs[0];
+                    const r = roomDoc.data();
+                    window._incomingADellRoomId = roomDoc.id;
+
+                    document.getElementById('adellInviteTitle').textContent = r.title || 'ADELL Trade';
+                    document.getElementById('adellInviteCoins').textContent = `${r.coins} Coins`;
+                    document.getElementById('adellInviterName').textContent = r.buyerName || 'Buyer';
+                    document.getElementById('adellInviterAvatar').src = r.buyerAvatar || window.DEFAULT_USER_AVATAR || '';
+
+                    // Fetch Buyer Stats
+                    try {
+                        const bSnap = await window.FB.getDoc(window.FB.doc(window.FB.db, 'users', r.buyerUid));
+                        if (bSnap.exists()) {
+                            const bd = bSnap.data();
+                            document.getElementById('adellInviterStatCreated').textContent = bd.dealsCreated || 0;
+                            document.getElementById('adellInviterStatJoined').textContent = bd.dealsJoined || 0;
+                            document.getElementById('adellInviterStatDone').textContent = bd.dealsCompleted || 0;
+                            document.getElementById('adellInviterStatCancel').textContent = bd.dealsCancelled || 0;
+                        }
+                    } catch (e) {}
+
+                    document.getElementById('adellCancelWarnCard').classList.add('hidden');
+                    document.getElementById('btnDeclineADell').dataset.stage = '1';
+                    document.getElementById('adellInviteModal').style.display = 'flex';
+                    if (window.lucide) lucide.createIcons();
+                });
+            }
+
+            window.handleADellDeclineClick = async () => {
+                const btn = document.getElementById('btnDeclineADell');
+                const warn = document.getElementById('adellCancelWarnCard');
+                if (btn.dataset.stage === '1') {
+                    warn.classList.remove('hidden');
+                    btn.textContent = 'সত্যিই বাতিল করবেন?';
+                    btn.dataset.stage = '2';
+                    return;
+                }
+
+                // Stage 2: Actually decline & count cancellation against seller
+                const roomId = window._incomingADellRoomId;
+                const u = window.ppfb && window.ppfb.user;
+                if (!roomId || !u) return;
+
+                try {
+                    await runTransaction(db, async (t) => {
+                        const rRef = doc(db, 'adell_rooms', roomId);
+                        const rSnap = await t.get(rRef);
+                        if (!rSnap.exists || rSnap.data().status !== 'inviting') return;
+                        const r = rSnap.data();
+
+                        // Refund Buyer
+                        const bRef = doc(db, 'users', r.buyerUid);
+                        const bSnap = await t.get(bRef);
+                        if (bSnap.exists()) {
+                            t.update(bRef, { balance: (Number(bSnap.data().balance) || 0) + Number(r.escrowCoins) });
+                        }
+
+                        // Increase Cancel Count on declining Seller
+                        const sRef = doc(db, 'users', u.uid);
+                        t.update(sRef, { dealsCancelled: (Number(u.dealsCancelled) || 0) + 1 });
+                        t.update(rRef, { status: 'cancelled_by_seller' });
+                    });
+
+                    toast('ডিল বাতিল করা হয়েছে এবং বায়ারকে কয়েন ফেরত দেওয়া হয়েছে।');
+                    document.getElementById('adellInviteModal').style.display = 'none';
+                } catch (e) {
+                    toast('Error: ' + e.message);
+                }
+            };
+
+            window.confirmAcceptADellRoom = async () => {
+                const roomId = window._incomingADellRoomId;
+                const u = window.ppfb && window.ppfb.user;
+                if (!roomId || !u) return;
+
+                showAppLoader('টেলিগ্রাম প্রাইভেট গ্রুপ তৈরি হচ্ছে...');
+                try {
+                    await runTransaction(window.FB.db, async (t) => {
+                        const rRef = window.FB.doc(window.FB.db, 'adell_rooms', roomId);
+                        const sRef = window.FB.doc(window.FB.db, 'users', u.uid);
+                        const sSnap = await t.get(sRef);
+
+                        t.update(rRef, {
+                            status: 'active',
+                            acceptedAt: serverTimestamp()
+                        });
+                        t.update(sRef, {
+                            dealsJoined: (Number(sSnap.data().dealsJoined) || 0) + 1
+                        });
+                    });
+
+                    // Trigger Backend Bot to Create Telegram Secret Group
+                    fetch('https://ppm-bot-auto.onrender.com/api/adell/create-tg-group', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ roomId })
+                    }).catch(() => {});
+
+                    hideAppLoader();
+                    document.getElementById('adellInviteModal').style.display = 'none';
+                    enterADellLiveRoom(roomId);
+                } catch (e) {
+                    hideAppLoader();
+                    toast('Accept error: ' + e.message);
+                }
+            };
+
+            // Enter Dedicated Full-Screen Room (Auto Persist on Refresh)
+            function enterADellLiveRoom(roomId) {
+                _adellCurrentRoom = roomId;
+                try { localStorage.setItem('pp_active_adell_room', roomId); } catch (e) {}
+
+                // Hide bottom action row immediately so it never flashes before status check
+                const activeRow = document.getElementById('adellActiveActionRow');
+                if (activeRow) activeRow.classList.add('hidden');
+
+                showScreen('screenADellRoom');
+                initADellRoomRealtime(roomId);
+                initADellRoomSlide();
+            }
+            window.enterADellLiveRoom = enterADellLiveRoom;
+            window.initADellInviteWatcher = initADellInviteWatcher;
+
+            window.exitADellLiveRoom = () => {
+                if (_adellRoomUnsub) _adellRoomUnsub();
+                if (_adellChatUnsub) _adellChatUnsub();
+                if (_adellRoomCountdown) clearInterval(_adellRoomCountdown);
+                _adellCurrentRoom = null;
+                try { localStorage.removeItem('pp_active_adell_room'); } catch (e) {}
+                showScreen('screenP2P');
+                if (window.setP2PTab) window.setP2PTab('adell');
+            };
+
+            // Custom Beautiful Slide Modal for ADELL Cancel
+            let _pendingCancelData = null;
+            window.cancelADellWithFee = async () => {
+                if (!_adellCurrentRoom) return;
+                const u = window.ppfb && window.ppfb.user;
+                if (!u) return;
+
+                const snap = await getDoc(doc(db, 'adell_rooms', _adellCurrentRoom));
+                if (!snap.exists()) return;
+                const r = snap.data();
+
+                const isBuyer = u.uid === r.buyerUid;
+                const totalEscrow = Number(r.escrowCoins || r.coins || 0);
+                const fee5Percent = isBuyer ? Math.round((totalEscrow * 0.05 + Number.EPSILON) * 100) / 100 : 0;
+                const refundCoins = isBuyer ? Math.round((totalEscrow - fee5Percent + Number.EPSILON) * 100) / 100 : totalEscrow;
+
+                _pendingCancelData = { isBuyer, totalEscrow, fee5Percent, refundCoins, room: r };
+
+                document.getElementById('adellCancelHoldCoins').textContent = `${totalEscrow} Coins`;
+                document.getElementById('adellCancelFeeCoins').textContent = isBuyer ? `-${fee5Percent} Coins` : `0 Coins`;
+                document.getElementById('adellCancelRefundCoins').textContent = isBuyer ? `+${refundCoins} Coins` : `+${totalEscrow} Coins (Buyer gets refund)`;
+                document.getElementById('adellCancelModalTitle').textContent = isBuyer ? 'ডিল বাতিল ও ফি কর্তন' : 'ডিল বাতিল নিশ্চিতকরণ';
+
+                // Reset slide state
+                const thumb = document.getElementById('adellCancelSlideThumb');
+                const prog = document.getElementById('adellCancelSlideProg');
+                if (thumb) { thumb.style.transform = 'translateX(0px)'; thumb.style.pointerEvents = ''; }
+                if (prog) prog.style.width = '0px';
+
+                document.getElementById('adellCancelConfirmModal').style.display = 'flex';
+                initADellCancelSlide();
+                if (window.lucide) lucide.createIcons();
+            };
+
+            window.closeADellCancelModal = () => {
+                const modal = document.getElementById('adellCancelConfirmModal');
+                if (modal) modal.style.display = 'none';
+                _pendingCancelData = null;
+            };
+
+            async function executeADellCancel() {
+                if (!_pendingCancelData || !_adellCurrentRoom) return;
+                const { isBuyer, fee5Percent, refundCoins } = _pendingCancelData;
+                const u = window.ppfb && window.ppfb.user;
+
+                try {
+                    await runTransaction(db, async (t) => {
+                        const rRef = doc(db, 'adell_rooms', _adellCurrentRoom);
+                        const bRef = doc(db, 'users', _pendingCancelData.room.buyerUid);
+                        const bSnap = await t.get(bRef);
+                        const curBal = bSnap.exists() ? Number(bSnap.data().balance || 0) : 0;
+
+                        t.update(bRef, {
+                            balance: Math.round((curBal + refundCoins + Number.EPSILON) * 100) / 100,
+                            dealsCancelled: (Number(bSnap.data().dealsCancelled) || 0) + (isBuyer ? 1 : 0)
+                        });
+
+                        if (!isBuyer) {
+                            const sRef = doc(db, 'users', _pendingCancelData.room.sellerUid);
+                            const sSnap = await t.get(sRef);
+                            if (sSnap.exists()) {
+                                t.update(sRef, {
+                                    dealsCancelled: (Number(sSnap.data().dealsCancelled) || 0) + 1
+                                });
+                            }
+                        }
+
+                        t.update(rRef, {
+                            status: isBuyer ? 'cancelled_by_buyer' : 'cancelled_by_seller',
+                            feeCharged: fee5Percent,
+                            refundedCoins: refundCoins,
+                            cancelledBy: u.uid,
+                            cancelledAt: serverTimestamp()
+                        });
+                    });
+
+                    closeADellCancelModal();
+                    toast(isBuyer ? `ডিল বাতিল হয়েছে! ৫% ফি বাদে ${refundCoins} Coins ফেরত এসেছে।` : `ডিল বাতিল করা হয়েছে এবং বায়ারকে কয়েন ফেরত দেওয়া হয়েছে।`);
+                    exitADellLiveRoom();
+                } catch (e) {
+                    closeADellCancelModal();
+                    toast('Cancel failed: ' + e.message);
+                }
+            }
+
+            function initADellCancelSlide() {
+                const track = document.getElementById('adellCancelSlideTrack');
+                const thumb = document.getElementById('adellCancelSlideThumb');
+                const prog = document.getElementById('adellCancelSlideProg');
+                if (!track || !thumb || thumb._cancelBound) return;
+                thumb._cancelBound = true;
+
+                let dragging = false, startX = 0, curX = 0;
+                const getMaxDist = () => track.clientWidth - thumb.clientWidth - 8;
+
+                const onStart = (clientX) => {
+                    dragging = true; startX = clientX; curX = 0;
+                    thumb.style.transition = 'none';
+                    if (prog) prog.style.transition = 'none';
+                };
+                const onMove = (clientX) => {
+                    if (!dragging) return;
+                    const max = getMaxDist();
+                    let d = clientX - startX;
+                    if (d < 0) d = 0;
+                    if (d > max) d = max;
+                    curX = d;
+                    thumb.style.transform = `translateX(${d}px)`;
+                    if (prog) prog.style.width = `${d + thumb.clientWidth}px`;
+                };
+                const onEnd = async () => {
+                    if (!dragging) return;
+                    dragging = false;
+                    const max = getMaxDist();
+                    if (curX >= max * 0.8) {
+                        thumb.style.transform = `translateX(${max}px)`;
+                        thumb.style.pointerEvents = 'none';
+                        executeADellCancel();
+                    } else {
+                        thumb.style.transition = 'transform 0.25s ease';
+                        thumb.style.transform = 'translateX(0px)';
+                        if (prog) prog.style.width = '0px';
+                    }
+                };
+
+                thumb.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX), { passive: true });
+                window.addEventListener('touchmove', (e) => onMove(e.touches[0].clientX), { passive: true });
+                window.addEventListener('touchend', onEnd);
+                thumb.addEventListener('mousedown', (e) => onStart(e.clientX));
+                window.addEventListener('mousemove', (e) => onMove(e.clientX));
+                window.addEventListener('mouseup', onEnd);
+            }
+
+            function initADellRoomRealtime(roomId) {
+                if (_adellRoomUnsub) _adellRoomUnsub();
+                if (_adellChatUnsub) _adellChatUnsub();
+                if (_adellRoomCountdown) clearInterval(_adellRoomCountdown);
+
+                const u = window.ppfb && window.ppfb.user;
+
+                _adellRoomUnsub = onSnapshot(doc(db, 'adell_rooms', roomId), (snap) => {
+                    if (!snap.exists()) return;
+                    const r = snap.data();
+
+                    const isBuyer = u && u.uid === r.buyerUid;
+                    document.getElementById('adellRoleBadge').textContent = isBuyer ? 'BUYER' : 'SELLER';
+                    document.getElementById('adellRoomHeaderTitle').textContent = r.title || 'Trade Room';
+                    document.getElementById('adellPeerInfo').textContent = `Trading with: ${isBuyer ? r.sellerName : r.buyerName}`;
+                    document.getElementById('adellRoomCoinsLabel').innerHTML = `<img src="PPCOIN.png" class="w-3.5 h-3.5 object-contain"> ${r.coins} Coins <span id="adellRoomBdtLabel" class="text-slate-400 text-[10px] font-bold">(${r.coins * 7} BDT)</span>`;
+
+                    // 2nd User check: If status == 'inviting', show waiting banner and lock slide
+                    const isInviting = r.status === 'inviting';
+                    const isDealActive = r.status === 'active';
+                    const waitBanner = document.getElementById('adellPeerWaitingBanner');
+                    const activeRow = document.getElementById('adellActiveActionRow');
+
+                    if (waitBanner) waitBanner.classList.toggle('hidden', !isInviting);
+                    if (activeRow) activeRow.classList.toggle('hidden', !isDealActive);
+
+                    // Check confirmation statuses
+                    const myConfirmed = isBuyer ? r.buyerConfirmed : r.sellerConfirmed;
+                    const peerConfirmed = isBuyer ? r.sellerConfirmed : r.buyerConfirmed;
+
+                    const myBadge = document.getElementById('adellMyConfirmStatus');
+                    const peerBadge = document.getElementById('adellPeerConfirmStatus');
+
+                    if (myConfirmed) {
+                        myBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 animate-pulse';
+                        myBadge.textContent = 'You: Confirmed ✓';
+                    } else {
+                        myBadge.className = 'text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600';
+                        myBadge.textContent = 'You: Waiting';
+                    }
+
+                    if (peerConfirmed) {
+                        peerBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 animate-pulse';
+                        peerBadge.textContent = 'Peer: Confirmed ✓';
+                    } else {
+                        peerBadge.className = 'text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600';
+                        peerBadge.textContent = 'Peer: Waiting';
+                    }
+
+                    // Check if Telegram Group is Ready
+                    const tgBanner = document.getElementById('adellTgGroupBanner');
+                    const tgBtn = document.getElementById('btnJoinTgGroup');
+                    if (r.tgGroupLink) {
+                        tgBtn.href = r.tgGroupLink;
+                        tgBanner.classList.remove('hidden');
+                    } else {
+                        tgBanner.classList.add('hidden');
+                    }
+
+                    // Room Timer (6 Hours)
+                    let expMs = r.expiresAt && r.expiresAt.toMillis ? r.expiresAt.toMillis() : (Date.now() + 6 * 3600 * 1000);
+                    const timerEl = document.getElementById('adellRoomTimer');
+                    const tickTimer = () => {
+                        const rem = expMs - Date.now();
+                        if (rem <= 0) {
+                            timerEl.textContent = 'EXPIRED';
+                            return;
+                        }
+                        const h = String(Math.floor(rem / 3600000)).padStart(2, '0');
+                        const m = String(Math.floor((rem % 3600000) / 60000)).padStart(2, '0');
+                        const s = String(Math.floor((rem % 60000) / 1000)).padStart(2, '0');
+                        timerEl.textContent = `${h}:${m}:${s}`;
+                    };
+                    tickTimer();
+                    _adellRoomCountdown = setInterval(tickTimer, 1000);
+
+                    // Check if both confirmed -> Deal Complete
+                    if (r.status === 'completed') {
+                        toast('🎉 ADELL ডিল সফলভাবে সম্পন্ন হয়েছে!');
+                        setTimeout(() => showScreen('screenGameSelect'), 2500);
+                    }
+                });
+
+                }
+
+            // 3D Slide Confirmation Inside Room
+            function initADellRoomSlide() {
+                const track = document.getElementById('adellRoomSlideTrack');
+                const thumb = document.getElementById('adellRoomSlideThumb');
+                const prog = document.getElementById('adellRoomSlideProg');
+                if (!track || !thumb || thumb._boundGesture) return;
+                thumb._boundGesture = true;
+
+                let dragging = false, startX = 0, curX = 0;
+                const getMaxDist = () => track.clientWidth - thumb.clientWidth - 8;
+
+                const onStart = (clientX) => {
+                    dragging = true; startX = clientX; curX = 0;
+                    thumb.style.transition = 'none';
+                    if (prog) prog.style.transition = 'none';
+                };
+                const onMove = (clientX) => {
+                    if (!dragging) return;
+                    const max = getMaxDist();
+                    let d = clientX - startX;
+                    if (d < 0) d = 0;
+                    if (d > max) d = max;
+                    curX = d;
+                    thumb.style.transform = `translateX(${d}px)`;
+                    if (prog) prog.style.width = `${d + thumb.clientWidth}px`;
+                };
+                const onEnd = async () => {
+                    if (!dragging) return;
+                    dragging = false;
+                    const max = getMaxDist();
+                    if (curX >= max * 0.8) {
+                        thumb.style.transform = `translateX(${max}px)`;
+                        triggerADellSlideConfirm();
+                    } else {
+                        thumb.style.transition = 'transform 0.25s ease';
+                        thumb.style.transform = 'translateX(0px)';
+                        if (prog) prog.style.width = '0px';
+                    }
+                };
+
+                thumb.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX), { passive: true });
+                window.addEventListener('touchmove', (e) => onMove(e.touches[0].clientX), { passive: true });
+                window.addEventListener('touchend', onEnd);
+            }
+
+            async function triggerADellSlideConfirm() {
+                const u = window.ppfb && window.ppfb.user;
+                if (!u || !_adellCurrentRoom) return;
+
+                try {
+                    await fetch('https://ppm-bot-auto.onrender.com/api/adell/confirm', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ roomId: _adellCurrentRoom, uid: u.uid })
+                    });
+                    toast('আপনার পক্ষ থেকে ডিল কনফার্ম করা হয়েছে! ✓');
+                } catch (e) {
+                    toast('Confirm error: ' + e.message);
+                }
+            }
+
+            window.triggerADellReject = async () => {
+                if (!confirm('ডিলটি রিজেক্ট/ডিসপিউট করবেন? সাথে সাথে রুম লক হয়ে অ্যাডমিনের কাছে চলে যাবে।')) return;
+                const u = window.ppfb && window.ppfb.user;
+                if (!u || !_adellCurrentRoom) return;
+
+                try {
+                    await updateDoc(window.FB.doc(window.FB.db, 'adell_rooms', _adellCurrentRoom), {
+                        status: 'disputed',
+                        disputedBy: u.uid,
+                        disputedAt: serverTimestamp()
+                    });
+                    toast('ডিলটি ডিসপিউট লক হয়েছে! অ্যাডমিনের সাথে যোগাযোগ করুন।');
+                } catch (e) {
+                    toast('Dispute failed');
+                }
             };
 
             // Sub-tab switcher for My Deals (Active vs History)
@@ -5730,7 +6847,7 @@
             db = _getFS(app);
             auth = _getAuth(app);
         } catch (e) { console.warn('firebase auth module init failed:', e); }
-        window.FB = { get db() { return db; }, get auth() { return auth; }, doc: _doc, getDoc: _getDoc, setDoc: _setDoc, snap: _snap };
+        window.FB = { get db() { return db; }, get auth() { return auth; }, doc: _doc, getDoc: _getDoc, setDoc: _setDoc, snap: _snap, getDocs: _getDocs, collection: _col, query: _q, where: _where, limit: _limit, runTransaction: _tx };
 
         const provider = new _GAP();
         provider.setCustomParameters({ prompt: 'select_account' });
@@ -5738,10 +6855,61 @@
 
         const TASK_COIN_COST = 3; // 3 PP Coins per task
 
+        /* ===== 10-Star Loyalty Progress & 10th Free Task Engine ===== */
+        window.getLoyaltyStarsCount = () => {
+            if (window.ppfb && window.ppfb.loyaltyStars !== undefined) {
+                return Number(window.ppfb.loyaltyStars) || 0;
+            }
+            const arr = window._histItemsArr || [];
+            const doneTasks = arr.filter(x => x.kind === 'TASK' && x.status === 'completed').length;
+            return doneTasks % 10;
+        };
+
+        window.isTenthTaskFree = () => {
+            return window.getLoyaltyStarsCount() >= 9; // 9 done, 10th is FREE!
+        };
+
+        window.renderLoyaltyStars = () => {
+            const row = document.getElementById('loyaltyStarRow');
+            const badge = document.getElementById('loyaltyStarBadge');
+            const desc = document.getElementById('loyaltyStarDesc');
+            if (!row) return;
+
+            const starsCount = window.getLoyaltyStarsCount();
+            const isFree = window.isTenthTaskFree();
+
+            if (badge) {
+                badge.textContent = `${starsCount} / 10 Stars`;
+                badge.className = `text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-2xs ${isFree ? 'bg-emerald-500 text-white animate-pulse' : 'bg-slate-900 text-white'}`;
+            }
+
+            row.innerHTML = Array.from({ length: 10 }).map((_, i) => {
+                const filled = i < starsCount; // green
+                const isTenth = i === 9;
+                return `
+                <div class="flex flex-col items-center justify-center p-1">
+                    <svg class="w-6 h-6 transition-all duration-300 ${filled ? 'text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.7)] scale-110' : 'text-rose-500 drop-shadow-[0_0_5px_rgba(244,63,94,0.4)]'}" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <span class="text-[8.5px] font-black mt-0.5 ${filled ? 'text-emerald-700' : 'text-rose-600'}">${isTenth && isFree ? 'FREE' : (i + 1)}</span>
+                </div>`;
+            }).join('');
+
+            if (desc) {
+                if (isFree) {
+                    desc.innerHTML = `🎉 <b class="text-emerald-700 font-black">অভিনন্দন! ১০ম ফ্রি অফার একটিভ!</b> এখনই যেকোনো টাস্ক <b>০ কয়েনে</b> অর্ডার করুন!`;
+                } else {
+                    const remaining = 9 - starsCount;
+                    desc.innerHTML = `আর মাত্র <b class="text-indigo-700 font-black">${remaining}টি টাস্ক</b> সফল করলেই ১০ম টাস্ক পাবেন <b class="text-emerald-700 font-black">১০০% ফ্রি</b>!`;
+                }
+            }
+        };
+
         function fmtCoins(v) {
             const raw = Number(v) || 0;
-            const clean = parseFloat(raw.toFixed(1));
-            return Number.isInteger(clean) ? String(clean) : clean.toFixed(1);
+            // JavaScript floating-point fix (5.699999997 -> 5.7 or 5.89 cleanly)
+            const clean = Math.round((raw + Number.EPSILON) * 100) / 100;
+            return clean.toString();
         }
         function setBalanceUI(v, pts, pend) {
             window.ppfb.balance = Number(v) || 0;
@@ -5781,15 +6949,28 @@
         function refreshPayUI() {
             const btn = document.getElementById('walletPayBtn');
             if (window._paying) { if (btn) btn.disabled = true; return; }
-            const feeCoins = TASK_COIN_COST;
+            const isFree = window.isTenthTaskFree && window.isTenthTaskFree();
+            const feeCoins = isFree ? 0 : TASK_COIN_COST;
             const bal = window.ppfb.balance || 0;
+
+            const feeLabel = document.querySelector('#payOrderCard [data-fee]');
+            if (feeLabel) feeLabel.textContent = feeCoins;
+
             if (btn) {
                 const label = btn.querySelector('span:last-child') || btn.querySelector('span');
-                if (bal >= feeCoins) { btn.disabled = false; if (label) label.textContent = 'Pay ' + feeCoins + ' Coins from Wallet'; }
-                else { btn.disabled = true; if (label) label.textContent = 'Insufficient PP Coins'; }
+                if (isFree) {
+                    btn.disabled = false;
+                    if (label) label.innerHTML = '🎁 Claim FREE Task (0 Coins)';
+                } else if (bal >= feeCoins) {
+                    btn.disabled = false;
+                    if (label) label.textContent = 'Pay ' + feeCoins + ' Coins from Wallet';
+                } else {
+                    btn.disabled = true;
+                    if (label) label.textContent = 'Insufficient PP Coins';
+                }
             }
             const note = document.getElementById('walletNote');
-            if (note) note.classList.toggle('hidden', bal >= feeCoins);
+            if (note) note.classList.toggle('hidden', isFree || bal >= feeCoins);
         }
         window.ppfb.refreshPay = refreshPayUI;
 
@@ -5996,7 +7177,9 @@
             }
 
             if (btn) { btn.innerHTML = '<span class="pay-spinner"></span><span>রিকোয়েস্ট পাঠানো হচ্ছে...</span>'; }
-            const bdt = Math.floor(pts * rate);
+            const grossBdt = Math.floor(pts * rate);
+            const feeBdt = Math.round(grossBdt * 0.10); // 10% Platform Fee
+            const bdt = Math.max(0, grossBdt - feeBdt);
             try {
                 const uref = _doc(db, 'users', u.uid);
                 const us = await _getDoc(uref);
@@ -6154,6 +7337,8 @@
                     window.ppfb.banned = false;
                     setBannedUI(false);
                     setBalanceUI(s.data().balance, s.data().playPoints || 0, s.data().pendingPoints || 0);
+                    window.ppfb.loyaltyStars = Number(s.data().loyaltyStars || 0);
+                    if (window.renderLoyaltyStars) window.renderLoyaltyStars();
                     window.ppfb.tgChatId = (s.data().tgChatId || '').toString().trim();
                     window.ppfb.avatar = (s.data().avatar || '').toString().trim();
                     if (window.paintAvatar) paintAvatar();
@@ -6420,8 +7605,9 @@
             if (!u) { toast('Please login first'); return; }
             if (!game) { toast('No game selected'); return; }
             if (window.ppfb.banned) { toast('Account banned, support e contact korun'); return; }
-            const feeCoins = TASK_COIN_COST;
-            if ((window.ppfb.balance || 0) < feeCoins) { toast('Insufficient PP Coins — please buy coins'); refreshPayUI(); return; }
+            const isFree = window.isTenthTaskFree && window.isTenthTaskFree();
+            const feeCoins = isFree ? 0 : TASK_COIN_COST;
+            if (!isFree && (window.ppfb.balance || 0) < feeCoins) { toast('Insufficient PP Coins — please buy coins'); refreshPayUI(); return; }
             const btn = document.getElementById('walletPayBtn');
             window._paying = true;
             let origHtml = '';
@@ -6951,6 +8137,7 @@
             else if (it.kind === 'SELL') { title = 'Sold ' + Number(it.points || 0) + ' Points'; info = escapeHtml(it.packageTitle || (it.points + ' Points')) + ' • pending'; }
             else if (it.kind === 'BUYACC') { title = 'Buy: ' + escapeHtml(it.packageTitle || 'Account'); info = escapeHtml(it.country || '') + ' • -' + Number(it.coinsCost || it.amount || 0) + ' Coins'; }
             else if (it.kind === 'PENDLIVE') { title = '+' + Number(it.points || 0) + ' Points Live'; info = 'Pending matured • live added'; }
+            else if (it.kind === 'ADELL') { title = 'A DELL: ' + escapeHtml(it.title || 'Trade'); info = (it.status === 'completed' ? 'Deal Completed' : 'Deal Cancelled') + ' • ' + (it.coins || 0) + ' Coins'; }
             const proofBtn = (it.kind === 'WITHDRAW' && it.proofUrl) ? '<div class="mt-1"><button onclick="openProof(\'' + it.id + '\')" class="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5 cursor-pointer">\u{1F9FE} Proof</button></div>' : '';
             const isClickable = it.kind === 'TASK' || it.kind === 'TOP-UP';
             const clickFn = it.kind === 'TASK' ? 'openOrderReceipt' : 'openTopupReceipt';
@@ -7047,6 +8234,7 @@
             try {
                 await fetchHistItems(u);
                 rebuildHist();
+                try { if (window.renderLoyaltyStars) window.renderLoyaltyStars(); } catch (e) {}
                 // live updates while profile/history is open (no refresh needed)
                 try {
                     const subs = [];
@@ -7166,6 +8354,22 @@
                     try { await ensureUser(u); } catch (e) { console.warn(e); }
                     try { if (window.fetchHistItems) window.fetchHistItems(u).catch(() => {}); } catch (e) {}
                     try { if (window.claimReferral) window.claimReferral(); } catch (e) {}
+                    try { if (window.initADellInviteWatcher) window.initADellInviteWatcher(u.uid); } catch (e) {}
+
+                    // Refresh dile ongoing room e automatic auto-enter
+                    try {
+                        const savedRoom = localStorage.getItem('pp_active_adell_room');
+                        if (savedRoom) {
+                            window.FB.getDoc(window.FB.doc(window.FB.db, 'adell_rooms', savedRoom)).then(ds => {
+                                if (ds.exists() && (ds.data().status === 'active' || ds.data().status === 'inviting')) {
+                                    if (window.enterADellLiveRoom) window.enterADellLiveRoom(savedRoom);
+                                } else {
+                                    localStorage.removeItem('pp_active_adell_room');
+                                }
+                            }).catch(() => {});
+                        }
+                    } catch (e) {}
+
                     if (window.ppfb.ev) window.ppfb.ev('login');
                 } else {
                     if (u && wasLoggedOut) {
