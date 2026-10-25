@@ -6372,9 +6372,23 @@
                     }
                 };
 
+                // Touch Events (Mobile)
                 thumb.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX), { passive: true });
                 window.addEventListener('touchmove', (e) => onMove(e.touches[0].clientX), { passive: true });
                 window.addEventListener('touchend', onEnd);
+
+                // Mouse Events (PC Desktop/Laptop)
+                thumb.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    onStart(e.clientX);
+                });
+                window.addEventListener('mousemove', (e) => {
+                    if (dragging) {
+                        e.preventDefault();
+                        onMove(e.clientX);
+                    }
+                });
+                window.addEventListener('mouseup', onEnd);
             }
 
             async function triggerADellSlideConfirm() {
